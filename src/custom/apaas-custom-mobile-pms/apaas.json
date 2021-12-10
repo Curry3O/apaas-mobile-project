@@ -1,0 +1,20 @@
+{
+  "entry": "index.js",
+  "copyAssets": ["public/custom/apaas-custom-mobile-pms"],
+  "router": {
+    "apaas-custom-mobile-pms": {
+      "name": "apaas-custom-mobile-pms",
+      "path": "apaas-custom-mobile-pms",
+      "meta": {
+        "title": "自开发移动端pms"
+      }
+    }
+  },
+  "customWidgetList": [
+    {
+      "code": "apaas-mobile-demo",
+      "text": "apaas-mobile-demo"
+    }
+  ],
+  "outputName": "apaas-custom-mobile-pms"
+}
