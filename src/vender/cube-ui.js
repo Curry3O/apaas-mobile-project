@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-23 17:45:00
- * @LastEditTime: 2021-07-27 14:19:53
+ * @LastEditTime: 2021-12-16 20:05:31
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /x-product-h5-workspace/packages/xdap-h5/src/cube-ui.js
@@ -21,7 +21,7 @@ import {
   // Tip,
   // Toolbar,
   TabBar,
-  // TabPanels,
+  TabPanels,
   // // form
   Checkbox,
   CheckboxGroup,
@@ -50,7 +50,7 @@ import {
   ImagePreview,
   // // scroll
   Scroll,
-  // Slide,
+  Slide,
   // IndexList,
   // Swipe,
   // Sticky,
@@ -64,7 +64,7 @@ Vue.use(Button)
 // Vue.use(Tip)
 // Vue.use(Toolbar)
 Vue.use(TabBar)
-// Vue.use(TabPanels)
+Vue.use(TabPanels)
 Vue.use(Checkbox)
 Vue.use(CheckboxGroup)
 // Vue.use(Checker)
@@ -90,7 +90,7 @@ Vue.use(Dialog)
 Vue.use(Drawer)
 Vue.use(ImagePreview)
 Vue.use(Scroll)
-// Vue.use(Slide)
+Vue.use(Slide)
 // Vue.use(IndexList)
 // Vue.use(Swipe)
 // Vue.use(Sticky)

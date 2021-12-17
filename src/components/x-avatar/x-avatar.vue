@@ -1,10 +1,21 @@
+<!--
+ * @Author: your name
+ * @Date: 2021-12-10 10:27:20
+ * @LastEditTime: 2021-12-15 11:46:02
+ * @LastEditors: your name
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \apaas-mobile-pms\src\components\x-avatar\x-avatar.vue
+-->
 <template>
   <div class="x-avatar">
     <template v-if="avatarUrl">
-      <img class="img-avatar" :src="avatarRealUrl" alt="avatar">
+      <img class="img-avatar" :src="avatarRealUrl" alt="avatar" />
     </template>
     <template v-else>
-      <div class="default-avatar" :style="{'background-color': defaultAvatarColor === 'primaryColor' ? '' : defaultAvatarColor}">
+      <div
+        class="default-avatar"
+        :style="{'background-color':  === 'primaryColor' ? '' : defaultAvatarColor}"
+      >
         <span>{{ displayName }}</span>
       </div>
     </template>
@@ -31,16 +42,16 @@ export default {
   },
   computed: {
     ...mapState({
-      token: state => state.authModule.token
+      token: (state) => state.authModule.token
     }),
-    displayName: function () {
+    displayName: function() {
       if (this.personName) {
         return this.personName.slice(this.personName.length - 2, this.personName.length)
       } else {
         return ''
       }
     },
-    avatarRealUrl: function () {
+    avatarRealUrl: function() {
       return `${this.avatarUrl}&token=${this.token}`
     }
   }

@@ -2,18 +2,18 @@
   "entry": "index.js",
   "copyAssets": ["public/custom/apaas-custom-mobile-pms"],
   "router": {
-    "apaas-custom-mobile-pms": {
-      "name": "apaas-custom-mobile-pms",
-      "path": "apaas-custom-mobile-pms",
+    "apaas-custom-project-home-page": {
+      "name": "apaas-custom-project-home-page",
+      "path": "apaas-custom-project-home-page",
       "meta": {
-        "title": "自开发移动端pms"
+        "title": "项目首页"
       }
     }
   },
   "customWidgetList": [
     {
-      "code": "apaas-mobile-demo",
-      "text": "apaas-mobile-demo"
+      "code": "apaas-mobile-pms",
+      "text": "apaas-mobile-pms"
     }
   ],
   "outputName": "apaas-custom-mobile-pms"
