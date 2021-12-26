@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-23 16:20:22
- * @LastEditTime: 2021-07-08 20:53:51
+ * @LastEditTime: 2021-12-26 15:55:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /x-product-h5-workspace/packages/xdap-h5/src/main.js
@@ -20,9 +20,7 @@ import AssetsLoader from './assets-loader'
 import i18n from '@/locale/index'
 
 import store from './store'
-import {
-  SET_TOKEN,
-} from '@/store/auth.store.js'
+import { SET_TOKEN } from '@/store/auth.store.js'
 import { ExtensionEngine } from 'x-extension'
 
 import { RuleEngine, functions, SimpleRuleEngine } from '@x-apaas/x-lib-rule-engine'
@@ -40,7 +38,7 @@ Vue.prototype.$store = store
 const requireContext = require.context('./custom/', true, /apaas.json$/)
 console.log(requireContext.keys())
 
-requireContext.keys().map(key => {
+requireContext.keys().map((key) => {
   const rc = requireContext(key)
   if (rc && rc.entry) {
     // 装载JS
@@ -53,7 +51,7 @@ requireContext.keys().map(key => {
     // 动态添加路由
     const r = router
 
-    Object.keys(rc.router).forEach(key => {
+    Object.keys(rc.router).forEach((key) => {
       const routerConfig = rc.router[key]
       store.commit('menuModule/ADD_CUSTOM_MENU_ROUTER', routerConfig)
       r.addRoute('admin', {
@@ -76,7 +74,9 @@ Vue.addInterceptorsRequest('REQUEST_PARAMS_INTERCEPTOR', (e) => {
 
   const authStore = store.state.authModule
   if (authStore.token) {
-    e.headers['xdaptoken'] = authStore.token
+    e.headers['xdaptenantid'] = '203908342555344897'
+    e.headers['xdaptoken'] =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2NDA1MTI1MTcsImlhdCI6MTY0MDUwNTMxNywieGRhcHVzZXJpZCI6IjEwMDIwOTc5NDY2Nzg3OTg1ODE3NiJ9.k7k5hm5X2sFs05S7LpUN8sbjbVgCxyNU4zmWWEWCZ6p7Gq2DDvtiScASCX5gqmQGlPwKXOAbh_x2wgpO4QtMLQ'
   }
 
   return e
@@ -105,7 +105,6 @@ Vue.addInterceptorsResponse('RESPONSE_SUCCESS_MSG_INTERCEPTOR', (e) => {
   return e
 })
 
-
 const isSingleApp = () => {
   return ExtensionEngine.getInstance().validateBlock('SINGLE_APP', 'SingleAppConfig')
 }
@@ -118,10 +117,10 @@ new Vue({
   store,
   created() {
     const MESSAGE_TYPES = {
-      'info': 'txt',
-      'success': 'correct',
-      'warning': 'warn',
-      'error': 'error'
+      info: 'txt',
+      success: 'correct',
+      warning: 'warn',
+      error: 'error'
     }
     Vue.prototype.$message = ({ message, type = 'info', mask = false, maskClosable = false }) => {
       let toast

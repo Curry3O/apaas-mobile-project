@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-23 17:45:00
- * @LastEditTime: 2021-12-16 20:05:31
+ * @LastEditTime: 2021-12-24 17:23:43
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /x-product-h5-workspace/packages/xdap-h5/src/cube-ui.js
@@ -35,7 +35,7 @@ import {
   // Rate,
   // Validator,
   Upload,
-  // Form,
+  Form,
   // // popup
   // Popup,
   Toast,
@@ -45,7 +45,7 @@ import {
   // TimePicker,
   // SegmentPicker,
   Dialog,
-  // ActionSheet,
+  ActionSheet,
   Drawer,
   ImagePreview,
   // // scroll
@@ -77,7 +77,7 @@ Vue.use(Select)
 // Vue.use(Rate)
 // Vue.use(Validator)
 Vue.use(Upload)
-// Vue.use(Form)
+Vue.use(Form)
 // Vue.use(Popup)
 Vue.use(Toast)
 Vue.use(Picker)
@@ -86,7 +86,7 @@ Vue.use(DatePicker)
 // Vue.use(TimePicker)
 // Vue.use(SegmentPicker)
 Vue.use(Dialog)
-// Vue.use(ActionSheet)
+Vue.use(ActionSheet)
 Vue.use(Drawer)
 Vue.use(ImagePreview)
 Vue.use(Scroll)

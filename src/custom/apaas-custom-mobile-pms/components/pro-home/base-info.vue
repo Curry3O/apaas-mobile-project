@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-13 20:46:20
- * @LastEditTime: 2021-12-17 20:52:41
+ * @LastEditTime: 2021-12-26 16:06:08
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\base-info.vue
@@ -23,11 +23,18 @@
             </div>
           </div>
           <div class="box-amount fs-18 fw-600">
-            {{ item.value ? (item.isMoney ? '¥' + item.value : item.value + '%') : '-' }}
+            {{
+              item.value || item.value === 0
+                ? item.isMoney
+                  ? transform(item.value)
+                  : item.value + '%'
+                : '-'
+            }}
           </div>
         </div>
       </div>
     </div>
+    <div class="pg-wrap mt-10"></div>
     <div class="pg-title">
       <div class="pg-line"></div>
       <div class="ml-10 fs-16 fw-600">综合评价</div>
@@ -42,6 +49,7 @@
         </div>
       </div>
     </div>
+    <div class="pg-wrap mt-10"></div>
     <div class="pg-title">
       <div class="pg-line"></div>
       <div class="ml-10 fs-16 fw-600">{{ pieTitle }}</div>
@@ -61,11 +69,15 @@
               <div class="pie-legend">
                 <div class="text-box">
                   <div class="text-label">{{ item.data[0].name }}</div>
-                  <div class="text-value">{{ transform(item.data[0].value) }}</div>
+                  <div class="text-value">
+                    {{ item.data[0].noValue ? '-' : transform(item.data[0].value) }}
+                  </div>
                 </div>
                 <div class="text-box">
                   <div class="text-label">{{ item.data[1].name }}</div>
-                  <div class="text-value">{{ transform(item.data[1].value) }}</div>
+                  <div class="text-value">
+                    {{ item.data[0].noValue ? '-' : transform(item.data[1].value) }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -73,6 +85,7 @@
         </cube-slide>
       </div>
     </div>
+    <div class="pg-wrap"></div>
     <div class="pg-title mt-5">
       <div class="pg-line"></div>
       <div class="ml-10 fs-16 fw-600">实际毛利率</div>
@@ -82,6 +95,7 @@
         <LineChart class="line-chart" :lineData="lineData"></LineChart>
       </div>
     </div>
+    <div class="pg-wrap"></div>
   </div>
 </template>
 
@@ -103,26 +117,23 @@ export default {
     LineChart
   },
   props: {
-    financeIndexVo: {
+    indexVo: {
+      type: Object
+    },
+    grossMarginVo: {
+      type: Object
+    },
+    fourPiecesVo: {
       type: Object
     }
   },
   data() {
     return {
-      baseInfo: {
-        projectName: 'AS杰钊测试新报价页面01DF合同订单2',
-        projectCode: 'KH991111006439JF-B',
-        mianBuName: '云智造BU',
-        projectManager: '顾金龙',
-        milestoneName: '实施中',
-        contractType: '框架合同',
-        acceptanceDate: '2021-12-13'
-      },
       amountList: [
         {
           label: '计划总成本',
           code: 'plannedGrossCost',
-          value: '117,662,69',
+          value: null,
           isMoney: true,
           url: totalCostUrl,
           bgColor: 'rgb(201, 223, 255)'
@@ -130,7 +141,7 @@ export default {
         {
           label: '计划毛利率',
           code: 'mrdPlanGrossProfit',
-          value: '20.00',
+          value: null,
           isMoney: false,
           url: actualCostUrl,
           bgColor: 'rgb(255, 247, 229)'
@@ -138,7 +149,7 @@ export default {
         {
           label: '合同总金额',
           code: 'totalContractAmount',
-          value: '3,888.58',
+          value: null,
           isMoney: true,
           url: planProfitUrl,
           bgColor: 'rgb(253, 237, 231)'
@@ -146,7 +157,7 @@ export default {
         {
           label: '实际总成本',
           code: 'actualGrossCost',
-          value: '543,463,44',
+          value: null,
           isMoney: true,
           url: totalAmountUrl,
           bgColor: 'rgb(231, 248, 250)'
@@ -154,7 +165,7 @@ export default {
         {
           label: '实际毛利率',
           code: 'currentActualGrossProfit',
-          value: '13.87',
+          value: null,
           isMoney: false,
           url: actualProfitUrl,
           bgColor: 'rgb(229, 246, 237)'
@@ -162,7 +173,7 @@ export default {
         {
           label: '毛利率偏差',
           code: 'grossProfitDeviation',
-          value: '5.20',
+          value: null,
           isMoney: false,
           url: marginDeviationUrl,
           bgColor: 'rgb(239, 231, 243)'
@@ -171,48 +182,48 @@ export default {
       lightList: [
         {
           label: '进度控制',
-          code: 'process',
-          twHealthyState: 'red'
+          code: 'speedProgress',
+          twHealthyState: null
         },
         {
           label: '资源情况',
           code: 'resourceSituation',
-          twHealthyState: 'green'
+          twHealthyState: null
         },
         {
           label: '范围控制',
           code: 'rangeControl',
-          twHealthyState: 'yellow'
+          twHealthyState: null
         },
         {
           label: '成本管理',
-          code: 'cost',
-          twHealthyState: 'red'
+          code: 'costPrice',
+          twHealthyState: null
         },
         {
           label: '开发质量',
-          code: 'developmentQuality',
-          twHealthyState: 'red'
+          code: 'quality',
+          twHealthyState: null
         },
         {
           label: '收入预计',
-          code: 'revenueForecast',
-          twHealthyState: 'red'
+          code: 'incomeEstimate',
+          twHealthyState: null
         },
         {
           label: '业务价值实现',
-          code: 'businessValueRealization',
-          twHealthyState: 'red'
+          code: 'businessValueRealize',
+          twHealthyState: null
         },
         {
           label: '客户关系人关系',
-          code: 'customerRelationship',
-          twHealthyState: 'red'
+          code: 'relationship',
+          twHealthyState: null
         },
         {
           label: '客户期望',
-          code: 'customerExpectations',
-          twHealthyState: 'red'
+          code: 'customerExpect',
+          twHealthyState: null
         },
         {
           label: 'test',
@@ -222,41 +233,78 @@ export default {
       slideList: [
         {
           data: [
-            { value: 6125.32, name: '已确认收入' },
-            { value: 5203.1, name: '未确认收入' }
+            { value: 0, name: '已确认收入', code: 'alreadyConfirmIncome', noValue: true },
+            { value: 0, name: '未确认收入', code: 'notConfirmIncome', noValue: true }
           ]
         },
         {
           data: [
-            { value: 489.74, name: '已开票' },
-            { value: 294.22, name: '未开票' }
+            { value: 0, name: '已开票', code: 'alreadyInvoicing', noValue: true },
+            { value: 0, name: '未开票', code: 'notInvoicing', noValue: true }
           ]
         },
         {
           data: [
-            { value: 2974.3, name: '已回款' },
-            { value: 1002.53, name: '未回款' }
+            { value: 0, name: '已回款', code: 'alreadyCollection', noValue: true },
+            { value: 0, name: '未回款', code: 'notCollection', noValue: true }
           ]
         }
       ],
       pieTitle: '收入情况（¥）',
       lineData: {
-        deviation: ['120.5', '240.52', '178.54', '190.22', '236.30', '260.42'],
-        mrdGrossMargin: '150',
-        mrdGrossMarginAbove: '200',
-        mrdGrossMarginUnder: '250',
-        weekNum: ['32', '33', '41', '42', '43', '44']
+        deviation: [],
+        mrdGrossMargin: null,
+        mrdGrossMarginAbove: null,
+        mrdGrossMarginUnder: null,
+        weekNum: []
       }
     }
   },
   computed: {
     transform() {
       return (value) => {
-        return '¥' + formatMoney(value)
+        if (value) {
+          return '¥' + formatMoney(value)
+        } else if (value === 0) {
+          return '¥' + '0.00'
+        }
+        return '-'
       }
     }
   },
-  watch: {},
+  watch: {
+    indexVo: {
+      handler(v) {
+        this.amountList.forEach((item) => {
+          item.value = v[item.code]
+        })
+      }
+    },
+    fourPiecesVo: {
+      handler(v) {
+        this.lightList.forEach((item) => {
+          item.twHealthyState = v[item.code]
+        })
+        this.slideList.forEach((item) => {
+          item.data.forEach((pItem) => {
+            if (v[pItem.code] || v[pItem.code] === 0) {
+              pItem.value = v[pItem.code]
+              pItem.noValue = false
+            } else {
+              pItem.noValue = true
+            }
+          })
+        })
+      }
+    },
+    grossMarginVo: {
+      handler(v) {
+        Object.keys(this.lineData).forEach((key) => {
+          this.$set(this.lineData, key, v[key])
+        })
+      }
+    }
+  },
   mounted() {},
   methods: {
     changePage(current) {
@@ -414,6 +462,12 @@ export default {
       display: flex;
       justify-content: center;
     }
+  }
+  .pg-wrap {
+    margin-top: 15px;
+    width: 100%;
+    height: 10px;
+    background: #efeff4;
   }
   .bz-text {
     color: #fff;

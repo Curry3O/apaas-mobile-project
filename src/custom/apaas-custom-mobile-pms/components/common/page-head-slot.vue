@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 15:44:06
- * @LastEditTime: 2021-12-14 19:56:04
+ * @LastEditTime: 2021-12-25 17:01:46
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\page-head-slot.vue
@@ -40,11 +40,23 @@ export default {
     showRight: {
       type: Boolean,
       default: true
+    },
+    backPath: {
+      type: String
     }
   },
   methods: {
     goBack() {
-      this.$router.go(-1)
+      if (this.backPath) {
+        this.$router.push({
+          path: this.backPath,
+          query: {
+            ...this.$route.query
+          }
+        })
+      } else {
+        this.$router.go(-1)
+      }
     }
   }
 }
@@ -52,8 +64,9 @@ export default {
 
 <style lang="scss" scoped>
 .page-header {
+  background: #fff;
   .head-content {
-    padding-top: 15px;
+    padding: 15px 0;
     display: flex;
     align-items: center;
     .both-sides {
@@ -79,6 +92,9 @@ export default {
         background: #fff;
         border-top-right-radius: 1.428571rem;
         border-bottom-right-radius: 1.428571rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       ::v-deep .cube-input:after {
         border: none;

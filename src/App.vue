@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 16:20:22
- * @LastEditTime: 2021-04-15 16:18:30
+ * @LastEditTime: 2021-12-21 17:20:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \xdap-h5\src\App.vue
@@ -19,8 +19,7 @@ import { mapMutations } from 'vuex'
 import { SET_USER_INFO } from '@/store/auth.store'
 
 export default {
-  components: {
-  },
+  components: {},
   data() {
     return {
       keepAliveComps: {}
@@ -40,15 +39,15 @@ export default {
   },
   created() {
     this.setUserInfo({
-      'loginName': 'admin',
-      'id': '1',
-      'phone': '17729389320',
-      'email': '17728389320@163.com',
-      'enableStatus': 'ENABLED',
-      'headPortrait': null,
-      'userName': '赵站洋',
-      'credentialNo': '110101199003076675',
-      'gender': 'male'
+      loginName: 'jinlong.gu',
+      id: '100169876816012509184',
+      phone: '17729389320',
+      email: '17728389320@163.com',
+      enableStatus: 'ENABLED',
+      headPortrait: null,
+      username: '顾金龙',
+      credentialNo: '110101199003076675',
+      gender: 'male'
     })
   },
   mounted() {
@@ -91,5 +90,4 @@ export default {
 }
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

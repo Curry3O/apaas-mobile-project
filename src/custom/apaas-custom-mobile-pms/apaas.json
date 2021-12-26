@@ -8,6 +8,41 @@
       "meta": {
         "title": "项目首页"
       }
+    },
+    "apaas-custom-project-member": {
+      "name": "apaas-custom-project-member",
+      "path": "apaas-custom-project-member",
+      "meta": {
+        "title": "项目成员"
+      }
+    },
+    "apaas-custom-add-member": {
+      "name": "apaas-custom-add-member",
+      "path": "apaas-custom-add-member",
+      "meta": {
+        "title": "新增项目成员"
+      }
+    },
+    "apaas-custom-search-project": {
+      "name": "apaas-custom-search-project",
+      "path": "apaas-custom-search-project",
+      "meta": {
+        "title": "搜索项目页面"
+      }
+    },
+    "apaas-custom-search-people": {
+      "name": "apaas-custom-search-people",
+      "path": "apaas-custom-search-people",
+      "meta": {
+        "title": "搜索人员页面"
+      }
+    },
+    "apaas-custom-search-role": {
+      "name": "apaas-custom-search-role",
+      "path": "apaas-custom-search-role",
+      "meta": {
+        "title": "搜索角色页面"
+      }
     }
   },
   "customWidgetList": [

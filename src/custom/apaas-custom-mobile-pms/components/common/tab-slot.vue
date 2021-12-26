@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-16 16:48:37
- * @LastEditTime: 2021-12-17 21:08:19
+ * @LastEditTime: 2021-12-26 16:44:11
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\tab-info.vue
@@ -12,7 +12,8 @@
       v-model="currentFirstTab"
       show-slider
       ref="tabFirstNav"
-      class="firstTab"
+      class="firstTabBar"
+      :style="{ width: firstTabWidth + 'px' }"
       :use-transition="false"
       :data="tabBarData"
     >
@@ -29,12 +30,16 @@
         @scroll="scroll"
         @change="changePage"
       >
-        <cube-slide-item v-for="(tab, tabIndex) in tabBarData" :key="tabIndex">
+        <cube-slide-item
+          v-for="(tab, tabIndex) in tabBarData"
+          :key="tabIndex"
+          :style="{ height: slideHeight + 'px' }"
+        >
           <cube-scroll :data="tab.children" :options="scrollOptions">
             <cube-tab-bar
               v-model="currentSecondTab"
               show-slider
-              class="secondTab"
+              class="secondTabBar"
               @change="tabChange"
             >
               <cube-tab v-for="item in tab.children" :label="item.label" :key="item.code">
@@ -77,11 +82,18 @@ export default {
     tabsData: {
       type: Array
     },
-    firstTab: {
+    firstTabName: {
       type: String
     },
-    secondTab: {
+    secondTabName: {
       type: String
+    },
+    firstTabWidth: {
+      type: Number,
+      default: 120
+    },
+    heightList: {
+      type: Array
     }
   },
   data() {
@@ -108,18 +120,21 @@ export default {
       },
       immediate: true
     },
-    firstTab: {
+    firstTabName: {
       handler(v) {
         this.currentFirstTab = v
       },
       immediate: true
     },
-    secondTab: {
+    secondTabName: {
       handler(v) {
         this.currentSecondTab = v
       },
       immediate: true
     }
+  },
+  created() {
+    this.slideHeight = this.heightList[0]
   },
   methods: {
     changePage(current) {
@@ -128,6 +143,7 @@ export default {
       this.currentSecondTab = this.selectedTab[current]
         ? this.selectedTab[current]
         : this.tabBarData[current].children[0].label
+      this.slideHeight = this.heightList[current]
     },
     tabChange(tab) {
       this.selectedTab[this.currentIndex] = tab
@@ -164,8 +180,7 @@ export default {
 
 <style lang="scss" scoped>
 .tab-bar {
-  margin-bottom: 100px;
-  .firstTab {
+  .firstTabBar {
     border-bottom: 2px solid #e8e8e8;
     ::v-deep .cube-tab {
       line-height: 24px;
@@ -175,7 +190,11 @@ export default {
       }
     }
   }
-  .secondTab {
+  .tab-slide-container {
+    margin-top: -2px;
+    border-top: 3px solid #e8e8e8;
+  }
+  .secondTabBar {
     border-bottom: 2px solid #e8e8e8;
     ::v-deep .cube-tab {
       line-height: 20px;
@@ -192,7 +211,7 @@ export default {
       padding: 0 10px 0 20px;
       height: 60px;
       line-height: 60px;
-      border-top: 1px solid #eee;
+      border-top: 2px solid #e8e8e8;
       display: flex;
       // align-items: center;
       .panel-label {
@@ -219,6 +238,9 @@ export default {
           height: 24px !important;
         }
       }
+    }
+    .tab-panel-li:nth-child(1) {
+      border-top: none;
     }
   }
   .fc-blue {

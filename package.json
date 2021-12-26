@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode dev",
     "lint": "vue-cli-service lint",
-    "cm": "git-cz"
+    "cm": "git-cz",
+    "build:proWeekly": "vue-cli-service lint --fix && x-apaas-cli build apaas-custom-mobile-pms"
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.13.14",

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-09-16 14:33:56
- * @LastEditTime: 2021-12-16 16:36:26
+ * @LastEditTime: 2021-12-26 15:01:12
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \apaas-custom-pms\src\custom\apaas-custom-financial-norm\components\echart-data.vue
@@ -214,7 +214,8 @@ export default {
           }
         }
       },
-      immediate: true
+      immediate: true,
+      deep: true
     }
   },
   mounted() {
