@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-22 16:03:08
- * @LastEditTime: 2021-12-26 13:53:44
+ * @LastEditTime: 2021-12-27 14:42:00
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\project-member.vue
@@ -10,7 +10,9 @@
   <div class="project-member">
     <PageHeadSlot :backPath="backPath">
       <template v-slot:main>
-        <div class="head-text">项目成员</div>
+        <div class="head-text">
+          项目成员
+        </div>
       </template>
       <template v-slot:icon>
         <x-svg-icon name="add-icon" @click.native="addMember"></x-svg-icon>
@@ -33,7 +35,9 @@
             @click="panelClick(item.state, item.id)"
           >
             <div class="item-content">
-              <div class="item-label">{{ item.roles }}</div>
+              <div class="item-label">
+                {{ item.roles }}
+              </div>
               <x-svg-icon
                 v-if="item.state === '禁用'"
                 name="disable-icon"
@@ -70,7 +74,7 @@ export default {
   },
   data() {
     return {
-      backPath: './apaas-custom-project-home-page',
+      backPath: './apaas-custom-financial-norm',
       memberList: [],
       colorList: [
         'linear-gradient(#71b4ff, #027aff)',
@@ -104,12 +108,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-              threshold: 0,
-              txt: {
-                more: '上滑加载更多',
-                noMore: '没有更多数据了'
-              }
+            threshold: 0,
+            txt: {
+              more: '上滑加载更多',
+              noMore: '没有更多数据了'
             }
+          }
           : false,
         scrollbar: true
       }
@@ -199,7 +203,7 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    if (from.name === 'apaas-custom-project-home-page' || from.name === 'apaas-custom-add-member') {
+    if (from.name === 'apaas-custom-financial-norm' || from.name === 'apaas-custom-add-member') {
       next((vm) => {
         if (vm.selectedData.pmsProjectCode) {
           vm.loadData()

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-13 20:46:20
- * @LastEditTime: 2021-12-26 16:06:08
+ * @LastEditTime: 2021-12-27 14:14:09
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\base-info.vue
@@ -17,7 +17,9 @@
       >
         <div class="box-bg">
           <div class="box-content">
-            <div class="box-text">{{ item.label }}</div>
+            <div class="box-text">
+              {{ item.label }}
+            </div>
             <div class="box-img">
               <img :src="item.url" />
             </div>
@@ -37,7 +39,9 @@
     <div class="pg-wrap mt-10"></div>
     <div class="pg-title">
       <div class="pg-line"></div>
-      <div class="ml-10 fs-16 fw-600">综合评价</div>
+      <div class="ml-10 fs-16 fw-600">
+        综合评价
+      </div>
     </div>
     <div class="page-evaluate">
       <div class="card-list">
@@ -45,14 +49,18 @@
           <div class="box-icon ml-10 mr-10">
             <x-svg-icon name="light-icon" :class="'bg-' + item.twHealthyState" />
           </div>
-          <div class="box-text fs-12">{{ item.label }}</div>
+          <div class="box-text fs-12">
+            {{ item.label }}
+          </div>
         </div>
       </div>
     </div>
     <div class="pg-wrap mt-10"></div>
     <div class="pg-title">
       <div class="pg-line"></div>
-      <div class="ml-10 fs-16 fw-600">{{ pieTitle }}</div>
+      <div class="ml-10 fs-16 fw-600">
+        {{ pieTitle }}
+      </div>
     </div>
     <div class="page-chart">
       <div class="slide-box box-card">
@@ -68,13 +76,17 @@
               <PieChart class="pie-chart" :pieData="item.data"></PieChart>
               <div class="pie-legend">
                 <div class="text-box">
-                  <div class="text-label">{{ item.data[0].name }}</div>
+                  <div class="text-label">
+                    {{ item.data[0].name }}
+                  </div>
                   <div class="text-value">
                     {{ item.data[0].noValue ? '-' : transform(item.data[0].value) }}
                   </div>
                 </div>
                 <div class="text-box">
-                  <div class="text-label">{{ item.data[1].name }}</div>
+                  <div class="text-label">
+                    {{ item.data[1].name }}
+                  </div>
                   <div class="text-value">
                     {{ item.data[0].noValue ? '-' : transform(item.data[1].value) }}
                   </div>
@@ -88,7 +100,9 @@
     <div class="pg-wrap"></div>
     <div class="pg-title mt-5">
       <div class="pg-line"></div>
-      <div class="ml-10 fs-16 fw-600">实际毛利率</div>
+      <div class="ml-10 fs-16 fw-600">
+        实际毛利率
+      </div>
     </div>
     <div class="page-chart">
       <div ref="lineBox" class="line-box box-card">
@@ -118,13 +132,16 @@ export default {
   },
   props: {
     indexVo: {
-      type: Object
+      type: Object,
+      default: () => {}
     },
     grossMarginVo: {
-      type: Object
+      type: Object,
+      default: () => {}
     },
     fourPiecesVo: {
-      type: Object
+      type: Object,
+      default: () => {}
     }
   },
   data() {

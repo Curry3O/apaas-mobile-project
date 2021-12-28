@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-24 16:48:00
- * @LastEditTime: 2021-12-26 15:59:56
+ * @LastEditTime: 2021-12-27 11:30:52
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\add-member.vue
@@ -10,7 +10,9 @@
   <div class="add-member">
     <PageHeadSlot :backPath="backPath">
       <template v-slot:main>
-        <div class="head-text">新增项目成员</div>
+        <div class="head-text">
+          新增项目成员
+        </div>
       </template>
     </PageHeadSlot>
     <cube-form
@@ -35,7 +37,9 @@
         </cube-form-item>
         <cube-form-item :field="fields[1]">
           <div class="list-item" @click="selectRole">
-            <div class="list-value">{{ model.roleName }}</div>
+            <div class="list-value">
+              {{ model.roleName }}
+            </div>
             <div v-if="model.roleName" class="list-icon">
               <x-svg-icon name="clear-icon" @click.native.stop="clearRole"></x-svg-icon>
             </div>
@@ -43,7 +47,9 @@
         </cube-form-item>
       </cube-form-group>
       <cube-form-group class="submit-btn">
-        <cube-button type="submit" @click="confirmBtn">确认</cube-button>
+        <cube-button type="submit" @click="confirmBtn">
+          确认
+        </cube-button>
       </cube-form-group>
     </cube-form>
   </div>
@@ -184,7 +190,6 @@ export default {
             txt: '保存成功！',
             type: 'txt'
           }).show()
-          this.clearMemberModel()
           this.$router.push({
             path: './apaas-custom-project-member',
             query: {
@@ -204,6 +209,10 @@ export default {
     if (from.name === 'apaas-custom-search-people' || from.name === 'apaas-custom-search-role') {
       next((vm) => {
         vm.model = vm.memberModel
+      })
+    } else if (from.name === 'apaas-custom-project-member') {
+      next((vm) => {
+        vm.clearMemberModel()
       })
     } else {
       next()

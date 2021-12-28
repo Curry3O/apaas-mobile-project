@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2021-12-15 11:46:02
- * @LastEditors: your name
+ * @LastEditTime: 2021-12-27 14:06:36
+ * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\components\x-avatar\x-avatar.vue
 -->
@@ -14,7 +14,9 @@
     <template v-else>
       <div
         class="default-avatar"
-        :style="{'background-color':  === 'primaryColor' ? '' : defaultAvatarColor}"
+        :style="{
+          'background-color': defaultAvatarColor === 'primaryColor' ? '' : defaultAvatarColor
+        }"
       >
         <span>{{ displayName }}</span>
       </div>

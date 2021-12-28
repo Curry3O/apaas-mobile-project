@@ -21,7 +21,9 @@
         >
         </cube-input>
       </div>
-      <div class="ph-text" @click="goBack">取消</div>
+      <div class="ph-text" @click="goBack">
+        取消
+      </div>
     </div>
     <div class="search-content">
       <cube-scroll
@@ -35,8 +37,8 @@
           <cube-radio
             v-for="item in searchList"
             :key="item.id"
-            :option="item"
             v-model="selected.value"
+            :option="item"
             class="list-item"
             @input="inputChange"
           >
@@ -63,7 +65,9 @@
       </span>
     </div>
     <div class="bottom-btn">
-      <cube-button @click="confirmBtn">确定</cube-button>
+      <cube-button @click="confirmBtn">
+        确定
+      </cube-button>
     </div>
   </div>
 </template>
@@ -106,12 +110,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-              threshold: 0,
-              txt: {
-                more: '上滑加载更多',
-                noMore: '没有更多数据了'
-              }
+            threshold: 0,
+            txt: {
+              more: '上滑加载更多',
+              noMore: '没有更多数据了'
             }
+          }
           : false,
         scrollbar: true
       }

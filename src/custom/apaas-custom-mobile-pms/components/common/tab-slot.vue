@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-16 16:48:37
- * @LastEditTime: 2021-12-26 16:44:11
+ * @LastEditTime: 2021-12-27 14:29:13
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\tab-info.vue
@@ -9,9 +9,9 @@
 <template>
   <div class="tab-bar">
     <cube-tab-bar
+      ref="tabFirstNav"
       v-model="currentFirstTab"
       show-slider
-      ref="tabFirstNav"
       class="firstTabBar"
       :style="{ width: firstTabWidth + 'px' }"
       :use-transition="false"
@@ -42,16 +42,18 @@
               class="secondTabBar"
               @change="tabChange"
             >
-              <cube-tab v-for="item in tab.children" :label="item.label" :key="item.code">
+              <cube-tab v-for="item in tab.children" :key="item.code" :label="item.label">
                 <span class="fc-blue">{{ item.label.split('/')[0] }}</span>
                 <span class="fc-black">{{ ' / ' + item.label.split('/')[1] }}</span>
               </cube-tab>
             </cube-tab-bar>
             <cube-tab-panels v-model="currentSecondTab" class="tab-panel">
-              <cube-tab-panel v-for="item in tab.children" :label="item.label" :key="item.label">
+              <cube-tab-panel v-for="item in tab.children" :key="item.label" :label="item.label">
                 <ul>
-                  <li class="tab-panel-li" v-for="pItem in item.list" :key="pItem.field">
-                    <div class="panel-label">{{ pItem.field }}</div>
+                  <li v-for="pItem in item.list" :key="pItem.field" class="tab-panel-li">
+                    <div class="panel-label">
+                      {{ pItem.field }}
+                    </div>
                     <div class="panel-value">
                       <div class="fc-blue">
                         {{ transform(pItem.value1) }}
@@ -80,20 +82,24 @@ export default {
   name: 'TabSlot',
   props: {
     tabsData: {
-      type: Array
+      type: Array,
+      default: () => []
     },
     firstTabName: {
-      type: String
+      type: String,
+      default: ''
     },
     secondTabName: {
-      type: String
+      type: String,
+      default: ''
     },
     firstTabWidth: {
       type: Number,
       default: 120
     },
     heightList: {
-      type: Array
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -110,6 +116,24 @@ export default {
       },
       scrollOptions: {
         directionLockThreshold: 0
+      }
+    }
+  },
+  computed: {
+    initialIndex() {
+      let index = 0
+      index = findIndex(this.tabBarData, (item) => item.label === this.currentFirstTab)
+      return index
+    },
+    transform() {
+      return (value) => {
+        if (value) {
+          return formatMoney(value)
+        }
+        if (value === 0) {
+          return '0.00'
+        }
+        return '-'
       }
     }
   },
@@ -156,24 +180,6 @@ export default {
       this.$refs.tabFirstNav.setSliderTransform(deltaX)
     },
     editData() {}
-  },
-  computed: {
-    initialIndex() {
-      let index = 0
-      index = findIndex(this.tabBarData, (item) => item.label === this.currentFirstTab)
-      return index
-    },
-    transform() {
-      return (value) => {
-        if (value) {
-          return formatMoney(value)
-        }
-        if (value == 0) {
-          return '0.00'
-        }
-        return '-'
-      }
-    }
   }
 }
 </script>

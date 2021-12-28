@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-09-16 14:33:56
- * @LastEditTime: 2021-12-26 15:01:12
+ * @LastEditTime: 2021-12-27 14:14:16
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \apaas-custom-pms\src\custom\apaas-custom-financial-norm\components\echart-data.vue
@@ -9,8 +9,8 @@
 <template>
   <e-charts
     id="echarts"
-    :style="{ width: boxWidth + 'px' }"
     ref="myEchart"
+    :style="{ width: boxWidth + 'px' }"
     :options="options"
     :auto-resize="true"
   ></e-charts>
@@ -32,7 +32,8 @@ export default {
   },
   props: {
     lineData: {
-      type: Object
+      type: Object,
+      default: () => {}
     }
   },
   data() {

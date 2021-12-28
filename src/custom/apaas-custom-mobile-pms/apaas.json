@@ -2,9 +2,9 @@
   "entry": "index.js",
   "copyAssets": ["public/custom/apaas-custom-mobile-pms"],
   "router": {
-    "apaas-custom-project-home-page": {
-      "name": "apaas-custom-project-home-page",
-      "path": "apaas-custom-project-home-page",
+    "apaas-custom-financial-norm": {
+      "name": "apaas-custom-financial-norm",
+      "path": "apaas-custom-financial-norm",
       "meta": {
         "title": "项目首页"
       }
@@ -21,6 +21,13 @@
       "path": "apaas-custom-add-member",
       "meta": {
         "title": "新增项目成员"
+      }
+    },
+    "apaas-custom-weekly-page": {
+      "name": "apaas-custom-weekly-page",
+      "path": "apaas-custom-weekly-page",
+      "meta": {
+        "title": "周报首页"
       }
     },
     "apaas-custom-search-project": {

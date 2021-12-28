@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-25 17:49:38
- * @LastEditTime: 2021-12-25 23:11:12
+ * @LastEditTime: 2021-12-27 16:13:23
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\common\store\project-home.store.js
@@ -9,10 +9,9 @@
 import TypeUtil from '@/util/type.util'
 
 export const SET_FINANCE_MODEL = 'SET_FINANCE_MODEL'
-export const CLEAR_FINANCE_MODEL = 'CLEAR_FINANCE_MODEL'
 export const SET_SELECTED_DATA = 'SET_SELECTED_DATA'
-export const CLEAR_SELECTED_DATA = 'CLEAR_SELECTED_DATA'
-export const SET_REFRESH = 'SET_REFRESH'
+export const SET_HOME_REFRESH = 'SET_HOME_REFRESH'
+export const INIT_FINANCE = 'INIT_FINANCE'
 
 export const projectHomeStore = {
   namespaced: true,
@@ -29,7 +28,7 @@ export const projectHomeStore = {
       projectName: null,
       pmsProjectCode: null
     }, // 选中的项目
-    refresh: true // 是否需要刷新
+    homeRefresh: true // 是否需要刷新
   },
   mutations: {
     [SET_FINANCE_MODEL](state, financeModel) {
@@ -37,7 +36,15 @@ export const projectHomeStore = {
         state.financeModel = financeModel
       }
     },
-    [CLEAR_FINANCE_MODEL](state) {
+    [SET_SELECTED_DATA](state, selectedData) {
+      if (TypeUtil.isObject(selectedData)) {
+        state.selectedData = selectedData
+      }
+    },
+    [SET_HOME_REFRESH](state, homeRefresh) {
+      state.homeRefresh = homeRefresh
+    },
+    [INIT_FINANCE](state) {
       state.financeModel = {
         indexVo: {},
         grossMarginVo: {},
@@ -46,20 +53,11 @@ export const projectHomeStore = {
         incomeVoList: [],
         returnVoList: []
       }
-    },
-    [SET_SELECTED_DATA](state, selectedData) {
-      if (TypeUtil.isObject(selectedData)) {
-        state.selectedData = selectedData
-      }
-    },
-    [CLEAR_SELECTED_DATA](state) {
       state.selectedData = {
         projectName: null,
         pmsProjectCode: null
       }
-    },
-    [SET_REFRESH](state, refresh) {
-      state.refresh = refresh
+      state.homeRefresh = true
     }
   },
   actions: {},

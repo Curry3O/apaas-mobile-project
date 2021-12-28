@@ -1,13 +1,13 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2021-12-26 16:10:21
+ * @LastEditTime: 2021-12-27 16:13:34
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\page.vue
 -->
 <template>
-  <div class="container">
+  <div class="home-page">
     <cube-scroll
       ref="scroll"
       :data="costVoList"
@@ -15,7 +15,7 @@
       @pulling-down="onPullingDown"
     >
       <div class="page" :class="{ 'page-bs': isEmpty }">
-        <PageHeadSlot>
+        <PageHeadSlot :backPath="backPath">
           <template v-slot:main>
             <cube-input
               v-model="searchValue"
@@ -29,7 +29,7 @@
           </template>
         </PageHeadSlot>
         <div class="page-head">
-          <div class="head-title" v-if="!isEmpty">
+          <div v-if="!isEmpty" class="head-title">
             <div class="opt-btn">
               <cube-button
                 class="btn mr-8 fs-12"
@@ -48,9 +48,13 @@
                 填写周报
               </cube-button> -->
             </div>
-            <div class="pt-10" v-if="indexVo.projectCode">
-              <div class="bz-text fs-18 mb-5">{{ indexVo.projectCode }}</div>
-              <div class="bz-text fs-12">{{ indexVo.projectName }}</div>
+            <div v-if="indexVo.projectCode" class="pt-10">
+              <div class="bz-text fs-18 mb-5">
+                {{ indexVo.projectCode }}
+              </div>
+              <div class="bz-text fs-12">
+                {{ indexVo.projectName }}
+              </div>
             </div>
           </div>
           <div class="head-tag">
@@ -87,8 +91,12 @@
               {{ indexVo.contractType }}
             </cube-button>
             <div v-if="!isEmpty" class="bottom-text mt-10 fs-12">
-              <div class="bz-text">预计验收时间：{{ indexVo.acceptanceDate || '-' }}</div>
-              <div class="bz-text">币种：{{ indexVo.originalCurrency || '-' }}</div>
+              <div class="bz-text">
+                预计验收时间：{{ indexVo.acceptanceDate || '-' }}
+              </div>
+              <div class="bz-text">
+                币种：{{ indexVo.originalCurrency || '-' }}
+              </div>
             </div>
           </div>
           <div class="bg-radius"></div>
@@ -116,7 +124,7 @@ import PageHeadSlot from '../components/common/page-head-slot.vue'
 import BaseInfo from '../components/pro-home/base-info.vue'
 import TabInfo from '../components/pro-home/table-info.vue'
 import { mapState, mapMutations } from 'vuex'
-import { SET_FINANCE_MODEL, CLEAR_FINANCE_MODEL } from '../../common/store/project-home.store'
+import { SET_FINANCE_MODEL, INIT_FINANCE } from '../../common/store/project-home.store'
 export default {
   name: 'ProjectHomePage',
   components: {
@@ -126,6 +134,7 @@ export default {
   },
   data: function() {
     return {
+      backPath: './menu',
       searchValue: '',
       isEmpty: true,
       indexVo: {}, // 项目财务指标主体信息
@@ -140,15 +149,15 @@ export default {
     ...mapState({
       financeModel: (state) => state.projectHomeModule.financeModel,
       selectedData: (state) => state.projectHomeModule.selectedData,
-      refresh: (state) => state.projectHomeModule.refresh
+      homeRefresh: (state) => state.projectHomeModule.homeRefresh
     }),
     cubeScrollOptions() {
       return {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-              txt: '刷新成功'
-            },
+            txt: '刷新成功'
+          },
         scrollbar: false
       }
     }
@@ -158,7 +167,7 @@ export default {
   methods: {
     ...mapMutations('projectHomeModule', {
       setFinanceModel: SET_FINANCE_MODEL,
-      clearFinanceModel: CLEAR_FINANCE_MODEL
+      initFinance: INIT_FINANCE
     }),
     // 下拉刷新
     onPullingDown() {
@@ -267,7 +276,7 @@ export default {
       next((vm) => {
         if (vm.selectedData.pmsProjectCode) {
           vm.searchValue = vm.selectedData.projectName
-          if (vm.refresh) {
+          if (vm.homeRefresh) {
             vm.loadDetailData(vm.selectedData.pmsProjectCode)
           } else {
             vm.handleAllData(vm.financeModel)
@@ -282,14 +291,16 @@ export default {
         }
       })
     } else {
-      next()
+      next((vm) => {
+        vm.initFinance()
+      })
     }
   }
 }
 </script>
 
-<style lang="scss">
-.container {
+<style lang="scss" scoped>
+.home-page {
   height: 100vh;
   background: #f8f8f8;
   .page {

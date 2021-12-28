@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-21 10:57:59
- * @LastEditTime: 2021-12-25 23:13:04
+ * @LastEditTime: 2021-12-27 16:16:14
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-project.vue
@@ -22,11 +22,15 @@
         >
         </cube-input>
       </div>
-      <div class="ph-text" @click="goBack">取消</div>
+      <div class="ph-text" @click="goBack">
+        取消
+      </div>
     </div>
     <div v-if="!hasSearchValue && historyList.length" class="history-content">
       <div class="hc-head">
-        <div class="hc-title">历史搜索</div>
+        <div class="hc-title">
+          历史搜索
+        </div>
         <div class="hc-icon">
           <x-svg-icon name="delete-btn" @click.native="deleteConfirm"></x-svg-icon>
         </div>
@@ -57,7 +61,9 @@
               <span class="high-text">{{ searchValue }}</span>
               <span>{{ item.projectName.split(searchValue)[1] }}</span>
             </div>
-            <div v-else>{{ item.projectName }}</div>
+            <div v-else>
+              {{ item.projectName }}
+            </div>
           </div>
           <div class="item-icon">
             <x-svg-icon name="arrow-right-icon"></x-svg-icon>
@@ -76,7 +82,8 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { SET_SELECTED_DATA, SET_REFRESH } from '../../../common/store/project-home.store'
+import { SET_SELECTED_DATA, SET_HOME_REFRESH } from '../../../common/store/project-home.store'
+import { SET_SEARCH_CONTENT, SET_WEEKLY_REFRESH } from '../../../common/store/project-weekly.store'
 import apis from '../../../common/api'
 export default {
   name: 'SearchProject',
@@ -96,7 +103,11 @@ export default {
       userInfo: (state) => state.authModule.userInfo
     }),
     placeholder() {
+      console.log(this.returnRoute, 1)
       return this.returnRoute === 'proHome' ? '输入项目进行搜索' : '项目名称/编码/BU/项目经理'
+    },
+    searchType() {
+      return this.returnRoute === 'proHome' ? 'PMS_project' : 'PMS_weekly'
     },
     hasSearchValue() {
       return this.searchValue.length
@@ -105,25 +116,29 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-              threshold: 0,
-              txt: {
-                more: '上滑加载更多',
-                noMore: '没有更多数据了'
-              }
+            threshold: 0,
+            txt: {
+              more: '上滑加载更多',
+              noMore: '没有更多数据了'
             }
+          }
           : false,
         scrollbar: true
       }
     }
   },
   watch: {},
-  created() {
+  mounted() {
     this.getHistoryRecord()
   },
   methods: {
     ...mapMutations('projectHomeModule', {
       setSelectedData: SET_SELECTED_DATA,
-      setRefresh: SET_REFRESH
+      setHomeRefresh: SET_HOME_REFRESH
+    }),
+    ...mapMutations('projectWeeklyModule', {
+      setSearchContent: SET_SEARCH_CONTENT,
+      setWeeklyRefresh: SET_WEEKLY_REFRESH
     }),
     initData() {
       this.searchList = []
@@ -131,19 +146,34 @@ export default {
       this.pullUpLoad = true
       this.loadData()
     },
-    valueChange() {
+    valueChange(e) {
       this.searchList = []
       this.pagination.currentPage = 1
       this.pullUpLoad = true
+      if (!e) {
+        this.getHistoryRecord()
+      }
     },
     searchData() {
-      this.initData()
+      if (this.returnRoute === 'proHome') {
+        this.initData()
+      } else {
+        this.setSearchContent(this.searchValue)
+        this.setWeeklyRefresh(true)
+        this.$router.push({
+          path: './apaas-custom-weekly-page',
+          query: {
+            ...this.$route.query
+          }
+        })
+      }
     },
     recordHistory() {},
     getHistoryRecord() {
       const request = {
         ...apis.GET_WEEKLY_SEARCH_HISTORY,
         params: {
+          searchType: this.searchType,
           userId: this.userInfo.id
         }
       }
@@ -163,7 +193,7 @@ export default {
         return
       }
       const request = {
-        ...apis.GET_PROJECT_FINANCE_LIST_PRO,
+        ...apis.GET_PROJECT_FINANCE_LIST_APP,
         params: {
           projectName: this.searchValue,
           userId: this.userInfo.id,
@@ -192,8 +222,12 @@ export default {
       })
     },
     goBack() {
+      if (this.returnRoute === 'proHome') {
+        this.setHomeRefresh(false)
+      } else {
+        this.setWeeklyRefresh(false)
+      }
       this.$router.go(-1)
-      this.setRefresh(false)
     },
     deleteConfirm() {
       this.$createDialog({
@@ -205,39 +239,65 @@ export default {
       }).show()
     },
     deleteHistory() {
-      console.log(1111)
+      const request = {
+        ...apis.EMPTY_WEEKLY_SEARCH_HISTORY,
+        params: {
+          searchType: this.searchType,
+          userId: this.userInfo.id
+        }
+      }
+      this.$request(request).asyncThen((resp) => {
+        if (resp.code === 'ok') {
+          this.getHistoryRecord()
+        } else {
+          this.$createToast({
+            txt: resp.message,
+            type: 'error'
+          }).show()
+        }
+      })
     },
     selectedItem(value) {
-      this.searchValue = value
-      this.loadData()
+      if (this.returnRoute === 'proHome') {
+        this.searchValue = value
+        this.loadData()
+      } else {
+        this.setSearchContent(value)
+        this.$router.push({
+          path: './apaas-custom-weekly-page',
+          query: {
+            ...this.$route.query
+          }
+        })
+      }
     },
     onPullingUp() {
       this.loadData()
     },
     searchItem(item) {
-      let path = null
       if (this.returnRoute === 'proHome') {
-        path = './apaas-custom-project-home-page'
         this.setSelectedData({
           projectName: item.projectName,
           pmsProjectCode: item.pmsProjectCode
         })
-        this.setRefresh(true)
-      } else {
-        path = ''
+        this.setHomeRefresh(true)
+        this.$router.push({
+          path: './apaas-custom-financial-norm',
+          query: {
+            ...this.$route.query
+          }
+        })
       }
-      this.$router.push({
-        path: path,
-        query: {
-          ...this.$route.query
-        }
-      })
     }
   },
   beforeRouteEnter(to, from, next) {
-    if (from.name === 'apaas-custom-project-home-page') {
+    if (from.name === 'apaas-custom-financial-norm') {
       next((vm) => {
         vm.returnRoute = 'proHome'
+      })
+    } else if (from.name === 'apaas-custom-weekly-page') {
+      next((vm) => {
+        vm.returnRoute = 'proWeekly'
       })
     } else {
       next()
@@ -303,6 +363,7 @@ export default {
     }
   }
   .history-content {
+    background: #fff;
     padding: 10px 15px;
     .hc-head {
       display: flex;

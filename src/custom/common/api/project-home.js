@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-21 16:56:23
- * @LastEditTime: 2021-12-25 23:41:56
+ * @LastEditTime: 2021-12-27 14:38:58
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\common\api\project-home.js
@@ -13,15 +13,21 @@ export default {
     method: 'get',
     disableSuccessMsg: true
   },
-  GET_PROJECT_FINANCE_LIST_PRO: {
+  GET_PROJECT_FINANCE_LIST_APP: {
     // 查询项目周报报表
-    url: '/custom/project/getProjectFinanceListPro',
+    url: '/custom/project/getProjectFinanceListApp',
     method: 'get',
     disableSuccessMsg: true
   },
   GET_WEEKLY_SEARCH_HISTORY: {
     // 搜索历史列表
     url: '/custom/weeklyPro/getWeeklySearchHistory',
+    method: 'post',
+    disableSuccessMsg: true
+  },
+  EMPTY_WEEKLY_SEARCH_HISTORY: {
+    // 搜索历史清空
+    url: '/custom/weeklyPro/emptyWeeklySearchHistory',
     method: 'post',
     disableSuccessMsg: true
   },

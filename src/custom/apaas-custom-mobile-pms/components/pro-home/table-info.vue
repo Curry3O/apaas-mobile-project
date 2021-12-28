@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-17 20:19:29
- * @LastEditTime: 2021-12-26 16:38:09
+ * @LastEditTime: 2021-12-27 14:15:21
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\table-info.vue
@@ -17,7 +17,9 @@
     <div class="pg-wrap"></div>
     <div class="pg-title">
       <div class="pg-line"></div>
-      <div class="ml-10 fs-16 fw-600">回款</div>
+      <div class="ml-10 fs-16 fw-600">
+        回款
+      </div>
     </div>
     <div class="page-list">
       <div class="slide-box box-card">
@@ -41,16 +43,18 @@
       </div>
     </div>
     <cube-tab-bar v-model="currentTab" show-slider class="page-tab">
-      <cube-tab v-for="item in receiveData" :label="item.label" :key="item.code">
+      <cube-tab v-for="item in receiveData" :key="item.code" :label="item.label">
         <span class="fc-blue">{{ item.label.split('/')[0] }}</span>
         <span class="fc-black">{{ ' / ' + item.label.split('/')[1] }}</span>
       </cube-tab>
     </cube-tab-bar>
     <cube-tab-panels v-model="currentTab" class="page-panel">
-      <cube-tab-panel v-for="item in receiveData" :label="item.label" :key="item.label">
+      <cube-tab-panel v-for="item in receiveData" :key="item.label" :label="item.label">
         <ul>
-          <li class="tab-panel-li" v-for="pItem in item.list" :key="pItem.field">
-            <div class="panel-label">{{ pItem.field }}</div>
+          <li v-for="pItem in item.list" :key="pItem.field" class="tab-panel-li">
+            <div class="panel-label">
+              {{ pItem.field }}
+            </div>
             <div class="panel-value">
               <div class="fc-blue">
                 {{ transform(pItem.value1) }}
@@ -80,13 +84,16 @@ export default {
   },
   props: {
     costVoList: {
-      type: Array
+      type: Array,
+      default: () => []
     },
     incomeVoList: {
-      type: Array
+      type: Array,
+      default: () => []
     },
     returnVoList: {
-      type: Array
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -277,7 +284,7 @@ export default {
         if (value) {
           return formatMoney(value)
         }
-        if (value == 0) {
+        if (value === 0) {
           return '0.00'
         }
         return '-'

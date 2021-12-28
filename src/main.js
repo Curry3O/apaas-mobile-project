@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-23 16:20:22
- * @LastEditTime: 2021-12-26 15:55:29
+ * @LastEditTime: 2021-12-27 14:30:21
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /x-product-h5-workspace/packages/xdap-h5/src/main.js
@@ -21,7 +21,7 @@ import i18n from '@/locale/index'
 
 import store from './store'
 import { SET_TOKEN } from '@/store/auth.store.js'
-import { ExtensionEngine } from 'x-extension'
+// import { ExtensionEngine } from 'x-extension'
 
 import { RuleEngine, functions, SimpleRuleEngine } from '@x-apaas/x-lib-rule-engine'
 import './vender/x-dcloud-page-mobile'
@@ -76,7 +76,7 @@ Vue.addInterceptorsRequest('REQUEST_PARAMS_INTERCEPTOR', (e) => {
   if (authStore.token) {
     e.headers['xdaptenantid'] = '203908342555344897'
     e.headers['xdaptoken'] =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2NDA1MTI1MTcsImlhdCI6MTY0MDUwNTMxNywieGRhcHVzZXJpZCI6IjEwMDIwOTc5NDY2Nzg3OTg1ODE3NiJ9.k7k5hm5X2sFs05S7LpUN8sbjbVgCxyNU4zmWWEWCZ6p7Gq2DDvtiScASCX5gqmQGlPwKXOAbh_x2wgpO4QtMLQ'
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2NDA1ODI0MTEsImlhdCI6MTY0MDU3NTIxMSwieGRhcHVzZXJpZCI6IjEwMDIwOTc5NDY2Nzg3OTg1ODE3NiJ9.Zhh8_IIJoPXFW99SNRr928xtVo1x7C7_j9SmJR2Is0pMm123MR0CC3HtACE0jypHhsFKDyiK8VhMlfN0pSTdyg'
   }
 
   return e
@@ -105,9 +105,9 @@ Vue.addInterceptorsResponse('RESPONSE_SUCCESS_MSG_INTERCEPTOR', (e) => {
   return e
 })
 
-const isSingleApp = () => {
+/* const isSingleApp = () => {
   return ExtensionEngine.getInstance().validateBlock('SINGLE_APP', 'SingleAppConfig')
-}
+} */
 
 AuthLogic.getInstance(store, router, Vue.GLOBAL_ENV)
 
