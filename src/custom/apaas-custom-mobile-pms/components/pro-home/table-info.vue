@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-17 20:19:29
- * @LastEditTime: 2021-12-27 14:15:21
+ * @LastEditTime: 2021-12-28 20:30:06
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\table-info.vue
@@ -294,31 +294,37 @@ export default {
   watch: {
     costVoList: {
       handler(v) {
-        this.costIncomeList[0].children[0].list.forEach((item) => {
-          item.value1 = v[0][item.code]
-        })
-        this.costIncomeList[0].children[0].list.forEach((item) => {
-          item.value2 = v[1][item.code]
-        })
+        if (v.length) {
+          this.costIncomeList[0].children[0].list.forEach((item) => {
+            item.value1 = v[0][item.code]
+          })
+          this.costIncomeList[0].children[0].list.forEach((item) => {
+            item.value2 = v[1][item.code]
+          })
+        }
       }
     },
     incomeVoList: {
       handler(v) {
-        this.costIncomeList[1].children[0].list.forEach((item) => {
-          item.value1 = v[0][item.code]
-        })
-        this.costIncomeList[1].children[0].list.forEach((item) => {
-          item.value2 = v[1][item.code]
-        })
+        if (v.length) {
+          this.costIncomeList[1].children[0].list.forEach((item) => {
+            item.value1 = v[0][item.code]
+          })
+          this.costIncomeList[1].children[0].list.forEach((item) => {
+            item.value2 = v[1][item.code]
+          })
+        }
       }
     },
     returnVoList: {
       handler(v) {
-        this.payBackList = [...v]
-        this.receiveData[0].list.forEach((item) => {
-          item.value1 = v[0][item.code + 'Expected']
-          item.value2 = v[0][item.code + 'Actual']
-        })
+        if (v.length) {
+          this.payBackList = [...v]
+          this.receiveData[0].list.forEach((item) => {
+            item.value1 = v[0][item.code + 'Expected']
+            item.value2 = v[0][item.code + 'Actual']
+          })
+        }
       }
     }
   },

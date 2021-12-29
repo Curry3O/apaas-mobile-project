@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-23 17:45:00
- * @LastEditTime: 2021-12-24 17:23:43
+ * @LastEditTime: 2021-12-29 15:46:58
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /x-product-h5-workspace/packages/xdap-h5/src/cube-ui.js
@@ -37,7 +37,7 @@ import {
   Upload,
   Form,
   // // popup
-  // Popup,
+  Popup,
   Toast,
   Picker,
   // CascadePicker,
@@ -78,7 +78,7 @@ Vue.use(Select)
 // Vue.use(Validator)
 Vue.use(Upload)
 Vue.use(Form)
-// Vue.use(Popup)
+Vue.use(Popup)
 Vue.use(Toast)
 Vue.use(Picker)
 // Vue.use(CascadePicker)

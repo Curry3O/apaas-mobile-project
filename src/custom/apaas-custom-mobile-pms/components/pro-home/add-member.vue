@@ -1,14 +1,14 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-24 16:48:00
- * @LastEditTime: 2021-12-27 11:30:52
+ * @LastEditTime: 2021-12-28 20:19:46
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\add-member.vue
 -->
 <template>
   <div class="add-member">
-    <PageHeadSlot :backPath="backPath">
+    <PageHeadSlot :backPath="backPath" returnRoute="addMember">
       <template v-slot:main>
         <div class="head-text">
           新增项目成员
@@ -106,7 +106,8 @@ export default {
         scrollToInvalidField: true,
         layout: 'standard'
       },
-      clickFlag: false
+      clickFlag: false,
+      returnRoute: null
     }
   },
   computed: {
@@ -116,7 +117,14 @@ export default {
     })
   },
   watch: {},
-  created() {},
+  created() {
+    this.returnRoute = this.$route.query.returnRoute
+    if (this.returnRoute === 'searchPeople' || this.returnRoute === 'searchRole') {
+      this.model = this.memberModel
+    } else if (this.returnRoute === 'proMember') {
+      this.clearMemberModel()
+    }
+  },
   methods: {
     ...mapMutations('addMemberModule', {
       setMemberModel: SET_MEMBER_MODEL,
@@ -126,7 +134,8 @@ export default {
       this.$router.push({
         path: './apaas-custom-search-people',
         query: {
-          ...this.$route.query
+          ...this.$route.query,
+          returnRoute: 'addMember'
         }
       })
     },
@@ -134,7 +143,8 @@ export default {
       this.$router.push({
         path: './apaas-custom-search-role',
         query: {
-          ...this.$route.query
+          ...this.$route.query,
+          returnRoute: 'addMember'
         }
       })
     },
@@ -193,7 +203,8 @@ export default {
           this.$router.push({
             path: './apaas-custom-project-member',
             query: {
-              ...this.$route.query
+              ...this.$route.query,
+              returnRoute: 'addMember'
             }
           })
         } else {
@@ -204,8 +215,8 @@ export default {
         }
       })
     }
-  },
-  beforeRouteEnter(to, from, next) {
+  }
+  /* beforeRouteEnter(to, from, next) {
     if (from.name === 'apaas-custom-search-people' || from.name === 'apaas-custom-search-role') {
       next((vm) => {
         vm.model = vm.memberModel
@@ -217,7 +228,7 @@ export default {
     } else {
       next()
     }
-  }
+  } */
 }
 </script>
 

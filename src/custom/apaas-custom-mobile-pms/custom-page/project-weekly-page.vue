@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-27 15:35:18
- * @LastEditTime: 2021-12-28 11:51:24
+ * @LastEditTime: 2021-12-29 18:03:23
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\project-weekly-page.vue
@@ -16,11 +16,11 @@
     >
       <div class="page">
         <div class="page-head">
-          <PageHeadSlot :backPath="backPath">
+          <PageHeadSlot :backPath="backPath" returnRoute="proWeekly">
             <template v-slot:main>
               <cube-input
-                v-model="searchValue"
-                :class="{ 'br-radius': !searchValue.length }"
+                v-model="params.searchContent"
+                :class="{ 'br-radius': !params.searchContent.length }"
                 :readonly="true"
                 placeholder="项目名称/编码/BU/项目经理"
                 @focus="goSearchPage"
@@ -29,7 +29,18 @@
               </cube-input>
             </template>
             <template v-slot:icon>
-              <x-svg-icon name="filter-icon" class="bigIcon" @click="filterData"></x-svg-icon>
+              <div class="icon-slot">
+                <div class="search-week" @click="selectWeek">
+                  {{ params.week + '周' }}
+                </div>
+                <div>
+                  <x-svg-icon
+                    name="filter-icon"
+                    class="search-filter"
+                    @click.native="filterData"
+                  ></x-svg-icon>
+                </div>
+              </div>
             </template>
           </PageHeadSlot>
           <div class="header-tab">
@@ -42,8 +53,12 @@
               @click="selectTab('红灯')"
             >
               红灯
-              <div v-if="redLightTotal" class="item-total" :class="'hw-' + transNum(redLightTotal)">
-                {{ redLightTotal > 99 ? '99+' : redLightTotal }}
+              <div
+                v-if="lightNum.redLightTotal"
+                class="item-total"
+                :class="'hw-' + transNum(lightNum.redLightTotal)"
+              >
+                {{ lightNum.redLightTotal > 99 ? '99+' : lightNum.redLightTotal }}
               </div>
             </div>
             <div
@@ -53,11 +68,11 @@
             >
               黄灯
               <div
-                v-if="yellowLightTotal"
+                v-if="lightNum.yellowLightTotal"
                 class="item-total"
-                :class="'hw-' + transNum(yellowLightTotal)"
+                :class="'hw-' + transNum(lightNum.yellowLightTotal)"
               >
-                {{ yellowLightTotal > 99 ? '99+' : yellowLightTotal }}
+                {{ lightNum.yellowLightTotal > 99 ? '99+' : lightNum.yellowLightTotal }}
               </div>
             </div>
             <div
@@ -67,11 +82,11 @@
             >
               绿灯
               <div
-                v-if="greenLightTotal"
+                v-if="lightNum.greenLightTotal"
                 class="item-total"
-                :class="'hw-' + transNum(greenLightTotal)"
+                :class="'hw-' + transNum(lightNum.greenLightTotal)"
               >
-                {{ greenLightTotal > 99 ? '99+' : greenLightTotal }}
+                {{ lightNum.greenLightTotal > 99 ? '99+' : lightNum.greenLightTotal }}
               </div>
             </div>
           </div>
@@ -81,6 +96,52 @@
         </div>
       </div>
     </cube-scroll>
+    <cube-popup ref="myPopup" type="my-popup" position="top" :mask-closable="true">
+      <div class="popup-box">
+        <div>
+          <div class="box-title">
+            项目状态：
+          </div>
+          <div class="box-content">
+            <div v-for="item in selectOptions.statusList" :key="item.value">
+              <div
+                class="box-btn"
+                :class="{ 'ac-btn': params.milestoneCode === item.value }"
+                @click="selectChange('status', item.value)"
+              >
+                {{ item.label }}
+              </div
+              >
+            </div>
+          </div>
+        </div>
+        <div class="mt-15">
+          <div class="box-title">
+            周报检查：
+          </div>
+          <div class="box-content">
+            <div v-for="item in selectOptions.checkList" :key="item.value">
+              <div
+                class="box-btn"
+                :class="{ 'ac-btn': params.isInspect === item.value }"
+                @click="selectChange('check', item.value)"
+              >
+                {{ item.label }}
+              </div
+              >
+            </div>
+          </div>
+        </div>
+        <div class="bottom-btn">
+          <cube-button @click="resetBtn">
+            重置
+          </cube-button>
+          <cube-button class="confirm-btn" @click="confirmBtn">
+            确定
+          </cube-button>
+        </div>
+      </div>
+    </cube-popup>
   </div>
 </template>
 
@@ -88,6 +149,7 @@
 import PageHeadSlot from '../components/common/page-head-slot.vue'
 import { mapState, mapMutations } from 'vuex'
 import { INIT_WEEKLY } from '../../common/store/project-weekly.store'
+import { getYearWeek } from '../../common/utils/tool'
 export default {
   name: 'ProjectWeeklyPage',
   components: {
@@ -96,13 +158,35 @@ export default {
   data() {
     return {
       backPath: './menu',
-      searchValue: '',
       isEmpty: true,
       activeTab: null,
-      redLightTotal: 1,
-      yellowLightTotal: 0,
-      greenLightTotal: 13,
-      weeklyList: []
+      lightNum: {
+        redLightTotal: 0,
+        yellowLightTotal: 0,
+        greenLightTotal: 0
+      },
+      selectOptions: {
+        statusList: [
+          { label: '待立项', value: 'ZB' },
+          { label: '实施中', value: 'SS' },
+          { label: '已上线', value: 'SX' },
+          { label: '已验收', value: 'YS' },
+          { label: '预交付立项', value: 'YLX' }
+        ],
+        checkList: [
+          { label: '是', value: '是' },
+          { label: '否', value: '否' }
+        ]
+      },
+      params: {
+        searchContent: '',
+        week: null,
+        milestoneCode: null,
+        isInspect: null
+      },
+      pagination: { currentPage: 1, pageSize: 10, total: 0 },
+      weeklyList: [],
+      returnRoute: null
     }
   },
   computed: {
@@ -124,14 +208,29 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-              txt: '刷新成功'
-            },
+            txt: '刷新成功'
+          },
         scrollbar: false
       }
     }
   },
   watch: {},
-  created() {},
+  created() {
+    this.returnRoute = this.$route.query.returnRoute
+    this.params.week = getYearWeek(this.$dayjs(new Date()).format('YYYY-MM-DD'))
+    if (this.returnRoute === 'searchPro') {
+      if (this.searchContent) {
+        this.params.searchContent = this.searchContent
+        if (this.weeklyRefresh) {
+          this.loadData()
+        } else {
+          this.handleAllData()
+        }
+      }
+    } else {
+      this.initWeekly()
+    }
+  },
   methods: {
     ...mapMutations('projectWeeklyModule', {
       initWeekly: INIT_WEEKLY
@@ -142,7 +241,7 @@ export default {
     handleAllData() {},
     // 下拉刷新
     onPullingDown() {
-      if (this.searchValue) {
+      if (this.params.searchContent) {
         this.loadData()
       }
     },
@@ -152,22 +251,54 @@ export default {
       this.$router.push({
         path: './apaas-custom-search-project',
         query: {
-          ...this.$route.query
+          ...this.$route.query,
+          returnRoute: 'proWeekly'
         }
       })
     },
-    // 过滤数据
-    filterData() {},
+    // 弹出层
+    filterData() {
+      const component = this.$refs.myPopup
+      component.show()
+    },
+    // 筛选数据
+    selectChange(code, value) {
+      const field = code === 'status' ? 'milestoneCode' : 'isInspect'
+      if (this.params[field] === value) {
+        this.params[field] = null
+      } else {
+        this.params[field] = value
+      }
+    },
+    // 重置
+    resetBtn() {
+      this.$set(this.params, 'milestoneCode', null)
+      this.$set(this.params, 'isInspect', null)
+    },
+    // 确定
+    confirmBtn() {},
+    // 筛选周数
+    selectWeek() {
+      this.datePicker = this.$createDatePicker({
+        title: '',
+        value: new Date(),
+        onSelect: this.selectHandle
+      })
+      this.datePicker.show()
+    },
+    selectHandle(date) {
+      this.params.week = getYearWeek(this.$dayjs(new Date(date)).format('YYYY-MM-DD'))
+    },
     // 筛选健康度
     selectTab(tab) {
       this.activeTab = tab
     }
-  },
-  beforeRouteEnter(to, from, next) {
+  }
+  /* beforeRouteEnter(to, from, next) {
     if (from.name === 'apaas-custom-search-project') {
       next((vm) => {
         if (vm.searchContent) {
-          vm.searchValue = vm.searchContent
+          vm.params.searchContent = vm.searchContent
           if (vm.weeklyRefresh) {
             vm.loadData()
           } else {
@@ -180,7 +311,7 @@ export default {
         vm.initWeekly()
       })
     }
-  }
+  } */
 }
 </script>
 
@@ -195,10 +326,25 @@ export default {
     .page-head {
       .page-header {
         background: transparent;
-        .bigIcon {
-          ::v-deep .svg-icon {
-            height: 24px !important;
-            width: 24px !important;
+        ::v-deep .left-icon {
+          flex: 2 !important;
+        }
+        ::v-deep .right-icon {
+          flex: 4 !important;
+        }
+        .icon-slot {
+          display: flex;
+          align-items: center;
+          .search-week {
+            flex: 1;
+            line-height: 22px;
+            margin-right: 10px;
+            font-size: 12px;
+            color: #fff;
+            border-bottom: 1px solid #fff;
+          }
+          .search-filter {
+            flex: 1;
           }
         }
       }
@@ -248,8 +394,55 @@ export default {
     }
     .page-main {
       background: #fff;
-      height: calc(100vh - 220px);
+      height: calc(100vh - 91px);
       overflow: scroll;
+    }
+  }
+  ::v-deep .cube-popup {
+    top: 90px;
+  }
+  .popup-box {
+    background-color: #fff;
+    padding: 20px 15px;
+    .box-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-left: 5px;
+    }
+    .box-content {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      flex-flow: wrap;
+      .box-btn {
+        width: 70px;
+        height: 20px;
+        font-size: 12px;
+        text-align: center;
+        margin: 5px;
+        line-height: 20px;
+        border: 1px solid #dcdfe6;
+        border-radius: 5px;
+      }
+      .ac-btn {
+        color: #a9e676;
+        border: 1px solid #a9e676;
+      }
+    }
+    .bottom-btn {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+      .cube-btn {
+        width: 20%;
+        height: 24px;
+        line-height: 24px;
+        border-radius: 15px;
+        font-size: 12px;
+      }
+      .confirm-btn {
+        background: #027aff;
+      }
     }
   }
   .fs-12 {
@@ -285,11 +478,22 @@ export default {
   .mr-10 {
     margin-right: 10px;
   }
-  .mt-10 {
-    margin-top: 10px;
+  .mt-15 {
+    margin-top: 15px;
   }
   .mb-5 {
     margin-bottom: 5px;
+  }
+}
+</style>
+
+<style lang="scss">
+.public-form {
+  .public-form--support {
+    display: none !important;
+  }
+  .public-form-body {
+    top: 0;
   }
 }
 </style>

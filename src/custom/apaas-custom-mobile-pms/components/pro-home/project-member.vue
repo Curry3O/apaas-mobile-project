@@ -1,14 +1,14 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-22 16:03:08
- * @LastEditTime: 2021-12-27 14:42:00
+ * @LastEditTime: 2021-12-28 20:23:15
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\project-member.vue
 -->
 <template>
   <div class="project-member">
-    <PageHeadSlot :backPath="backPath">
+    <PageHeadSlot :backPath="backPath" returnRoute="proMember">
       <template v-slot:main>
         <div class="head-text">
           项目成员
@@ -90,7 +90,8 @@ export default {
         roleId: null
       },
       pullUpLoad: true,
-      pagination: { currentPage: 1, pageSize: 10, total: 0 }
+      pagination: { currentPage: 1, pageSize: 10, total: 0 },
+      returnRoute: null
     }
   },
   computed: {
@@ -120,7 +121,16 @@ export default {
     }
   },
   watch: {},
-  created() {},
+  created() {
+    this.returnRoute = this.$route.query.returnRoute
+    if (this.returnRoute === 'proHome' || this.returnRoute === 'addMember') {
+      if (this.selectedData.pmsProjectCode) {
+        this.loadData()
+      } else {
+        this.pullUpLoad = false
+      }
+    }
+  },
   methods: {
     initData() {
       this.memberList = []
@@ -164,7 +174,8 @@ export default {
       this.$router.push({
         path: './apaas-custom-add-member',
         query: {
-          ...this.$route.query
+          ...this.$route.query,
+          returnRoute: 'proMember'
         }
       })
     },
@@ -201,8 +212,8 @@ export default {
         }
       })
     }
-  },
-  beforeRouteEnter(to, from, next) {
+  }
+  /* beforeRouteEnter(to, from, next) {
     if (from.name === 'apaas-custom-financial-norm' || from.name === 'apaas-custom-add-member') {
       next((vm) => {
         if (vm.selectedData.pmsProjectCode) {
@@ -214,7 +225,7 @@ export default {
     } else {
       next()
     }
-  }
+  } */
 }
 </script>
 

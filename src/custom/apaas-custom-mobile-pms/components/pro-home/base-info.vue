@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-13 20:46:20
- * @LastEditTime: 2021-12-27 14:14:09
+ * @LastEditTime: 2021-12-29 18:30:22
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\base-info.vue
@@ -295,7 +295,8 @@ export default {
         this.amountList.forEach((item) => {
           item.value = v[item.code]
         })
-      }
+      },
+      immediate: true
     },
     fourPiecesVo: {
       handler(v) {
@@ -312,7 +313,8 @@ export default {
             }
           })
         })
-      }
+      },
+      immediate: true
     },
     grossMarginVo: {
       handler(v) {

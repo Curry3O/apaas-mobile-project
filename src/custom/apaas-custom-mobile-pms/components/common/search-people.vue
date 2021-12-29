@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-23 14:59:21
- * @LastEditTime: 2021-12-25 16:54:31
+ * @LastEditTime: 2021-12-29 15:29:28
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-people.vue
@@ -122,7 +122,9 @@ export default {
     }
   },
   watch: {},
-  created() {},
+  created() {
+    this.returnRoute = this.$route.query.returnRoute
+  },
   methods: {
     ...mapMutations('addMemberModule', {
       setMemberModel: SET_MEMBER_MODEL
@@ -199,13 +201,14 @@ export default {
         this.$router.push({
           path: path,
           query: {
-            ...this.$route.query
+            ...this.$route.query,
+            returnRoute: 'searchPeople'
           }
         })
       }
     }
-  },
-  beforeRouteEnter(to, from, next) {
+  }
+  /* beforeRouteEnter(to, from, next) {
     if (from.name === 'apaas-custom-add-member') {
       next((vm) => {
         vm.returnRoute = 'addMember'
@@ -213,7 +216,7 @@ export default {
     } else {
       next()
     }
-  }
+  } */
 }
 </script>
 
@@ -333,6 +336,9 @@ export default {
     .cube-btn {
       background: #027aff;
     }
+  }
+  ::v-deep .cube-radio-ui {
+    -webkit-text-stroke-width: 0px;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-23 16:20:22
- * @LastEditTime: 2021-12-27 14:30:21
+ * @LastEditTime: 2021-12-28 20:25:49
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /x-product-h5-workspace/packages/xdap-h5/src/main.js
@@ -76,7 +76,7 @@ Vue.addInterceptorsRequest('REQUEST_PARAMS_INTERCEPTOR', (e) => {
   if (authStore.token) {
     e.headers['xdaptenantid'] = '203908342555344897'
     e.headers['xdaptoken'] =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2NDA1ODI0MTEsImlhdCI6MTY0MDU3NTIxMSwieGRhcHVzZXJpZCI6IjEwMDIwOTc5NDY2Nzg3OTg1ODE3NiJ9.Zhh8_IIJoPXFW99SNRr928xtVo1x7C7_j9SmJR2Is0pMm123MR0CC3HtACE0jypHhsFKDyiK8VhMlfN0pSTdyg'
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2NDA3MDA3NzQsImlhdCI6MTY0MDY5MzU3NCwieGRhcHVzZXJpZCI6IjEwMDIwOTc5NDY2Nzg3OTg1ODE3NiJ9._0HrT3PX5pYOVqnI5rs-iiToJW-KzPFecPV--42xxnygYaz5LD6RDxJ3dMXVUDmQsBi5W2EbJmEz98yTPvRZXw'
   }
 
   return e

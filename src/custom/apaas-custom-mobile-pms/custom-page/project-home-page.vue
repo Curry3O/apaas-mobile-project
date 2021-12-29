@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2021-12-27 16:13:34
+ * @LastEditTime: 2021-12-29 18:30:31
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\page.vue
@@ -15,7 +15,7 @@
       @pulling-down="onPullingDown"
     >
       <div class="page" :class="{ 'page-bs': isEmpty }">
-        <PageHeadSlot :backPath="backPath">
+        <PageHeadSlot :backPath="backPath" returnRoute="proHome">
           <template v-slot:main>
             <cube-input
               v-model="searchValue"
@@ -142,7 +142,8 @@ export default {
       fourPiecesVo: {}, // 卡片里面的内容
       costVoList: [], // 成本列表
       incomeVoList: [], // 收入列表
-      returnVoList: [] // 回款列表
+      returnVoList: [], // 回款列表
+      returnRoute: null
     }
   },
   computed: {
@@ -163,7 +164,26 @@ export default {
     }
   },
   watch: {},
-  created() {},
+  created() {
+    this.returnRoute = this.$route.query.returnRoute
+    if (this.returnRoute === 'searchPro') {
+      if (this.selectedData.pmsProjectCode) {
+        this.searchValue = this.selectedData.projectName
+        if (this.homeRefresh) {
+          this.loadDetailData(this.selectedData.pmsProjectCode)
+        } else {
+          this.handleAllData(this.financeModel)
+        }
+      }
+    } else if (this.returnRoute === 'proMember') {
+      if (this.selectedData.pmsProjectCode) {
+        this.searchValue = this.selectedData.projectName
+        this.handleAllData(this.financeModel)
+      }
+    } else {
+      this.initFinance()
+    }
+  },
   methods: {
     ...mapMutations('projectHomeModule', {
       setFinanceModel: SET_FINANCE_MODEL,
@@ -181,7 +201,8 @@ export default {
       this.$router.push({
         path: './apaas-custom-search-project',
         query: {
-          ...this.$route.query
+          ...this.$route.query,
+          returnRoute: 'proHome'
         }
       })
     },
@@ -264,14 +285,15 @@ export default {
       this.$router.push({
         path: './apaas-custom-project-member',
         query: {
-          ...this.$route.query
+          ...this.$route.query,
+          returnRoute: 'proHome'
         }
       })
     },
     // 填写周报
     goWeeklyDetails() {}
-  },
-  beforeRouteEnter(to, from, next) {
+  }
+  /* beforeRouteEnter(to, from, next) {
     if (from.name === 'apaas-custom-search-project') {
       next((vm) => {
         if (vm.selectedData.pmsProjectCode) {
@@ -295,7 +317,7 @@ export default {
         vm.initFinance()
       })
     }
-  }
+  } */
 }
 </script>
 

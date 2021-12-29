@@ -1,12 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2021-12-27 15:38:21
+ * @LastEditTime: 2021-12-29 18:06:27
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-custom-apaas-mobile-pms\src\custom\apaas-custom-apaas-mobile-pms\index.js
  */
 import '@/icons/index'
+import 'cube-ui/lib/fonts/cubeic.dcc2b6f.ttf'
 import ProjectHomePage from './custom-page/project-home-page.vue'
 import ProjectMember from './components/pro-home/project-member.vue'
 import AddMember from './components/pro-home/add-member.vue'

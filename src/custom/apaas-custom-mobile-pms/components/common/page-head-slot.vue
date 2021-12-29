@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 15:44:06
- * @LastEditTime: 2021-12-27 14:08:27
+ * @LastEditTime: 2021-12-28 20:21:53
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\page-head-slot.vue
@@ -12,13 +12,13 @@
       <x-svg-icon
         v-if="showLeft"
         name="arrow-left"
-        class="both-sides"
+        class="both-sides left-icon"
         @click.native="goBack"
       ></x-svg-icon>
       <div class="center-area">
         <slot v-if="showCenter" name="main"></slot>
       </div>
-      <div class="both-sides">
+      <div class="both-sides right-icon">
         <slot v-if="showRight" name="icon"></slot>
       </div>
     </div>
@@ -44,6 +44,10 @@ export default {
     backPath: {
       type: String,
       default: ''
+    },
+    returnRoute: {
+      type: String,
+      default: ''
     }
   },
   methods: {
@@ -52,7 +56,8 @@ export default {
         this.$router.push({
           path: this.backPath,
           query: {
-            ...this.$route.query
+            ...this.$route.query,
+            returnRoute: this.returnRoute
           }
         })
       } else {
