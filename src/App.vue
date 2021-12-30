@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-23 16:20:22
- * @LastEditTime: 2021-12-21 17:20:46
+ * @LastEditTime: 2021-12-29 19:18:22
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \xdap-h5\src\App.vue
@@ -40,7 +40,7 @@ export default {
   created() {
     this.setUserInfo({
       loginName: 'jinlong.gu',
-      id: '100169876816012509184',
+      id: '100212602284050219008',
       phone: '17729389320',
       email: '17728389320@163.com',
       enableStatus: 'ENABLED',

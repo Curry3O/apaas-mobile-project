@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2021-12-29 18:30:31
+ * @LastEditTime: 2021-12-30 10:32:12
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\page.vue
@@ -15,7 +15,7 @@
       @pulling-down="onPullingDown"
     >
       <div class="page" :class="{ 'page-bs': isEmpty }">
-        <PageHeadSlot :backPath="backPath" returnRoute="proHome">
+        <PageHeadSlot returnRoute="proHome">
           <template v-slot:main>
             <cube-input
               v-model="searchValue"
@@ -134,7 +134,6 @@ export default {
   },
   data: function() {
     return {
-      backPath: './menu',
       searchValue: '',
       isEmpty: true,
       indexVo: {}, // 项目财务指标主体信息

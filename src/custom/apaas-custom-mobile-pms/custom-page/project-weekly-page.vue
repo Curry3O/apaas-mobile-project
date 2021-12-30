@@ -1,101 +1,124 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-27 15:35:18
- * @LastEditTime: 2021-12-29 18:03:23
+ * @LastEditTime: 2021-12-30 18:50:15
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\project-weekly-page.vue
 -->
 <template>
   <div class="weekly-page">
+    <div class="page-head">
+      <div class="header">
+        <PageHeadSlot returnRoute="proWeekly">
+          <template v-slot:main>
+            <cube-input
+              v-model="params.searchContent"
+              :class="{ 'br-radius': !params.searchContent.length }"
+              :readonly="true"
+              placeholder="项目名称/编码/BU/项目经理"
+              @focus="goSearchPage"
+            >
+              <x-svg-icon slot="prepend" name="search-icon"></x-svg-icon>
+            </cube-input>
+          </template>
+          <template v-slot:icon>
+            <div class="icon-slot">
+              <div>
+                <div v-if="params.week" class="search-week mr-10" @click="selectWeek">
+                  {{ params.week + '周' }}
+                </div>
+                <div v-else>
+                  <x-svg-icon
+                    name="calendar-icon"
+                    class="search-filter mr-10"
+                    @click.native="selectWeek"
+                  ></x-svg-icon>
+                </div>
+              </div>
+              <div>
+                <x-svg-icon
+                  name="filter-icon"
+                  class="search-filter"
+                  @click.native="filterData"
+                ></x-svg-icon>
+              </div>
+            </div>
+          </template>
+        </PageHeadSlot>
+        <div class="header-tab">
+          <div :class="{ 'active-item': !activeTab }" @click="selectTab()">
+            全部
+          </div>
+          <div
+            :class="{ 'active-item': activeTab === '红灯' }"
+            class="item-tab"
+            @click="selectTab('红灯')"
+          >
+            红灯
+            <div
+              v-if="lightNum.redLightTotal"
+              class="item-total"
+              :class="'hw-' + transNum(lightNum.redLightTotal)"
+            >
+              {{ lightNum.redLightTotal > 99 ? '99+' : lightNum.redLightTotal }}
+            </div>
+          </div>
+          <div
+            :class="{ 'active-item': activeTab === '黄灯' }"
+            class="item-tab"
+            @click="selectTab('黄灯')"
+          >
+            黄灯
+            <div
+              v-if="lightNum.yellowLightTotal"
+              class="item-total"
+              :class="'hw-' + transNum(lightNum.yellowLightTotal)"
+            >
+              {{ lightNum.yellowLightTotal > 99 ? '99+' : lightNum.yellowLightTotal }}
+            </div>
+          </div>
+          <div
+            :class="{ 'active-item': activeTab === '绿灯' }"
+            class="item-tab"
+            @click="selectTab('绿灯')"
+          >
+            绿灯
+            <div
+              v-if="lightNum.greenLightTotal"
+              class="item-total"
+              :class="'hw-' + transNum(lightNum.greenLightTotal)"
+            >
+              {{ lightNum.greenLightTotal > 99 ? '99+' : lightNum.greenLightTotal }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <cube-scroll
       ref="scroll"
+      class="page-main"
       :data="weeklyList"
       :options="cubeScrollOptions"
       @pulling-down="onPullingDown"
     >
-      <div class="page">
-        <div class="page-head">
-          <PageHeadSlot :backPath="backPath" returnRoute="proWeekly">
-            <template v-slot:main>
-              <cube-input
-                v-model="params.searchContent"
-                :class="{ 'br-radius': !params.searchContent.length }"
-                :readonly="true"
-                placeholder="项目名称/编码/BU/项目经理"
-                @focus="goSearchPage"
-              >
-                <x-svg-icon slot="prepend" name="search-icon"></x-svg-icon>
-              </cube-input>
-            </template>
-            <template v-slot:icon>
-              <div class="icon-slot">
-                <div class="search-week" @click="selectWeek">
-                  {{ params.week + '周' }}
-                </div>
-                <div>
-                  <x-svg-icon
-                    name="filter-icon"
-                    class="search-filter"
-                    @click.native="filterData"
-                  ></x-svg-icon>
-                </div>
-              </div>
-            </template>
-          </PageHeadSlot>
-          <div class="header-tab">
-            <div :class="{ 'active-item': !activeTab }" @click="selectTab()">
-              全部
-            </div>
-            <div
-              :class="{ 'active-item': activeTab === '红灯' }"
-              class="item-tab"
-              @click="selectTab('红灯')"
-            >
-              红灯
-              <div
-                v-if="lightNum.redLightTotal"
-                class="item-total"
-                :class="'hw-' + transNum(lightNum.redLightTotal)"
-              >
-                {{ lightNum.redLightTotal > 99 ? '99+' : lightNum.redLightTotal }}
-              </div>
-            </div>
-            <div
-              :class="{ 'active-item': activeTab === '黄灯' }"
-              class="item-tab"
-              @click="selectTab('黄灯')"
-            >
-              黄灯
-              <div
-                v-if="lightNum.yellowLightTotal"
-                class="item-total"
-                :class="'hw-' + transNum(lightNum.yellowLightTotal)"
-              >
-                {{ lightNum.yellowLightTotal > 99 ? '99+' : lightNum.yellowLightTotal }}
-              </div>
-            </div>
-            <div
-              :class="{ 'active-item': activeTab === '绿灯' }"
-              class="item-tab"
-              @click="selectTab('绿灯')"
-            >
-              绿灯
-              <div
-                v-if="lightNum.greenLightTotal"
-                class="item-total"
-                :class="'hw-' + transNum(lightNum.greenLightTotal)"
-              >
-                {{ lightNum.greenLightTotal > 99 ? '99+' : lightNum.greenLightTotal }}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="page-main">
-          1111
-        </div>
-      </div>
+      <WeeklyList :hideCheckbox="hideCheckbox" @check-data="checkData = $event"></WeeklyList>
     </cube-scroll>
+    <div class="page-foot">
+      <div v-if="hideCheckbox" class="one-btn">
+        <cube-button @click="handleCheck">
+          批量检查
+        </cube-button>
+      </div>
+      <div v-else class="two-btn">
+        <cube-button class="cancel-btn" @click="handleCheck">
+          取消
+        </cube-button>
+        <cube-button :disabled="!checkData.length" @click="submitCheck">
+          提交
+        </cube-button>
+      </div>
+    </div>
     <cube-popup ref="myPopup" type="my-popup" position="top" :mask-closable="true">
       <div class="popup-box">
         <div>
@@ -110,8 +133,7 @@
                 @click="selectChange('status', item.value)"
               >
                 {{ item.label }}
-              </div
-              >
+              </div>
             </div>
           </div>
         </div>
@@ -127,8 +149,7 @@
                 @click="selectChange('check', item.value)"
               >
                 {{ item.label }}
-              </div
-              >
+              </div>
             </div>
           </div>
         </div>
@@ -147,17 +168,18 @@
 
 <script>
 import PageHeadSlot from '../components/common/page-head-slot.vue'
+import WeeklyList from '../components/pro-weekly/weekly-list.vue'
 import { mapState, mapMutations } from 'vuex'
 import { INIT_WEEKLY } from '../../common/store/project-weekly.store'
 import { getYearWeek } from '../../common/utils/tool'
 export default {
   name: 'ProjectWeeklyPage',
   components: {
-    PageHeadSlot
+    PageHeadSlot,
+    WeeklyList
   },
   data() {
     return {
-      backPath: './menu',
       isEmpty: true,
       activeTab: null,
       lightNum: {
@@ -186,6 +208,8 @@ export default {
       },
       pagination: { currentPage: 1, pageSize: 10, total: 0 },
       weeklyList: [],
+      checkData: [],
+      hideCheckbox: true,
       returnRoute: null
     }
   },
@@ -282,16 +306,28 @@ export default {
       this.datePicker = this.$createDatePicker({
         title: '',
         value: new Date(),
-        onSelect: this.selectHandle
+        onSelect: this.selectHandle,
+        onCancel: this.cancelHandle
       })
       this.datePicker.show()
     },
     selectHandle(date) {
       this.params.week = getYearWeek(this.$dayjs(new Date(date)).format('YYYY-MM-DD'))
     },
+    cancelHandle() {
+      this.$set(this.params, 'week', null)
+    },
     // 筛选健康度
     selectTab(tab) {
       this.activeTab = tab
+    },
+    // 批量检查
+    handleCheck() {
+      this.hideCheckbox = !this.hideCheckbox
+    },
+    // 提交批量检查
+    submitCheck() {
+      console.log(this.checkData)
     }
   }
   /* beforeRouteEnter(to, from, next) {
@@ -319,11 +355,11 @@ export default {
 .weekly-page {
   height: 100vh;
   background: #f8f8f8;
-  .page {
+  .page-head {
     background: url('~@/assets/project-bg.png');
     background-repeat: no-repeat;
     background-size: 100% 150px;
-    .page-head {
+    .header {
       .page-header {
         background: transparent;
         ::v-deep .left-icon {
@@ -338,7 +374,6 @@ export default {
           .search-week {
             flex: 1;
             line-height: 22px;
-            margin-right: 10px;
             font-size: 12px;
             color: #fff;
             border-bottom: 1px solid #fff;
@@ -392,10 +427,49 @@ export default {
         }
       }
     }
-    .page-main {
-      background: #fff;
-      height: calc(100vh - 91px);
-      overflow: scroll;
+  }
+  .page-main {
+    background: #fff;
+    height: 510px;
+    overflow: scroll;
+  }
+  .page-foot {
+    height: calc(100vh - 600px);
+    background: #fff;
+    padding: 15px;
+    .cube-btn {
+      color: #fff;
+      width: 60%;
+      background: linear-gradient(#33e585, #00a84d);
+      font-size: 12px;
+      border-radius: 6px;
+    }
+    .one-btn {
+      display: flex;
+      justify-content: center;
+    }
+    .two-btn {
+      display: flex;
+      justify-content: space-around;
+      .cube-btn {
+        width: 40%;
+      }
+      .cancel-btn {
+        color: #00a84d;
+        background: #fff;
+        border: 1px solid #00a84d;
+      }
+      .cube-btn_disabled {
+        color: #fff;
+        background: #ccc;
+        border: none;
+      }
+      ::v-deep .cube-btn-outline:after {
+        content: none;
+      }
+      ::v-deep .cube-btn_disabled:after {
+        content: none;
+      }
     }
   }
   ::v-deep .cube-popup {

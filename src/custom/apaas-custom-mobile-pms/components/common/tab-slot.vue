@@ -264,7 +264,3 @@ export default {
   }
 }
 </style>
-
-<style lang="stylus" rel="stylesheet/stylus">
-@require "./css/cube-tab.styl"
-</style>

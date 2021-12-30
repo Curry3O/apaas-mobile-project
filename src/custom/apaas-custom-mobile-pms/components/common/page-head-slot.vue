@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 15:44:06
- * @LastEditTime: 2021-12-28 20:21:53
+ * @LastEditTime: 2021-12-30 10:30:27
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\page-head-slot.vue
@@ -53,6 +53,7 @@ export default {
   methods: {
     goBack() {
       if (this.backPath) {
+        // 指定返回页面
         this.$router.push({
           path: this.backPath,
           query: {
@@ -61,7 +62,15 @@ export default {
           }
         })
       } else {
-        this.$router.go(-1)
+        // 默认跳回菜单首页
+        this.$router.push({
+          name: 'app-appMenu',
+          params: this.$route.params,
+          query: {
+            ...this.$route.query,
+            returnRoute: undefined
+          }
+        })
       }
     }
   }
