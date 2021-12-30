@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-29 20:02:36
- * @LastEditTime: 2021-12-30 19:33:56
+ * @LastEditTime: 2021-12-30 19:45:45
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-weekly\week-list.vue
@@ -444,6 +444,9 @@ export default {
       }
       ::v-deep .cube-btn-outline:after {
         content: none;
+      }
+      ::v-deep .cube-radio-ui {
+        -webkit-text-stroke-width: 0px;
       }
     }
     .hidden-box {
