@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-22 16:03:08
- * @LastEditTime: 2021-12-28 20:23:15
+ * @LastEditTime: 2022-01-05 16:30:13
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\project-member.vue
@@ -32,7 +32,7 @@
             :key="item.id"
             class="panel-item"
             :class="{ 'bg-disable': item.state === '禁用' }"
-            @click="panelClick(item.state, item.id)"
+            @click="panelClick(item.state, item.id, item.userId)"
           >
             <div class="item-content">
               <div class="item-label">
@@ -109,12 +109,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-            threshold: 0,
-            txt: {
-              more: '上滑加载更多',
-              noMore: '没有更多数据了'
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
             }
-          }
           : false,
         scrollbar: true
       }
@@ -180,21 +180,23 @@ export default {
       })
     },
     handleClose() {},
-    panelClick(state, id) {
+    panelClick(state, id, userId) {
       this.$createDialog({
         type: 'confirm',
         content: '是否' + (state === '启用' ? '禁用' : '启用') + '该员工',
         onConfirm: () => {
-          this.updateState(state, id)
+          this.updateState(state, id, userId)
         }
       }).show()
     },
-    updateState(state, id) {
+    updateState(state, id, userId) {
       const request = {
         ...apis.UPDATE_PMS_PROJECT_MEMBER_APP_STATE,
         params: {
           id: id,
-          state: state
+          state: state,
+          userId: userId,
+          pmsProjectCode: this.selectedData.pmsProjectCode
         }
       }
       this.$request(request).asyncThen((resp) => {
