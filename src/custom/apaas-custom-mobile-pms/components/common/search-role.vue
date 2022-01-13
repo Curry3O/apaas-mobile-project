@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-23 15:00:11
- * @LastEditTime: 2021-12-29 15:28:55
+ * @LastEditTime: 2022-01-13 17:08:48
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-role.vue
@@ -55,15 +55,17 @@
         <span class="empty-text">暂无数据</span>
       </x-empty>
     </div>
-    <div class="remark-text">
-      <span>
-        {{ '单选，已选择【' + (selected.selectItem.lookupValueMeaning || '') + '】' }}
-      </span>
-    </div>
-    <div class="bottom-btn">
-      <cube-button @click="confirmBtn">
-        确定
-      </cube-button>
+    <div class="search-bottom">
+      <div class="remark-text">
+        <span>
+          {{ '单选，已选择【' + (selected.selectItem.lookupValueMeaning || '') + '】' }}
+        </span>
+      </div>
+      <div class="bottom-btn">
+        <cube-button @click="confirmBtn">
+          确定
+        </cube-button>
+      </div>
     </div>
   </div>
 </template>
@@ -110,9 +112,16 @@ export default {
       }
     }
   },
-  watch: {},
+  watch: {
+    searchValue(v) {
+      if (!v) {
+        this.initData()
+      }
+    }
+  },
   created() {
     this.returnRoute = this.$route.query.returnRoute
+    this.initData()
   },
   methods: {
     ...mapMutations('addMemberModule', {
@@ -128,9 +137,6 @@ export default {
       this.initData()
     },
     loadData() {
-      if (!this.searchValue) {
-        return
-      }
       const request = {
         ...apis.GET_WEEKLY_LOOKUP_VALUE,
         params: {
@@ -212,7 +218,9 @@ export default {
 
 <style lang="scss" scoped>
 .search-role {
+  height: 100vh;
   background: #fff;
+  position: relative;
   .search-head {
     display: flex;
     align-items: center;
@@ -266,7 +274,7 @@ export default {
     }
   }
   .search-content {
-    height: 500px;
+    height: calc(100vh - 158px);
     background: #f8f8f8;
     .list-item {
       background: #fff;
@@ -299,18 +307,24 @@ export default {
   ::v-deep .x-empty {
     padding-top: 20px;
   }
-  .remark-text {
-    background: #f8f8f8;
-    color: #999999;
-    padding: 20px 10px 0;
-    text-align: right;
-  }
-  .bottom-btn {
-    height: calc(100vh - 553px);
-    background: #f8f8f8;
-    padding: 10px 20px 20px;
-    .cube-btn {
-      background: #027aff;
+  .search-bottom {
+    height: 100px;
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    .remark-text {
+      background: #f8f8f8;
+      color: #999999;
+      padding: 20px 10px 0;
+      text-align: right;
+    }
+    .bottom-btn {
+      height: calc(100vh - 553px);
+      background: #f8f8f8;
+      padding: 10px 20px 20px;
+      .cube-btn {
+        background: #027aff;
+      }
     }
   }
   ::v-deep .cube-radio-ui {

@@ -1,166 +1,177 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-27 15:35:18
- * @LastEditTime: 2021-12-30 19:45:18
+ * @LastEditTime: 2022-01-13 20:17:16
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\project-weekly-page.vue
 -->
 <template>
-  <div class="weekly-page">
-    <div class="page-head">
-      <div class="header">
-        <PageHeadSlot returnRoute="proWeekly">
-          <template v-slot:main>
-            <cube-input
-              v-model="params.searchContent"
-              :class="{ 'br-radius': !params.searchContent.length }"
-              :readonly="true"
-              placeholder="项目名称/编码/BU/项目经理"
-              @focus="goSearchPage"
-            >
-              <x-svg-icon slot="prepend" name="search-icon"></x-svg-icon>
-            </cube-input>
-          </template>
-          <template v-slot:icon>
-            <div class="icon-slot">
-              <div>
-                <div v-if="params.week" class="search-week mr-10" @click="selectWeek">
-                  {{ params.week + '周' }}
+  <div>
+    <div class="weekly-page">
+      <div class="page-head">
+        <div class="header">
+          <PageHeadSlot returnRoute="proWeekly">
+            <template v-slot:main>
+              <cube-input
+                v-model="params.searchContent"
+                :class="{ 'br-radius': !params.searchContent.length }"
+                :readonly="true"
+                placeholder="项目名称/编码/BU/项目经理"
+                @focus="goSearchPage"
+              >
+                <x-svg-icon slot="prepend" name="search-icon"></x-svg-icon>
+              </cube-input>
+            </template>
+            <template v-slot:icon>
+              <div class="icon-slot">
+                <div>
+                  <div v-if="params.week" class="search-week mr-10" @click="selectWeek">
+                    {{ params.week + '周' }}
+                  </div>
+                  <div v-else>
+                    <x-svg-icon
+                      name="calendar-icon"
+                      class="search-filter mr-10"
+                      @click.native="selectWeek"
+                    ></x-svg-icon>
+                  </div>
                 </div>
-                <div v-else>
+                <div>
                   <x-svg-icon
-                    name="calendar-icon"
-                    class="search-filter mr-10"
-                    @click.native="selectWeek"
+                    name="filter-icon"
+                    class="search-filter"
+                    @click.native="filterData"
                   ></x-svg-icon>
                 </div>
               </div>
-              <div>
-                <x-svg-icon
-                  name="filter-icon"
-                  class="search-filter"
-                  @click.native="filterData"
-                ></x-svg-icon>
-              </div>
+            </template>
+          </PageHeadSlot>
+          <div class="header-tab">
+            <div :class="{ 'active-item': !activeTab }" @click="selectTab()">
+              全部
             </div>
-          </template>
-        </PageHeadSlot>
-        <div class="header-tab">
-          <div :class="{ 'active-item': !activeTab }" @click="selectTab()">
-            全部
-          </div>
-          <div
-            :class="{ 'active-item': activeTab === '红灯' }"
-            class="item-tab"
-            @click="selectTab('红灯')"
-          >
-            红灯
             <div
-              v-if="lightNum.redLightTotal"
-              class="item-total"
-              :class="'hw-' + transNum(lightNum.redLightTotal)"
+              :class="{ 'active-item': activeTab === '红灯' }"
+              class="item-tab"
+              @click="selectTab('红灯')"
             >
-              {{ lightNum.redLightTotal > 99 ? '99+' : lightNum.redLightTotal }}
-            </div>
-          </div>
-          <div
-            :class="{ 'active-item': activeTab === '黄灯' }"
-            class="item-tab"
-            @click="selectTab('黄灯')"
-          >
-            黄灯
-            <div
-              v-if="lightNum.yellowLightTotal"
-              class="item-total"
-              :class="'hw-' + transNum(lightNum.yellowLightTotal)"
-            >
-              {{ lightNum.yellowLightTotal > 99 ? '99+' : lightNum.yellowLightTotal }}
-            </div>
-          </div>
-          <div
-            :class="{ 'active-item': activeTab === '绿灯' }"
-            class="item-tab"
-            @click="selectTab('绿灯')"
-          >
-            绿灯
-            <div
-              v-if="lightNum.greenLightTotal"
-              class="item-total"
-              :class="'hw-' + transNum(lightNum.greenLightTotal)"
-            >
-              {{ lightNum.greenLightTotal > 99 ? '99+' : lightNum.greenLightTotal }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <cube-scroll
-      ref="scroll"
-      class="page-main"
-      :data="weeklyList"
-      :options="cubeScrollOptions"
-      @pulling-down="onPullingDown"
-    >
-      <WeeklyList :hideCheckbox="hideCheckbox" @check-data="checkData = $event"></WeeklyList>
-    </cube-scroll>
-    <div class="page-foot">
-      <div v-if="hideCheckbox" class="one-btn">
-        <cube-button @click="handleCheck">
-          批量检查
-        </cube-button>
-      </div>
-      <div v-else class="two-btn">
-        <cube-button class="cancel-btn" @click="handleCheck">
-          取消
-        </cube-button>
-        <cube-button :disabled="!checkData.length" @click="submitCheck">
-          提交
-        </cube-button>
-      </div>
-    </div>
-    <cube-popup ref="myPopup" type="my-popup" position="top" :mask-closable="true">
-      <div class="popup-box">
-        <div>
-          <div class="box-title">
-            项目状态：
-          </div>
-          <div class="box-content">
-            <div v-for="item in selectOptions.statusList" :key="item.value">
+              红灯
               <div
-                class="box-btn"
-                :class="{ 'ac-btn': params.milestoneCode === item.value }"
-                @click="selectChange('status', item.value)"
+                v-if="lightNum.redLightTotal"
+                class="item-total"
+                :class="'hw-' + transNum(lightNum.redLightTotal)"
               >
-                {{ item.label }}
+                {{ lightNum.redLightTotal > 99 ? '99+' : lightNum.redLightTotal }}
               </div>
             </div>
-          </div>
-        </div>
-        <div class="mt-15">
-          <div class="box-title">
-            周报检查：
-          </div>
-          <div class="box-content">
-            <div v-for="item in selectOptions.checkList" :key="item.value">
+            <div
+              :class="{ 'active-item': activeTab === '黄灯' }"
+              class="item-tab"
+              @click="selectTab('黄灯')"
+            >
+              黄灯
               <div
-                class="box-btn"
-                :class="{ 'ac-btn': params.isInspect === item.value }"
-                @click="selectChange('check', item.value)"
+                v-if="lightNum.yellowLightTotal"
+                class="item-total"
+                :class="'hw-' + transNum(lightNum.yellowLightTotal)"
               >
-                {{ item.label }}
+                {{ lightNum.yellowLightTotal > 99 ? '99+' : lightNum.yellowLightTotal }}
+              </div>
+            </div>
+            <div
+              :class="{ 'active-item': activeTab === '绿灯' }"
+              class="item-tab"
+              @click="selectTab('绿灯')"
+            >
+              绿灯
+              <div
+                v-if="lightNum.greenLightTotal"
+                class="item-total"
+                :class="'hw-' + transNum(lightNum.greenLightTotal)"
+              >
+                {{ lightNum.greenLightTotal > 99 ? '99+' : lightNum.greenLightTotal }}
               </div>
             </div>
           </div>
         </div>
-        <div class="bottom-btn">
-          <cube-button @click="resetBtn">
-            重置
-          </cube-button>
-          <cube-button class="confirm-btn" @click="confirmBtn">
-            确定
+      </div>
+      <cube-scroll
+        ref="scroll"
+        class="page-main"
+        :data="weeklyList"
+        :options="cubeScrollOptions"
+        @pulling-down="onPullingDown"
+      >
+        <WeeklyList :hideCheckbox="hideCheckbox" @check-data="checkData = $event"></WeeklyList>
+      </cube-scroll>
+      <div class="page-foot">
+        <div v-if="hideCheckbox" class="one-btn">
+          <cube-button @click="handleCheck">
+            批量检查
           </cube-button>
         </div>
+        <div v-else class="two-btn">
+          <cube-button class="cancel-btn" @click="handleCheck">
+            取消
+          </cube-button>
+          <cube-button :disabled="!checkData.length" @click="submitCheck">
+            提交
+          </cube-button>
+        </div>
+      </div>
+      <cube-popup ref="myPopup" type="my-popup" position="top" :mask-closable="true">
+        <div class="popup-box">
+          <div>
+            <div class="box-title">
+              项目状态：
+            </div>
+            <div class="box-content">
+              <div v-for="item in selectOptions.statusList" :key="item.value">
+                <div
+                  class="box-btn"
+                  :class="{ 'ac-btn': params.milestoneCode === item.value }"
+                  @click="selectChange('status', item.value)"
+                >
+                  {{ item.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-15">
+            <div class="box-title">
+              周报检查：
+            </div>
+            <div class="box-content">
+              <div v-for="item in selectOptions.checkList" :key="item.value">
+                <div
+                  class="box-btn"
+                  :class="{ 'ac-btn': params.isInspect === item.value }"
+                  @click="selectChange('check', item.value)"
+                >
+                  {{ item.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-btn">
+            <cube-button @click="resetBtn">
+              重置
+            </cube-button>
+            <cube-button class="confirm-btn" @click="confirmBtn">
+              确定
+            </cube-button>
+          </div>
+        </div>
+      </cube-popup>
+    </div>
+    <!-- 暂时 1 -->
+    <cube-popup ref="development" type="my-popup">
+      <div
+        style="background-color: rgba(0, 0, 0, 0.8); color: #fff; padding: 20px 40px;"
+        @click="closePopup"
+      >
+        正在开发中...
       </div>
     </cube-popup>
   </div>
@@ -206,11 +217,15 @@ export default {
         milestoneCode: null,
         isInspect: null
       },
+      componentPopup: null,
       pagination: { currentPage: 1, pageSize: 10, total: 0 },
       weeklyList: [],
       checkData: [],
       hideCheckbox: true,
-      returnRoute: null
+      returnRoute: null,
+      // 暂时 2
+      temp: null,
+      count: 0
     }
   },
   computed: {
@@ -232,8 +247,8 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-            txt: '刷新成功'
-          },
+              txt: '刷新成功'
+            },
         scrollbar: false
       }
     }
@@ -255,10 +270,24 @@ export default {
       this.initWeekly()
     }
   },
+  mounted() {
+    // 暂时 3
+    this.count = 0
+    this.temp = this.$refs.development
+    this.temp.show()
+  },
   methods: {
     ...mapMutations('projectWeeklyModule', {
       initWeekly: INIT_WEEKLY
     }),
+    // 暂时 4
+    closePopup() {
+      if (this.count === 3) {
+        this.temp.hide()
+      } else {
+        this.count++
+      }
+    },
     // 加载数据
     loadData() {},
     // 处理数据
@@ -282,8 +311,8 @@ export default {
     },
     // 弹出层
     filterData() {
-      const component = this.$refs.myPopup
-      component.show()
+      this.componentPopup = this.$refs.myPopup
+      this.componentPopup.show()
     },
     // 筛选数据
     selectChange(code, value) {
@@ -300,7 +329,11 @@ export default {
       this.$set(this.params, 'isInspect', null)
     },
     // 确定
-    confirmBtn() {},
+    confirmBtn() {
+      if (this.componentPopup) {
+        this.componentPopup.hide()
+      }
+    },
     // 筛选周数
     selectWeek() {
       this.datePicker = this.$createDatePicker({
@@ -356,6 +389,7 @@ export default {
 .weekly-page {
   height: 100vh;
   background: #f8f8f8;
+  position: relative;
   .page-head {
     background: url('~@/assets/project-bg.png');
     background-repeat: no-repeat;
@@ -431,13 +465,19 @@ export default {
   }
   .page-main {
     background: #fff;
-    height: 510px;
+    height: calc(100vh - 153px);
     overflow: scroll;
   }
+  .weekly-list {
+    height: calc(100vh - 153px);
+  }
   .page-foot {
-    height: calc(100vh - 600px);
+    height: 32px;
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
     background: #fff;
-    padding: 15px;
+    padding: 15px 0;
     .cube-btn {
       color: #fff;
       width: 60%;

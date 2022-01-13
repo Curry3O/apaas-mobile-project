@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-22 16:03:08
- * @LastEditTime: 2022-01-05 16:30:13
+ * @LastEditTime: 2022-01-13 16:48:19
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\project-member.vue
@@ -90,7 +90,7 @@ export default {
         roleId: null
       },
       pullUpLoad: true,
-      pagination: { currentPage: 1, pageSize: 10, total: 0 },
+      pagination: { currentPage: 1, pageSize: 15, total: 0 },
       returnRoute: null
     }
   },
@@ -109,12 +109,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-              threshold: 0,
-              txt: {
-                more: '上滑加载更多',
-                noMore: '没有更多数据了'
-              }
+            threshold: 0,
+            txt: {
+              more: '上滑加载更多',
+              noMore: '没有更多数据了'
             }
+          }
           : false,
         scrollbar: true
       }
@@ -242,7 +242,7 @@ export default {
     text-align: center;
   }
   .member-list {
-    height: 600px;
+    height: calc(100vh - 52px);
     .list-item {
       margin-top: 15px;
       .panel-item {

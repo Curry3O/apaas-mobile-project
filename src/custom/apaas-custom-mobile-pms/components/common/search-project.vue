@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-21 10:57:59
- * @LastEditTime: 2021-12-28 20:10:50
+ * @LastEditTime: 2022-01-13 16:45:22
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-project.vue
@@ -95,7 +95,7 @@ export default {
       historyList: [],
       pullUpLoad: true,
       searchList: [],
-      pagination: { currentPage: 1, pageSize: 20, total: 0 }
+      pagination: { currentPage: 1, pageSize: 30, total: 0 }
     }
   },
   computed: {
@@ -405,7 +405,7 @@ export default {
     }
   }
   .search-content {
-    height: 600px;
+    height: calc(100vh - 58px);
     .panel-item {
       background: #fff;
       display: flex;
