@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-21 10:57:59
- * @LastEditTime: 2022-01-13 16:45:22
+ * @LastEditTime: 2022-01-14 15:20:31
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-project.vue
@@ -83,7 +83,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import { SET_SELECTED_DATA, SET_HOME_REFRESH } from '../../../common/store/project-home.store'
-import { SET_SEARCH_CONTENT, SET_WEEKLY_REFRESH } from '../../../common/store/project-weekly.store'
+import { SET_SEARCH_PARAMS, SET_WEEKLY_REFRESH } from '../../../common/store/project-weekly.store'
 import apis from '../../../common/api'
 export default {
   name: 'SearchProject',
@@ -100,7 +100,8 @@ export default {
   },
   computed: {
     ...mapState({
-      userInfo: (state) => state.authModule.userInfo
+      userInfo: (state) => state.authModule.userInfo,
+      searchParams: (state) => state.projectWeeklyModule.searchParams
     }),
     placeholder() {
       return this.returnRoute === 'proHome' ? '输入项目进行搜索' : '项目名称/编码/BU/项目经理'
@@ -115,12 +116,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-            threshold: 0,
-            txt: {
-              more: '上滑加载更多',
-              noMore: '没有更多数据了'
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
             }
-          }
           : false,
         scrollbar: true
       }
@@ -137,7 +138,7 @@ export default {
       setHomeRefresh: SET_HOME_REFRESH
     }),
     ...mapMutations('projectWeeklyModule', {
-      setSearchContent: SET_SEARCH_CONTENT,
+      setSearchParams: SET_SEARCH_PARAMS,
       setWeeklyRefresh: SET_WEEKLY_REFRESH
     }),
     initData() {
@@ -154,11 +155,12 @@ export default {
         this.getHistoryRecord()
       }
     },
+    // 回车搜索
     searchData() {
       if (this.returnRoute === 'proHome') {
         this.initData()
       } else {
-        this.setSearchContent(this.searchValue)
+        this.setSearchParams({ ...this.searchParams, searchContent: this.searchValue })
         this.setWeeklyRefresh(true)
         this.$router.push({
           path: './apaas-custom-weekly-page',
@@ -169,7 +171,6 @@ export default {
         })
       }
     },
-    recordHistory() {},
     getHistoryRecord() {
       const request = {
         ...apis.GET_WEEKLY_SEARCH_HISTORY,
@@ -263,7 +264,8 @@ export default {
         this.searchValue = value
         this.loadData()
       } else {
-        this.setSearchContent(value)
+        this.setSearchParams({ ...this.searchParams, searchContent: value })
+        this.setWeeklyRefresh(true)
         this.$router.push({
           path: './apaas-custom-weekly-page',
           query: {

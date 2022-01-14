@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2022-01-13 19:34:51
+ * @LastEditTime: 2022-01-14 15:29:34
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\page.vue
@@ -85,12 +85,8 @@
             {{ indexVo.contractType }}
           </cube-button>
           <div v-if="!isEmpty" class="bottom-text mt-10 fs-12">
-            <div class="bz-text">
-              预计验收时间：{{ indexVo.acceptanceDate || '-' }}
-            </div>
-            <div class="bz-text">
-              币种：{{ indexVo.originalCurrency || '-' }}
-            </div>
+            <div class="bz-text"> 预计验收时间：{{ indexVo.acceptanceDate || '-' }} </div>
+            <div class="bz-text"> 币种：{{ indexVo.originalCurrency || '-' }} </div>
           </div>
         </div>
         <div class="bg-radius"></div>
@@ -156,8 +152,8 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-            txt: '刷新成功'
-          },
+              txt: '刷新成功'
+            },
         pullUpLoad: false,
         scrollbar: false
       }
@@ -172,13 +168,13 @@ export default {
         if (this.homeRefresh) {
           this.loadDetailData(this.selectedData.pmsProjectCode)
         } else {
-          this.handleAllData(this.financeModel)
+          this.handleCacheData(this.financeModel)
         }
       }
     } else if (this.returnRoute === 'proMember') {
       if (this.selectedData.pmsProjectCode) {
         this.searchValue = this.selectedData.projectName
-        this.handleAllData(this.financeModel)
+        this.handleCacheData(this.financeModel)
       }
     } else {
       this.initFinance()
@@ -220,7 +216,7 @@ export default {
         .asyncThen(
           (resp) => {
             if (resp.code === 'ok' && resp.data) {
-              this.handleAllData(resp.data, 'Interface')
+              this.handleCacheData(resp.data, 'Interface')
               this.setFinanceModel({
                 indexVo: this.indexVo,
                 grossMarginVo: this.grossMarginVo,
@@ -246,7 +242,8 @@ export default {
           toast.hide()
         })
     },
-    handleAllData(data, type) {
+    // 处理缓存数据
+    handleCacheData(data, type) {
       if (type === 'Interface') {
         const {
           projectFinanceIndexVo,
@@ -301,7 +298,7 @@ export default {
           if (vm.homeRefresh) {
             vm.loadDetailData(vm.selectedData.pmsProjectCode)
           } else {
-            vm.handleAllData(vm.financeModel)
+            vm.handleCacheData(vm.financeModel)
           }
         }
       })
@@ -309,7 +306,7 @@ export default {
       next((vm) => {
         if (vm.selectedData.pmsProjectCode) {
           vm.searchValue = vm.selectedData.projectName
-          vm.handleAllData(vm.financeModel)
+          vm.handleCacheData(vm.financeModel)
         }
       })
     } else {

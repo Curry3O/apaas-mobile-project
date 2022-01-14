@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-27 15:35:18
- * @LastEditTime: 2022-01-13 20:38:07
+ * @LastEditTime: 2022-01-14 17:52:18
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\project-weekly-page.vue
@@ -48,8 +48,15 @@
             </template>
           </PageHeadSlot>
           <div class="header-tab">
-            <div :class="{ 'active-item': !activeTab }" @click="selectTab()">
+            <div :class="{ 'active-item': !activeTab }" class="item-tab" @click="selectTab()">
               全部
+              <div
+                v-if="lightNum.twWeeklyAlreadyTotal"
+                class="item-total"
+                :class="'hw-' + transNum(lightNum.twWeeklyAlreadyTotal)"
+              >
+                {{ lightNum.twWeeklyAlreadyTotal > 99 ? '99+' : lightNum.twWeeklyAlreadyTotal }}
+              </div>
             </div>
             <div
               :class="{ 'active-item': activeTab === '红灯' }"
@@ -97,13 +104,24 @@
         </div>
       </div>
       <cube-scroll
-        ref="scroll"
+        ref="myScroll"
         class="page-main"
         :data="weeklyList"
         :options="cubeScrollOptions"
         @pulling-down="onPullingDown"
+        @pulling-up="onPullingUp"
       >
-        <WeeklyList :hideCheckbox="hideCheckbox" @check-data="checkData = $event"></WeeklyList>
+        <cube-checkbox-group v-model="checkData">
+          <cube-checkbox
+            v-for="item in weeklyList"
+            :key="item.id"
+            :option="item"
+            class="check-group"
+            :class="{ 'hidden-box': hideCheckbox }"
+          >
+            <WeeklyList :weeklyData="item" :hideCheckbox="hideCheckbox"></WeeklyList>
+          </cube-checkbox>
+        </cube-checkbox-group>
       </cube-scroll>
       <div class="page-foot">
         <div v-if="hideCheckbox" class="one-btn">
@@ -143,7 +161,7 @@
               周报检查：
             </div>
             <div class="box-content">
-              <div v-for="item in selectOptions.checkList" :key="item.value">
+              <div v-for="item in selectOptions.isCheck" :key="item.value">
                 <div
                   class="box-btn"
                   :class="{ 'ac-btn': params.isInspect === item.value }"
@@ -178,10 +196,16 @@
 </template>
 
 <script>
+import apis from '../../common/api'
 import PageHeadSlot from '../components/common/page-head-slot.vue'
 import WeeklyList from '../components/pro-weekly/weekly-list.vue'
 import { mapState, mapMutations } from 'vuex'
-import { INIT_WEEKLY } from '../../common/store/project-weekly.store'
+import {
+  SET_SEARCH_PARAMS,
+  SET_WEEKLY_MODEL,
+  SET_WEEKLY_REFRESH,
+  INIT_WEEKLY
+} from '../../common/store/project-weekly.store'
 import { getYearWeek } from '../../common/utils/tool'
 export default {
   name: 'ProjectWeeklyPage',
@@ -194,6 +218,7 @@ export default {
       isEmpty: true,
       activeTab: null,
       lightNum: {
+        twWeeklyAlreadyTotal: 0,
         redLightTotal: 0,
         yellowLightTotal: 0,
         greenLightTotal: 0
@@ -206,7 +231,7 @@ export default {
           { label: '已验收', value: 'YS' },
           { label: '预交付立项', value: 'YLX' }
         ],
-        checkList: [
+        isCheck: [
           { label: '是', value: '是' },
           { label: '否', value: '否' }
         ]
@@ -217,6 +242,7 @@ export default {
         milestoneCode: null,
         isInspect: null
       },
+      pullUpLoad: true,
       componentPopup: null,
       pagination: { currentPage: 1, pageSize: 10, total: 0 },
       weeklyList: [],
@@ -230,7 +256,9 @@ export default {
   },
   computed: {
     ...mapState({
-      searchContent: (state) => state.projectWeeklyModule.searchContent,
+      userInfo: (state) => state.authModule.userInfo,
+      searchParams: (state) => state.projectWeeklyModule.searchParams,
+      weeklyModel: (state) => state.projectWeeklyModule.weeklyModel,
       weeklyRefresh: (state) => state.projectWeeklyModule.weeklyRefresh
     }),
     transNum() {
@@ -249,6 +277,15 @@ export default {
           : {
               txt: '刷新成功'
             },
+        pullUpLoad: this.pullUpLoad
+          ? {
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
+            }
+          : false,
         scrollbar: false
       }
     }
@@ -256,28 +293,32 @@ export default {
   watch: {},
   created() {
     this.returnRoute = this.$route.query.returnRoute
-    this.params.week = getYearWeek(this.$dayjs(new Date()).format('YYYY-MM-DD'))
     if (this.returnRoute === 'searchPro') {
-      if (this.searchContent) {
-        this.params.searchContent = this.searchContent
+      if (this.searchParams.searchContent) {
+        this.params.searchContent = this.searchParams.searchContent
         if (this.weeklyRefresh) {
-          this.loadData()
+          this.initData()
         } else {
-          this.handleAllData()
+          this.handleCacheData()
         }
       }
     } else {
       this.initWeekly()
+      this.params.week = getYearWeek(this.$dayjs(new Date()).format('YYYY-MM-DD'))
+      this.initData()
     }
   },
   mounted() {
     // 暂时 3
-    this.count = 0
-    this.temp = this.$refs.development
-    this.temp.show()
+    // this.count = 0
+    // this.temp = this.$refs.development
+    // this.temp.show()
   },
   methods: {
     ...mapMutations('projectWeeklyModule', {
+      setSearchParams: SET_SEARCH_PARAMS,
+      setWeeklyModel: SET_WEEKLY_MODEL,
+      setWeeklyRefresh: SET_WEEKLY_REFRESH,
       initWeekly: INIT_WEEKLY
     }),
     // 暂时 4
@@ -288,15 +329,112 @@ export default {
         this.count++
       }
     },
+    initData() {
+      this.isEmpty = true
+      this.weeklyList = []
+      this.hideCheckbox = true
+      this.checkData = []
+      this.pagination.currentPage = 1
+      this.pullUpLoad = true
+      this.loadData()
+    },
     // 加载数据
-    loadData() {},
-    // 处理数据
-    handleAllData() {},
+    loadData() {
+      const toast = this.$createToast({
+        txt: 'Loading...',
+        mask: true
+      })
+      toast.show()
+      const request = {
+        ...apis.GET_PROJECT_WEEKLY_REPORT_PRO_APP,
+        params: {
+          userId: this.userInfo.id,
+          healthDegree: this.activeTab,
+          pageIndex: this.pagination.currentPage,
+          pageSize: this.pagination.pageSize,
+          ...this.params
+        }
+      }
+      this.$request(request)
+        .asyncThen(
+          (resp) => {
+            if (resp.code === 'ok' && resp.data) {
+              const { weeklyReportDto, weeklyReportList } = resp.data
+              this.lightNum = { ...weeklyReportDto }
+              this.weeklyList = this.weeklyList.concat(weeklyReportList.result)
+              this.weeklyList.forEach((item) => {
+                item.value = item.id
+                item.disabled = true
+              })
+              this.pagination.total = weeklyReportList.count
+              if (this.pagination.total <= this.weeklyList.length) {
+                this.pullUpLoad = false
+                this.$nextTick(() => {
+                  this.weeklyList.length && this.$refs.myScroll.forceUpdate()
+                })
+              } else {
+                this.pagination.currentPage += 1
+              }
+              this.setSearchParams({
+                currentPage: this.pagination.currentPage,
+                activeTab: this.activeTab,
+                ...this.params
+              })
+              this.setWeeklyModel({
+                weeklyReportDto,
+                weeklyReportList
+              })
+              this.isEmpty = false
+              toast.hide()
+            } else {
+              toast.hide()
+              this.$createToast({
+                txt: resp.message,
+                type: 'error'
+              }).show()
+            }
+          },
+          () => {
+            toast.hide()
+          }
+        )
+        .asyncErrorCatch(() => {
+          toast.hide()
+        })
+    },
+    // 展示缓存数据
+    handleCacheData() {
+      // 查询参数
+      const {
+        currentPage,
+        activeTab,
+        searchContent,
+        week,
+        milestoneCode,
+        isInspect
+      } = this.searchParams
+      this.pagination.currentPage = currentPage
+      this.activeTab = activeTab
+      this.params = {
+        searchContent: searchContent,
+        week: week,
+        milestoneCode: milestoneCode,
+        isInspect: isInspect
+      }
+      // 查询数据
+      const { weeklyReportDto, weeklyReportList } = this.weeklyModel
+      this.lightNum = { ...weeklyReportDto }
+      this.weeklyList = weeklyReportList.result
+      this.pagination.total = weeklyReportList.count
+      this.isEmpty = false
+    },
     // 下拉刷新
     onPullingDown() {
-      if (this.params.searchContent) {
-        this.loadData()
-      }
+      this.initData()
+    },
+    // 上拉加载
+    onPullingUp() {
+      this.loadData()
     },
     // 搜索
     goSearchPage() {
@@ -332,11 +470,14 @@ export default {
     confirmBtn() {
       if (this.componentPopup) {
         this.componentPopup.hide()
+        this.initData()
       }
     },
     // 筛选周数
     selectWeek() {
-      this.componentPopup.hide()
+      if (this.componentPopup) {
+        this.componentPopup.hide()
+      }
       this.datePicker = this.$createDatePicker({
         title: '',
         value: new Date(),
@@ -347,18 +488,24 @@ export default {
     },
     selectHandle(date) {
       this.params.week = getYearWeek(this.$dayjs(new Date(date)).format('YYYY-MM-DD'))
+      this.initData()
     },
     cancelHandle() {
       this.$set(this.params, 'week', null)
+      this.initData()
     },
     // 筛选健康度
     selectTab(tab) {
       this.activeTab = tab
+      this.initData()
     },
     // 批量检查
     handleCheck() {
       this.checkData = []
       this.hideCheckbox = !this.hideCheckbox
+      this.weeklyList.forEach((item) => {
+        item.disabled = this.hideCheckbox
+      })
     },
     // 提交批量检查
     submitCheck() {
@@ -373,7 +520,7 @@ export default {
           if (vm.weeklyRefresh) {
             vm.loadData()
           } else {
-            vm.handleAllData()
+            vm.handleCacheData()
           }
         }
       })
@@ -468,9 +615,14 @@ export default {
     background: #fff;
     height: calc(100vh - 153px);
     overflow: scroll;
-  }
-  .weekly-list {
-    height: calc(100vh - 153px);
+    .check-group {
+      padding: 0 !important;
+    }
+    .hidden-box {
+      ::v-deep .cube-checkbox-ui {
+        display: none;
+      }
+    }
   }
   .page-foot {
     height: 32px;
@@ -599,6 +751,31 @@ export default {
   }
   .mb-5 {
     margin-bottom: 5px;
+  }
+  ::v-deep .cube-checkbox-ui {
+    position: absolute;
+    top: 16px;
+    left: 15px;
+  }
+  ::v-deep .cube-checkbox-label {
+    width: 100%;
+    line-height: 26px;
+  }
+  ::v-deep .cube-btn-outline:after {
+    content: none;
+  }
+  ::v-deep .cube-radio-ui {
+    -webkit-text-stroke-width: 0px;
+  }
+  ::v-deep .border-bottom-1px:after,
+  .border-bottom-1px:before,
+  .border-left-1px:after,
+  .border-left-1px:before,
+  .border-right-1px:after,
+  .border-right-1px:before,
+  .border-top-1px:after,
+  .border-top-1px:before {
+    content: none;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-13 20:46:20
- * @LastEditTime: 2021-12-29 18:30:22
+ * @LastEditTime: 2022-01-14 18:10:01
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\base-info.vue
@@ -25,13 +25,7 @@
             </div>
           </div>
           <div class="box-amount fs-18 fw-600">
-            {{
-              item.value || item.value === 0
-                ? item.isMoney
-                  ? transform(item.value)
-                  : item.value + '%'
-                : '-'
-            }}
+            {{ transform(item.value, item.isMoney) }}
           </div>
         </div>
       </div>
@@ -80,7 +74,7 @@
                     {{ item.data[0].name }}
                   </div>
                   <div class="text-value">
-                    {{ item.data[0].noValue ? '-' : transform(item.data[0].value) }}
+                    {{ item.data[0].noValue ? '-' : transform(item.data[0].value, true) }}
                   </div>
                 </div>
                 <div class="text-box">
@@ -88,7 +82,7 @@
                     {{ item.data[1].name }}
                   </div>
                   <div class="text-value">
-                    {{ item.data[0].noValue ? '-' : transform(item.data[1].value) }}
+                    {{ item.data[0].noValue ? '-' : transform(item.data[1].value, true) }}
                   </div>
                 </div>
               </div>
@@ -279,13 +273,22 @@ export default {
   },
   computed: {
     transform() {
-      return (value) => {
-        if (value) {
-          return '¥' + formatMoney(value)
-        } else if (value === 0) {
-          return '¥' + '0.00'
+      return (value, isMoney) => {
+        if (isMoney) {
+          if (value) {
+            return '¥' + formatMoney(value)
+          } else if (value === 0) {
+            return '¥' + '0.00'
+          } else {
+            return '-'
+          }
+        } else {
+          if (value) {
+            return value + '%'
+          } else {
+            return '-'
+          }
         }
-        return '-'
       }
     }
   },
