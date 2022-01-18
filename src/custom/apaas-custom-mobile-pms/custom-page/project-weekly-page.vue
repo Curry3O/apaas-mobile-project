@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-27 15:35:18
- * @LastEditTime: 2022-01-14 17:52:18
+ * @LastEditTime: 2022-01-18 16:59:48
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\project-weekly-page.vue
@@ -103,40 +103,47 @@
           </div>
         </div>
       </div>
-      <cube-scroll
-        ref="myScroll"
-        class="page-main"
-        :data="weeklyList"
-        :options="cubeScrollOptions"
-        @pulling-down="onPullingDown"
-        @pulling-up="onPullingUp"
-      >
-        <cube-checkbox-group v-model="checkData">
-          <cube-checkbox
-            v-for="item in weeklyList"
-            :key="item.id"
-            :option="item"
-            class="check-group"
-            :class="{ 'hidden-box': hideCheckbox }"
-          >
-            <WeeklyList :weeklyData="item" :hideCheckbox="hideCheckbox"></WeeklyList>
-          </cube-checkbox>
-        </cube-checkbox-group>
-      </cube-scroll>
-      <div class="page-foot">
-        <div v-if="hideCheckbox" class="one-btn">
-          <cube-button @click="handleCheck">
-            批量检查
-          </cube-button>
+      <div v-if="weeklyList.length">
+        <cube-scroll
+          ref="myScroll"
+          class="page-main"
+          :data="weeklyList"
+          :options="cubeScrollOptions"
+          @pulling-down="onPullingDown"
+          @pulling-up="onPullingUp"
+        >
+          <cube-checkbox-group v-model="checkData">
+            <cube-checkbox
+              v-for="item in weeklyList"
+              :key="item.id"
+              :option="item"
+              class="check-group"
+              :class="{ 'hidden-box': hideCheckbox }"
+            >
+              <WeeklyList :weeklyData="item" :hideCheckbox="hideCheckbox"></WeeklyList>
+            </cube-checkbox>
+          </cube-checkbox-group>
+        </cube-scroll>
+        <div class="page-foot">
+          <div v-if="hideCheckbox" class="one-btn">
+            <cube-button @click="handleCheck">
+              批量检查
+            </cube-button>
+          </div>
+          <div v-else class="two-btn">
+            <cube-button class="cancel-btn" @click="handleCheck">
+              取消
+            </cube-button>
+            <cube-button :disabled="!checkData.length" @click="submitCheck">
+              提交
+            </cube-button>
+          </div>
         </div>
-        <div v-else class="two-btn">
-          <cube-button class="cancel-btn" @click="handleCheck">
-            取消
-          </cube-button>
-          <cube-button :disabled="!checkData.length" @click="submitCheck">
-            提交
-          </cube-button>
-        </div>
+      </div>
+      <div class="table-empty" v-if="!weeklyList.length && hiddenEmpty">
+        <x-empty>
+          <span class="empty-text">暂无数据</span>
+        </x-empty>
       </div>
       <cube-popup ref="myPopup" type="my-popup" position="top" :mask-closable="true">
         <div class="popup-box">
@@ -216,6 +223,7 @@ export default {
   data() {
     return {
       isEmpty: true,
+      hiddenEmpty: false,
       activeTab: null,
       lightNum: {
         twWeeklyAlreadyTotal: 0,
@@ -294,13 +302,17 @@ export default {
   created() {
     this.returnRoute = this.$route.query.returnRoute
     if (this.returnRoute === 'searchPro') {
-      if (this.searchParams.searchContent) {
-        this.params.searchContent = this.searchParams.searchContent
-        if (this.weeklyRefresh) {
-          this.initData()
-        } else {
-          this.handleCacheData()
+      this.params.searchContent = this.searchParams.searchContent
+      if (this.weeklyRefresh) {
+        this.params = {
+          searchContent: this.searchParams.searchContent,
+          week: this.searchParams.week,
+          milestoneCode: this.searchParams.milestoneCode,
+          isInspect: this.searchParams.isInspect
         }
+        this.initData()
+      } else {
+        this.handleCacheData()
       }
     } else {
       this.initWeekly()
@@ -331,6 +343,7 @@ export default {
     },
     initData() {
       this.isEmpty = true
+      this.hiddenEmpty = false
       this.weeklyList = []
       this.hideCheckbox = true
       this.checkData = []
@@ -362,11 +375,13 @@ export default {
               const { weeklyReportDto, weeklyReportList } = resp.data
               this.lightNum = { ...weeklyReportDto }
               this.weeklyList = this.weeklyList.concat(weeklyReportList.result)
-              this.weeklyList.forEach((item) => {
+              this.weeklyList.forEach((item, index) => {
                 item.value = item.id
                 item.disabled = true
+                item.showWrap = index !== this.weeklyList.length - 1
               })
               this.pagination.total = weeklyReportList.count
+              this.hiddenEmpty = true
               if (this.pagination.total <= this.weeklyList.length) {
                 this.pullUpLoad = false
                 this.$nextTick(() => {
@@ -443,6 +458,7 @@ export default {
         path: './apaas-custom-search-project',
         query: {
           ...this.$route.query,
+          searchContent: this.params.searchContent,
           returnRoute: 'proWeekly'
         }
       })
@@ -481,16 +497,20 @@ export default {
       this.datePicker = this.$createDatePicker({
         title: '',
         value: new Date(),
+        maskClosable: false,
+        cancelTxt: '重置',
         onSelect: this.selectHandle,
-        onCancel: this.cancelHandle
+        onCancel: this.resetHandle
       })
       this.datePicker.show()
     },
+    // 选中
     selectHandle(date) {
       this.params.week = getYearWeek(this.$dayjs(new Date(date)).format('YYYY-MM-DD'))
       this.initData()
     },
-    cancelHandle() {
+    // 重置
+    resetHandle() {
       this.$set(this.params, 'week', null)
       this.initData()
     },
@@ -612,7 +632,7 @@ export default {
     }
   }
   .page-main {
-    background: #fff;
+    background: #efeff4;
     height: calc(100vh - 153px);
     overflow: scroll;
     .check-group {
@@ -666,6 +686,13 @@ export default {
       }
     }
   }
+  .table-empty {
+    height: calc(100vh - 153px);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   ::v-deep .cube-popup {
     top: 90px;
   }
@@ -683,12 +710,12 @@ export default {
       margin-top: 5px;
       flex-flow: wrap;
       .box-btn {
-        width: 70px;
-        height: 20px;
+        width: 82px;
+        height: 24px;
         font-size: 12px;
         text-align: center;
         margin: 5px;
-        line-height: 20px;
+        line-height: 24px;
         border: 1px solid #dcdfe6;
         border-radius: 5px;
       }
@@ -745,6 +772,9 @@ export default {
   }
   .mr-10 {
     margin-right: 10px;
+  }
+  .mt-5 {
+    margin-top: 5px;
   }
   .mt-15 {
     margin-top: 15px;

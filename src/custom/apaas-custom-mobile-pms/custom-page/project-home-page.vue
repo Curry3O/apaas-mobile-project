@@ -85,8 +85,12 @@
             {{ indexVo.contractType }}
           </cube-button>
           <div v-if="!isEmpty" class="bottom-text mt-10 fs-12">
-            <div class="bz-text"> 预计验收时间：{{ indexVo.acceptanceDate || '-' }} </div>
-            <div class="bz-text"> 币种：{{ indexVo.originalCurrency || '-' }} </div>
+            <div class="bz-text">
+              预计验收时间：{{ indexVo.acceptanceDate || '-' }}
+            </div>
+            <div class="bz-text">
+              币种：{{ indexVo.originalCurrency || '-' }}
+            </div>
           </div>
         </div>
         <div class="bg-radius"></div>
@@ -152,8 +156,8 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-              txt: '刷新成功'
-            },
+            txt: '刷新成功'
+          },
         pullUpLoad: false,
         scrollbar: false
       }

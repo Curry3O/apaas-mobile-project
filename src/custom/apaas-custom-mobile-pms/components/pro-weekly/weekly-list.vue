@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-29 20:02:36
- * @LastEditTime: 2022-01-14 17:45:48
+ * @LastEditTime: 2022-01-18 15:34:45
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-weekly\week-list.vue
@@ -95,7 +95,7 @@
         </cube-button>
       </div>
     </div>
-    <div class="item-wrap"></div>
+    <div v-if="weeklyData.showWrap" class="item-wrap"></div>
   </div>
 </template>
 
@@ -310,7 +310,7 @@ export default {
       }
     }
     .item-opt {
-      margin: 5px 0 12px;
+      margin-top: 5px;
       text-align: right;
       .opt-btn {
         color: #fff;

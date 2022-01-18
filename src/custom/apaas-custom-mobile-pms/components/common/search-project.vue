@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-21 10:57:59
- * @LastEditTime: 2022-01-14 15:20:31
+ * @LastEditTime: 2022-01-18 16:49:31
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-project.vue
@@ -12,8 +12,8 @@
       <div class="ph-input">
         <cube-input
           v-model="searchValue"
+          v-focus
           :clearable="true"
-          :autofocus="true"
           :class="{ 'br-radius': !hasSearchValue }"
           :placeholder="placeholder"
           @input="valueChange"
@@ -26,7 +26,10 @@
         取消
       </div>
     </div>
-    <div v-if="!hasSearchValue && historyList.length" class="history-content">
+    <div
+      v-if="(!hasSearchValue && historyList.length) || returnRoute === 'proWeekly'"
+      class="history-content"
+    >
       <div class="hc-head">
         <div class="hc-title">
           历史搜索
@@ -43,7 +46,7 @@
         </div>
       </div>
     </div>
-    <div v-if="hasSearchValue" class="search-content">
+    <div v-if="hasSearchValue && returnRoute !== 'proWeekly'" class="search-content">
       <cube-scroll
         v-if="searchList.length"
         ref="myScroll"
@@ -130,6 +133,9 @@ export default {
   watch: {},
   created() {
     this.returnRoute = this.$route.query.returnRoute
+    if (this.$route.query.searchContent) {
+      this.searchValue = this.$route.query.searchContent
+    }
     this.getHistoryRecord()
   },
   methods: {
@@ -224,12 +230,21 @@ export default {
       })
     },
     goBack() {
+      let path = null
       if (this.returnRoute === 'proHome') {
+        path = './apaas-custom-financial-norm'
         this.setHomeRefresh(false)
       } else {
+        path = './apaas-custom-weekly-page'
         this.setWeeklyRefresh(false)
       }
-      this.$router.go(-1)
+      this.$router.push({
+        path: path,
+        query: {
+          ...this.$route.query,
+          returnRoute: 'searchPro'
+        }
+      })
     },
     deleteConfirm() {
       this.$createDialog({

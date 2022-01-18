@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2021-12-29 18:06:27
+ * @LastEditTime: 2022-01-18 16:33:30
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-custom-apaas-mobile-pms\src\custom\apaas-custom-apaas-mobile-pms\index.js
@@ -33,6 +33,13 @@ const install = function(Vue) {
   Vue.prototype.$store.registerModule('addMemberModule', addMemberStore)
   Vue.prototype.$store.registerModule('projectHomeModule', projectHomeStore)
   Vue.prototype.$store.registerModule('projectWeeklyModule', projectWeeklyStore)
+  Vue.directive('focus', {
+    // 输入框自动聚焦指令
+    inserted: function(el) {
+      // 聚焦元素
+      el.querySelector('input').focus()
+    }
+  })
   // 安装表单部件
   // 注册自开发表单组件
   if (customFormComponentList && Array.isArray(customFormComponentList)) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-13 20:46:20
- * @LastEditTime: 2022-01-14 18:10:01
+ * @LastEditTime: 2022-01-18 10:31:27
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\base-info.vue
@@ -34,7 +34,7 @@
     <div class="pg-title">
       <div class="pg-line"></div>
       <div class="ml-10 fs-16 fw-600">
-        综合评价
+        健康情况
       </div>
     </div>
     <div class="page-evaluate">
@@ -154,7 +154,7 @@ export default {
           code: 'mrdPlanGrossProfit',
           value: null,
           isMoney: false,
-          url: actualCostUrl,
+          url: planProfitUrl,
           bgColor: 'rgb(255, 247, 229)'
         },
         {
@@ -162,7 +162,7 @@ export default {
           code: 'totalContractAmount',
           value: null,
           isMoney: true,
-          url: planProfitUrl,
+          url: actualCostUrl,
           bgColor: 'rgb(253, 237, 231)'
         },
         {
