@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-27 15:35:18
- * @LastEditTime: 2022-01-18 16:59:48
+ * @LastEditTime: 2022-01-19 19:31:18
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\project-weekly-page.vue
@@ -120,7 +120,11 @@
               class="check-group"
               :class="{ 'hidden-box': hideCheckbox }"
             >
-              <WeeklyList :weeklyData="item" :hideCheckbox="hideCheckbox"></WeeklyList>
+              <WeeklyList
+                :weeklyData="item"
+                :hideCheckbox="hideCheckbox"
+                @show-popup="openPopup($event)"
+              ></WeeklyList>
             </cube-checkbox>
           </cube-checkbox-group>
         </cube-scroll>
@@ -190,6 +194,11 @@
         </div>
       </cube-popup>
     </div>
+    <InspectPopup
+      ref="inspectPopup"
+      :weeklyReports="weeklyReports"
+      @refresh-data="initData()"
+    ></InspectPopup>
     <!-- 暂时 1 -->
     <cube-popup ref="development" type="my-popup">
       <div
@@ -206,6 +215,7 @@
 import apis from '../../common/api'
 import PageHeadSlot from '../components/common/page-head-slot.vue'
 import WeeklyList from '../components/pro-weekly/weekly-list.vue'
+import InspectPopup from '../components/pro-weekly/inspect-popup.vue'
 import { mapState, mapMutations } from 'vuex'
 import {
   SET_SEARCH_PARAMS,
@@ -218,7 +228,8 @@ export default {
   name: 'ProjectWeeklyPage',
   components: {
     PageHeadSlot,
-    WeeklyList
+    WeeklyList,
+    InspectPopup
   },
   data() {
     return {
@@ -250,6 +261,7 @@ export default {
         milestoneCode: null,
         isInspect: null
       },
+      weeklyReports: [],
       pullUpLoad: true,
       componentPopup: null,
       pagination: { currentPage: 1, pageSize: 10, total: 0 },
@@ -377,7 +389,6 @@ export default {
               this.weeklyList = this.weeklyList.concat(weeklyReportList.result)
               this.weeklyList.forEach((item, index) => {
                 item.value = item.id
-                item.disabled = true
                 item.showWrap = index !== this.weeklyList.length - 1
               })
               this.pagination.total = weeklyReportList.count
@@ -450,6 +461,11 @@ export default {
     // 上拉加载
     onPullingUp() {
       this.loadData()
+    },
+    // 批量检查
+    openPopup(e) {
+      this.weeklyReports = e
+      this.$refs.inspectPopup.showPopup()
     },
     // 搜索
     goSearchPage() {
@@ -524,12 +540,13 @@ export default {
       this.checkData = []
       this.hideCheckbox = !this.hideCheckbox
       this.weeklyList.forEach((item) => {
-        item.disabled = this.hideCheckbox
+        item.disabled = item.whetherInspection === '是'
       })
     },
     // 提交批量检查
     submitCheck() {
-      console.log(this.checkData)
+      this.weeklyReports = this.weeklyList.filter((item) => this.checkData.includes(item.id))
+      this.$refs.inspectPopup.showPopup()
     }
   }
   /* beforeRouteEnter(to, from, next) {
@@ -730,9 +747,9 @@ export default {
       justify-content: space-around;
       .cube-btn {
         width: 20%;
-        height: 24px;
-        line-height: 24px;
-        border-radius: 15px;
+        height: 26px;
+        line-height: 26px;
+        border-radius: 5px;
         font-size: 12px;
       }
       .confirm-btn {

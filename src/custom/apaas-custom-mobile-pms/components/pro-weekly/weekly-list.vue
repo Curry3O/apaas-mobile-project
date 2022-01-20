@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-29 20:02:36
- * @LastEditTime: 2022-01-18 15:34:45
+ * @LastEditTime: 2022-01-19 19:10:25
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-weekly\week-list.vue
@@ -39,7 +39,7 @@
             </cube-button>
           </div>
         </div>
-        <div class="content-img"></div>
+        <div v-if="weeklyData.whetherInspection === '是'" class="content-img"></div>
       </div>
       <div class="item-detail">
         <div class="detail-light">
@@ -87,11 +87,26 @@
         </div>
       </div>
       <div class="item-opt">
-        <cube-button class="opt-btn" :outline="true" :inline="true">
+        <cube-button
+          v-if="weeklyData.whetherInspection === '否'"
+          class="opt-btn"
+          :outline="true"
+          :inline="true"
+          @click="inspectBtn"
+        >
           检查通过
         </cube-button>
-        <cube-button class="opt-btn" :outline="true" :inline="true">
+        <cube-button
+          v-if="weeklyData.canEdit"
+          class="opt-btn"
+          :outline="true"
+          :inline="true"
+          @click="editBtn"
+        >
           编辑
+        </cube-button>
+        <cube-button class="opt-btn" :outline="true" :inline="true" @click="detailBtn">
+          详情
         </cube-button>
       </div>
     </div>
@@ -173,7 +188,20 @@ export default {
   },
   watch: {},
   created() {},
-  methods: {}
+  methods: {
+    // 详情
+    detailBtn() {
+      console.log(333)
+    },
+    // 检查通过
+    inspectBtn() {
+      this.$emit('show-popup', [this.weeklyData])
+    },
+    // 编辑
+    editBtn() {
+      console.log(2222)
+    }
+  }
 }
 </script>
 
@@ -182,6 +210,7 @@ export default {
   padding: 0 !important;
   .item-main {
     padding: 0 15px !important;
+    position: relative;
     .item-head {
       display: flex;
       align-items: center;
@@ -310,8 +339,13 @@ export default {
       }
     }
     .item-opt {
-      margin-top: 5px;
+      // margin-top: 5px;
+      position: absolute;
+      width: 90%;
       text-align: right;
+      bottom: -30px;
+      right: 15px;
+      z-index: 99;
       .opt-btn {
         color: #fff;
         background: linear-gradient(#33e585, #00a84d);
@@ -326,7 +360,7 @@ export default {
     }
   }
   .item-wrap {
-    margin-top: 10px;
+    margin-top: 40px;
     width: 100%;
     height: 10px;
     background: #efeff4;
