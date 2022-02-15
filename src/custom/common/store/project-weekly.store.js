@@ -1,12 +1,11 @@
 /*
  * @Author: your name
  * @Date: 2021-12-27 15:24:02
- * @LastEditTime: 2022-01-14 12:07:52
+ * @LastEditTime: 2022-01-28 21:33:58
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\common\store\project-weekly.store.js
  */
-// import TypeUtil from '@/util/type.util'
 
 export const SET_SEARCH_PARAMS = 'SET_SEARCH_PARAMS'
 export const SET_WEEKLY_MODEL = 'SET_WEEKLY_MODEL'

@@ -30,6 +30,34 @@
         "title": "周报首页"
       }
     },
+    "apaas-custom-weekly-details": {
+      "name": "apaas-custom-weekly-details",
+      "path": "apaas-custom-weekly-details",
+      "meta": {
+        "title": "周报详情"
+      }
+    },
+    "apaas-custom-add-coordinate": {
+      "name": "apaas-custom-add-coordinate",
+      "path": "apaas-custom-add-coordinate",
+      "meta": {
+        "title": "新增协调事项"
+      }
+    },
+    "apaas-custom-add-action-item": {
+      "name": "apaas-custom-add-action-item",
+      "path": "apaas-custom-add-action-item",
+      "meta": {
+        "title": "新增行动项"
+      }
+    },
+    "apaas-custom-add-check-item": {
+      "name": "apaas-custom-add-check-item",
+      "path": "apaas-custom-add-check-item",
+      "meta": {
+        "title": "新增周报检查"
+      }
+    },
     "apaas-custom-search-project": {
       "name": "apaas-custom-search-project",
       "path": "apaas-custom-search-project",
@@ -49,6 +77,13 @@
       "path": "apaas-custom-search-role",
       "meta": {
         "title": "搜索角色页面"
+      }
+    },
+    "apaas-custom-search-department": {
+      "name": "apaas-custom-search-department",
+      "path": "apaas-custom-search-department",
+      "meta": {
+        "title": "搜索部门页面"
       }
     }
   },

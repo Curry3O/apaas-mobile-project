@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-24 16:48:00
- * @LastEditTime: 2021-12-28 20:19:46
+ * @LastEditTime: 2022-01-27 18:10:52
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\add-member.vue
@@ -23,25 +23,38 @@
     >
       <cube-form-group>
         <cube-form-item :field="fields[0]">
-          <div class="list-item" @click="selectMember">
-            <PersonTag
-              v-if="model.userName"
-              tagKey="userName"
-              class="list-value"
-              :personName="model.userName"
-            ></PersonTag>
-            <div v-if="model.userName" class="list-icon">
-              <x-svg-icon name="clear-icon" @click.native.stop="clearMember"></x-svg-icon>
+          <div @click="selectMember">
+            <div v-if="model.userName" class="list-item">
+              <PersonTag
+                tagKey="userName"
+                class="list-value"
+                :personName="model.userName"
+              ></PersonTag>
+              <x-svg-icon
+                name="clear-icon"
+                class="list-icon"
+                @click.native.stop="clearMember"
+              ></x-svg-icon>
+            </div>
+            <div v-else class="list-placeholder">
+              请选择项目成员
             </div>
           </div>
         </cube-form-item>
         <cube-form-item :field="fields[1]">
-          <div class="list-item" @click="selectRole">
-            <div class="list-value">
-              {{ model.roleName }}
+          <div @click="selectRole">
+            <div v-if="model.roleName" class="list-item">
+              <div class="list-value">
+                {{ model.roleName }}
+              </div>
+              <x-svg-icon
+                name="clear-icon"
+                class="list-icon"
+                @click.native.stop="clearRole"
+              ></x-svg-icon>
             </div>
-            <div v-if="model.roleName" class="list-icon">
-              <x-svg-icon name="clear-icon" @click.native.stop="clearRole"></x-svg-icon>
+            <div v-else class="list-placeholder">
+              请选择项目角色
             </div>
           </div>
         </cube-form-item>
@@ -82,9 +95,6 @@ export default {
         {
           modelKey: 'userName',
           label: '项目成员',
-          props: {
-            placeholder: '请选择项目成员'
-          },
           rules: {
             required: true
           },
@@ -93,9 +103,6 @@ export default {
         {
           modelKey: 'roleName',
           label: '项目角色',
-          props: {
-            placeholder: '请选择项目角色'
-          },
           rules: {
             required: true
           },
@@ -267,6 +274,11 @@ export default {
         height: 18px !important;
       }
     }
+  }
+  .list-placeholder {
+    width: 100%;
+    color: #b8b8b8;
+    font-size: 14px;
   }
   .submit-btn {
     background: #f8f8f8;

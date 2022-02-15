@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-23 17:45:00
- * @LastEditTime: 2021-12-29 15:46:58
+ * @LastEditTime: 2022-02-14 15:06:14
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /x-product-h5-workspace/packages/xdap-h5/src/cube-ui.js
@@ -18,7 +18,7 @@ import {
   // basic
   Button,
   // Loading,
-  // Tip,
+  Tip,
   // Toolbar,
   TabBar,
   TabPanels,
@@ -33,7 +33,7 @@ import {
   Select,
   // Switch,
   // Rate,
-  // Validator,
+  Validator,
   Upload,
   Form,
   // // popup
@@ -61,7 +61,7 @@ import {
 // Vue.use(Style)
 Vue.use(Button)
 // Vue.use(Loading)
-// Vue.use(Tip)
+Vue.use(Tip)
 // Vue.use(Toolbar)
 Vue.use(TabBar)
 Vue.use(TabPanels)
@@ -75,7 +75,12 @@ Vue.use(Textarea)
 Vue.use(Select)
 // Vue.use(Switch)
 // Vue.use(Rate)
-// Vue.use(Validator)
+Vue.use(Validator)
+Validator.addRule(
+  'money',
+  (val, config, type) => typeof !config && /^-?(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/i.test(val)
+)
+Validator.addMessage('money', '请输入正确的金钱格式，最多保留两位小数')
 Vue.use(Upload)
 Vue.use(Form)
 Vue.use(Popup)

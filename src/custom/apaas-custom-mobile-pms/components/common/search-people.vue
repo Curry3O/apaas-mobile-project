@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-23 14:59:21
- * @LastEditTime: 2022-01-13 17:01:52
+ * @LastEditTime: 2022-02-11 13:56:38
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-people.vue
@@ -78,6 +78,9 @@
 import apis from '../../../common/api'
 import { mapState, mapMutations } from 'vuex'
 import { SET_MEMBER_MODEL } from '../../../common/store/add-member.store.js'
+import { SET_COORDINATE_MODEL } from '../../../common/store/add-coordinate.store'
+import { SET_ACTION_ITEM_MODEL } from '../../../common/store/add-action-item.store'
+import { SET_CHECK_ITEM_MODEL } from '../../../common/store/add-check-item.store'
 export default {
   name: 'SearchPeople',
   components: {},
@@ -96,7 +99,10 @@ export default {
   },
   computed: {
     ...mapState({
-      memberModel: (state) => state.addMemberModule.memberModel
+      memberModel: (state) => state.addMemberModule.memberModel,
+      coordinateModel: (state) => state.addCoordinateModule.coordinateModel,
+      actionItemModel: (state) => state.addActionItemModule.actionItemModel,
+      checkItemModel: (state) => state.addCheckItemModule.checkItemModel
     }),
     hasSearchValue() {
       return this.searchValue.length
@@ -112,12 +118,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-            threshold: 0,
-            txt: {
-              more: '上滑加载更多',
-              noMore: '没有更多数据了'
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
             }
-          }
           : false,
         scrollbar: true
       }
@@ -130,6 +136,15 @@ export default {
   methods: {
     ...mapMutations('addMemberModule', {
       setMemberModel: SET_MEMBER_MODEL
+    }),
+    ...mapMutations('addCoordinateModule', {
+      setCoordinateModel: SET_COORDINATE_MODEL
+    }),
+    ...mapMutations('addActionItemModule', {
+      setActionItemModel: SET_ACTION_ITEM_MODEL
+    }),
+    ...mapMutations('addCheckItemModule', {
+      setCheckItemModel: SET_CHECK_ITEM_MODEL
     }),
     initData() {
       this.searchList = []
@@ -197,8 +212,36 @@ export default {
             roleName: this.memberModel.roleName,
             roleId: this.memberModel.roleId
           })
-        } else {
-          path = './apaas-custom-project-weekly'
+        } else if (this.returnRoute === 'addCoordinate') {
+          path = './apaas-custom-add-coordinate'
+          this.setCoordinateModel({
+            coordinateMatter: this.coordinateModel.coordinateMatter,
+            coordinateDepartment: this.coordinateModel.coordinateDepartment,
+            coordinateDepartmentId: this.coordinateModel.coordinateDepartmentId,
+            expectCompleteTime: this.coordinateModel.expectCompleteTime,
+            coordinatePeople: username,
+            coordinatePeopleId: id,
+            pkId: this.coordinateModel.pkId
+          })
+        } else if (this.returnRoute === 'addActionItem') {
+          path = './apaas-custom-add-action-item'
+          this.setActionItemModel({
+            personInChargeName: username,
+            personInCharge: id,
+            plannedCompletionTime: this.actionItemModel.plannedCompletionTime,
+            title: this.actionItemModel.title,
+            content: this.actionItemModel.content,
+            pkId: this.actionItemModel.pkId
+          })
+        } else if (this.returnRoute === 'addCheckItem') {
+          path = './apaas-custom-add-check-item'
+          this.setCheckItemModel({
+            personInChargeName: username,
+            personInCharge: id,
+            scheduledStartTime: this.checkItemModel.scheduledStartTime,
+            estimatedMpletionTime: this.checkItemModel.estimatedMpletionTime,
+            problem: this.checkItemModel.problem
+          })
         }
         this.$router.push({
           path: path,
@@ -349,6 +392,9 @@ export default {
   }
   ::v-deep .cube-radio-ui {
     -webkit-text-stroke-width: 0px;
+  }
+  ::v-deep .cube-radio_selected .cube-radio-ui {
+    background-color: #0274ff;
   }
 }
 </style>

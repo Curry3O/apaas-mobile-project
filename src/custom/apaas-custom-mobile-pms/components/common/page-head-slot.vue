@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 15:44:06
- * @LastEditTime: 2021-12-30 10:30:27
+ * @LastEditTime: 2022-02-11 19:13:11
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\page-head-slot.vue
@@ -29,6 +29,10 @@
 export default {
   name: 'PageHeadSlot',
   props: {
+    noBack: {
+      type: Boolean,
+      default: false
+    },
     showLeft: {
       type: Boolean,
       default: true
@@ -52,6 +56,10 @@ export default {
   },
   methods: {
     goBack() {
+      if (this.noBack) {
+        this.$emit('go-back')
+        return
+      }
       if (this.backPath) {
         // 指定返回页面
         this.$router.push({

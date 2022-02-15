@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-18 19:55:22
- * @LastEditTime: 2022-01-19 19:23:47
+ * @LastEditTime: 2022-02-13 16:32:54
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/inspect-popup.vue
@@ -9,20 +9,18 @@
 <template>
   <cube-popup ref="myPopup" type="my-popup" position="bottom" :mask-closable="true">
     <div class="popup-box">
-      <div class="box-title">
-        请选择检查角色：
+      <div class="box-head">
+        <span class="text-cancel" @click="cancelBtn">取消</span>
+        <span class="text-confirm" :class="{ 'is-selected': checkRole }" @click="submitBtn">
+          提交
+        </span>
+        <div class="title-group">
+          <span class="text-title">检查角色</span>
+        </div>
       </div>
       <div class="box-body">
         <cube-radio-group v-model="checkRole" :options="options" />
         <div class="box-text">此操作允许一键通过该周报检查！</div>
-      </div>
-      <div class="box-bottom">
-        <cube-button @click="cancelBtn">
-          取消
-        </cube-button>
-        <cube-button class="confirm-btn" :disabled="!checkRole" @click="submitBtn">
-          提交
-        </cube-button>
       </div>
     </div>
   </cube-popup>
@@ -93,6 +91,9 @@ export default {
     },
     // 提交
     submitBtn() {
+      if (!this.checkRole) {
+        return
+      }
       const request = {
         ...apis.BATCH_WEEK_INSPECT,
         params: {
@@ -128,12 +129,45 @@ export default {
 <style lang="scss" scoped>
 .popup-box {
   background-color: #fff;
-  padding: 20px 15px;
-  .box-title {
-    font-size: 14px;
-    padding-left: 15px;
-    line-height: 40px;
-    color: #070b0b;
+  .box-head {
+    position: relative;
+    height: 50px;
+    border-bottom: 1px solid #ebebeb;
+    .text-cancel {
+      position: absolute;
+      left: 0;
+      color: #999;
+      line-height: 50px;
+      padding: 0 16px;
+      box-sizing: content-box;
+      font-size: 14px;
+    }
+    .text-confirm {
+      position: absolute;
+      right: 0;
+      color: #666;
+      line-height: 50px;
+      padding: 0 16px;
+      box-sizing: content-box;
+      font-size: 14px;
+    }
+    .is-selected {
+      color: #0274ff;
+    }
+    .title-group {
+      padding: 0 50px;
+      display: flex;
+      height: 100%;
+      flex-flow: column;
+      justify-content: center;
+      text-align: center;
+      .text-title {
+        font-size: 16px;
+        line-height: 25px;
+        font-weight: 400;
+        color: #333;
+      }
+    }
   }
   .box-body {
     ::v-deep .cube-radio {
@@ -144,35 +178,11 @@ export default {
       color: #b2b2b2;
       line-height: 18px;
       text-align: right;
-      margin-top: 15px;
+      padding: 15px 0;
     }
   }
-
-  .box-bottom {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-around;
-    .cube-btn {
-      width: 20%;
-      height: 30px;
-      line-height: 30px;
-      border-radius: 5px;
-      font-size: 12px;
-    }
-    .confirm-btn {
-      background: #027aff;
-    }
-    .cube-btn_disabled {
-      color: #fff;
-      background: #ccc;
-      border: none;
-    }
-    ::v-deep .cube-btn-outline:after {
-      content: none;
-    }
-    ::v-deep .cube-btn_disabled:after {
-      content: none;
-    }
+  ::v-deep .cube-radio_selected .cube-radio-ui {
+    background-color: #0274ff;
   }
 }
 </style>

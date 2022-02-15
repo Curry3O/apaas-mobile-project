@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2022-01-14 15:29:34
+ * @LastEditTime: 2022-01-21 11:13:41
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\page.vue
@@ -33,14 +33,15 @@
             >
               项目成员
             </cube-button>
-            <!-- <cube-button
-                class="btn fs-12"
-                :primary="true"
-                :inline="true"
-                @click="goWeeklyDetails"
-              >
-                填写周报
-              </cube-button> -->
+            <cube-button
+              v-if="canAdd"
+              class="btn fs-12"
+              :primary="true"
+              :inline="true"
+              @click="goWeeklyDetails"
+            >
+              填写周报
+            </cube-button>
           </div>
           <div v-if="indexVo.projectCode" class="pt-10">
             <div class="bz-text fs-18 mb-5">
@@ -85,12 +86,8 @@
             {{ indexVo.contractType }}
           </cube-button>
           <div v-if="!isEmpty" class="bottom-text mt-10 fs-12">
-            <div class="bz-text">
-              预计验收时间：{{ indexVo.acceptanceDate || '-' }}
-            </div>
-            <div class="bz-text">
-              币种：{{ indexVo.originalCurrency || '-' }}
-            </div>
+            <div class="bz-text"> 预计验收时间：{{ indexVo.acceptanceDate || '-' }} </div>
+            <div class="bz-text"> 币种：{{ indexVo.originalCurrency || '-' }} </div>
           </div>
         </div>
         <div class="bg-radius"></div>
@@ -136,6 +133,7 @@ export default {
     return {
       searchValue: '',
       isEmpty: true,
+      canAdd: false,
       indexVo: {}, // 项目财务指标主体信息
       grossMarginVo: {}, // 实际毛利率偏差折线图
       fourPiecesVo: {}, // 卡片里面的内容
@@ -147,6 +145,7 @@ export default {
   },
   computed: {
     ...mapState({
+      userInfo: (state) => state.authModule.userInfo,
       financeModel: (state) => state.projectHomeModule.financeModel,
       selectedData: (state) => state.projectHomeModule.selectedData,
       homeRefresh: (state) => state.projectHomeModule.homeRefresh
@@ -156,8 +155,8 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-            txt: '刷新成功'
-          },
+              txt: '刷新成功'
+            },
         pullUpLoad: false,
         scrollbar: false
       }
@@ -206,6 +205,25 @@ export default {
         }
       })
     },
+    // 是否能新增周报
+    showWeeklyBtn() {
+      const request = {
+        ...apis.SHOW_ADD_BUTTON,
+        params: {
+          Id: this.userInfo.id
+        }
+      }
+      this.$request(request).asyncThen((resp) => {
+        if (resp.code === 'ok') {
+          this.canAdd = resp.data
+        } else {
+          this.$createToast({
+            txt: resp.message,
+            type: 'error'
+          }).show()
+        }
+      })
+    },
     loadDetailData(pmsProjectCode) {
       const toast = this.$createToast({
         txt: 'Loading...',
@@ -220,6 +238,7 @@ export default {
         .asyncThen(
           (resp) => {
             if (resp.code === 'ok' && resp.data) {
+              this.showWeeklyBtn()
               this.handleCacheData(resp.data, 'Interface')
               this.setFinanceModel({
                 indexVo: this.indexVo,
@@ -292,7 +311,16 @@ export default {
       })
     },
     // 填写周报
-    goWeeklyDetails() {}
+    goWeeklyDetails() {
+      this.$router.push({
+        path: './apaas-custom-weekly-details',
+        query: {
+          ...this.$route.query,
+          pmsProjectCode: this.indexVo.pmsProjectCode,
+          returnRoute: 'proHome'
+        }
+      })
+    }
   }
   /* beforeRouteEnter(to, from, next) {
     if (from.name === 'apaas-custom-search-project') {
