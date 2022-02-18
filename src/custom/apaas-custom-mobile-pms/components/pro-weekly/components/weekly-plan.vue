@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-26 18:16:27
- * @LastEditTime: 2022-02-16 17:37:37
+ * @LastEditTime: 2022-02-18 16:35:30
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-plan.vue
@@ -51,7 +51,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { SET_SD_PROGRESS } from '../../../common/store/weekly-details.store'
+import { SET_SD_PROGRESS } from '../../../../common/store/weekly-details.store'
 export default {
   name: 'WeeklyPlan',
   components: {},

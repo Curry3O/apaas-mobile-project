@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-17 20:19:29
- * @LastEditTime: 2021-12-28 20:30:06
+ * @LastEditTime: 2022-02-18 16:28:01
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\table-info.vue
@@ -75,8 +75,8 @@
 </template>
 
 <script>
-import TabSlot from '../common/tab-slot.vue'
-import { formatMoney } from '../../../common/utils/tool'
+import TabSlot from '../../common/components/tab-slot.vue'
+import { formatMoney } from '../../../../common/utils/tool'
 export default {
   name: 'TableInfo',
   components: {

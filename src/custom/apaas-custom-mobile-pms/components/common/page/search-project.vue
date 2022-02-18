@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-21 10:57:59
- * @LastEditTime: 2022-01-18 16:49:31
+ * @LastEditTime: 2022-02-18 16:21:07
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-project.vue
@@ -85,9 +85,12 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { SET_SELECTED_DATA, SET_HOME_REFRESH } from '../../../common/store/project-home.store'
-import { SET_SEARCH_PARAMS, SET_WEEKLY_REFRESH } from '../../../common/store/project-weekly.store'
-import apis from '../../../common/api'
+import { SET_SELECTED_DATA, SET_HOME_REFRESH } from '../../../../common/store/project-home.store'
+import {
+  SET_SEARCH_PARAMS,
+  SET_WEEKLY_REFRESH
+} from '../../../../common/store/project-weekly.store'
+import apis from '../../../../common/api'
 export default {
   name: 'SearchProject',
   components: {},
@@ -119,12 +122,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-            threshold: 0,
-            txt: {
-              more: '上滑加载更多',
-              noMore: '没有更多数据了'
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
             }
-          }
           : false,
         scrollbar: true
       }

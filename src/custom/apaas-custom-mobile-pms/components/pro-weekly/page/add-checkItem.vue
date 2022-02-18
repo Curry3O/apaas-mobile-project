@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-11 11:08:05
- * @LastEditTime: 2022-02-11 14:57:06
+ * @LastEditTime: 2022-02-18 16:37:25
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/add-checkItem.vue
@@ -97,13 +97,13 @@
 </template>
 
 <script>
-import PageHeadSlot from '../common/page-head-slot.vue'
-import PersonTag from '../common/person-tag.vue'
+import PageHeadSlot from '../../common/components/page-head-slot.vue'
+import PersonTag from '../../common/components/person-tag.vue'
 import { mapState, mapMutations } from 'vuex'
 import {
   SET_CHECK_ITEM_MODEL,
   SET_CHECK_LIST_DATA
-} from '../../../common/store/add-check-item.store'
+} from '../../../../common/store/add-check-item.store'
 export default {
   name: 'AddCheckItem',
   components: {

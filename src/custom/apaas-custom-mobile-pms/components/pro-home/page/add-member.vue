@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-24 16:48:00
- * @LastEditTime: 2022-01-27 18:10:52
+ * @LastEditTime: 2022-02-18 16:29:59
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\add-member.vue
@@ -69,11 +69,11 @@
 </template>
 
 <script>
-import apis from '../../../common/api'
-import PageHeadSlot from '../common/page-head-slot.vue'
-import PersonTag from '../common/person-tag.vue'
+import apis from '../../../../common/api'
+import PageHeadSlot from '../../common/components/page-head-slot.vue'
+import PersonTag from '../../common/components/person-tag.vue'
 import { mapState, mapMutations } from 'vuex'
-import { SET_MEMBER_MODEL, CLEAR_MEMBER_MODEL } from '../../../common/store/add-member.store.js'
+import { SET_MEMBER_MODEL, CLEAR_MEMBER_MODEL } from '../../../../common/store/add-member.store.js'
 export default {
   name: 'AddMember',
   components: {

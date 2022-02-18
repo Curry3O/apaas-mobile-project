@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-08 17:38:56
- * @LastEditTime: 2022-02-18 14:56:30
+ * @LastEditTime: 2022-02-18 16:33:09
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-check.vue
@@ -100,17 +100,17 @@
 </template>
 
 <script>
-import apis from '../../../common/api'
+import apis from '../../../../common/api'
 import { mapState, mapMutations } from 'vuex'
-import CollapseSlot from '../common/collapse-slot.vue'
-import { SET_SCROLL_TOP, SET_SD_CHECK_WEEK } from '../../../common/store/weekly-details.store'
+import CollapseSlot from '../../common/components/collapse-slot.vue'
+import { SET_SCROLL_TOP, SET_SD_CHECK_WEEK } from '../../../../common/store/weekly-details.store'
 import {
   CLEAR_CHECK_ITEM_MODEL,
   SET_WEEKLY_INSPECT,
   SET_CHECK_ALL_DATA,
   SET_CHECK_LIST_DATA,
   SET_CHECK_LIST_ALL_DATA
-} from '../../../common/store/add-check-item.store'
+} from '../../../../common/store/add-check-item.store'
 export default {
   name: 'WeeklyCheck',
   components: {

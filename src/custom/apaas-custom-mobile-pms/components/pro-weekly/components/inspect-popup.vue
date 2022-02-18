@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-18 19:55:22
- * @LastEditTime: 2022-02-13 16:32:54
+ * @LastEditTime: 2022-02-18 16:32:06
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/inspect-popup.vue
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import apis from '../../../common/api'
+import apis from '../../../../common/api'
 import { mapState } from 'vuex'
 export default {
   name: 'InspectPopup',

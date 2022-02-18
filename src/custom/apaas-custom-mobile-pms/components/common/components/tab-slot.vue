@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-16 16:48:37
- * @LastEditTime: 2022-02-17 20:28:39
+ * @LastEditTime: 2022-02-18 15:24:01
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\tab-info.vue
@@ -157,9 +157,9 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { SET_SD_TABLE_DATA_LIST } from '../../../common/store/weekly-details.store'
-import { findIndex, formatMoney } from '../../../common/utils/tool'
-import TipComponent from '../common/tip-component.vue'
+import { SET_SD_TABLE_DATA_LIST } from '../../../../common/store/weekly-details.store'
+import { findIndex, formatMoney } from '../../../../common/utils/tool'
+import TipComponent from './tip-component.vue'
 export default {
   name: 'TabSlot',
   components: {

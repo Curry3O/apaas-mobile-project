@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-13 20:46:20
- * @LastEditTime: 2022-01-18 10:31:27
+ * @LastEditTime: 2022-02-18 16:27:02
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\base-info.vue
@@ -108,15 +108,15 @@
 </template>
 
 <script>
-import PieChart from '../pro-home/pie-chart.vue'
-import LineChart from '../pro-home/line-chart.vue'
-import totalCostUrl from '../../../common/img/total-cost.png'
-import actualCostUrl from '../../../common/img/actual-cost.png'
-import planProfitUrl from '../../../common/img/plan-profit.png'
-import totalAmountUrl from '../../../common/img/total-amount.png'
-import actualProfitUrl from '../../../common/img/actual-profit.png'
-import marginDeviationUrl from '../../../common/img/margin-deviation.png'
-import { formatMoney } from '../../../common/utils/tool'
+import PieChart from './pie-chart.vue'
+import LineChart from './line-chart.vue'
+import totalCostUrl from '../../../../common/img/total-cost.png'
+import actualCostUrl from '../../../../common/img/actual-cost.png'
+import planProfitUrl from '../../../../common/img/plan-profit.png'
+import totalAmountUrl from '../../../../common/img/total-amount.png'
+import actualProfitUrl from '../../../../common/img/actual-profit.png'
+import marginDeviationUrl from '../../../../common/img/margin-deviation.png'
+import { formatMoney } from '../../../../common/utils/tool'
 
 export default {
   name: 'BaseInfo',

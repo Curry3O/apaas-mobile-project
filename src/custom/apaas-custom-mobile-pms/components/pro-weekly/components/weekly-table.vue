@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-21 16:53:50
- * @LastEditTime: 2022-02-16 15:27:42
+ * @LastEditTime: 2022-02-18 16:35:47
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-table.vue
@@ -28,9 +28,9 @@ import {
   SET_SD_INCOME_TYPE,
   SET_SD_TYPE_LIST,
   SET_SD_TABLE_DATA_LIST
-} from '../../../common/store/weekly-details.store'
-import TabSlot from '../common/tab-slot.vue'
-import { formatMoney } from '../../../common/utils/tool'
+} from '../../../../common/store/weekly-details.store'
+import TabSlot from '../../common/components/tab-slot.vue'
+import { formatMoney } from '../../../../common/utils/tool'
 export default {
   name: 'WeeklyTable',
   components: {

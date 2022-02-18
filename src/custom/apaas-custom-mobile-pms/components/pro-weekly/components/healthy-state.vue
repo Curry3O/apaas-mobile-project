@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-24 12:21:28
- * @LastEditTime: 2022-02-16 17:27:34
+ * @LastEditTime: 2022-02-18 16:31:27
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/healthy-state.vue
@@ -135,11 +135,11 @@
 </template>
 
 <script>
-import CollapseSlot from '../common/collapse-slot.vue'
-import TipComponent from '../common/tip-component.vue'
+import CollapseSlot from '../../common/components/collapse-slot.vue'
+import TipComponent from '../../common/components/tip-component.vue'
 import { mapState, mapMutations } from 'vuex'
-import { SET_SCROLL_TOP, SET_SD_SITUATION } from '../../../common/store/weekly-details.store'
-import { CLEAR_ACTION_ITEM_MODEL } from '../../../common/store/add-action-item.store'
+import { SET_SCROLL_TOP, SET_SD_SITUATION } from '../../../../common/store/weekly-details.store'
+import { CLEAR_ACTION_ITEM_MODEL } from '../../../../common/store/add-action-item.store'
 export default {
   name: 'HealthyState',
   components: {

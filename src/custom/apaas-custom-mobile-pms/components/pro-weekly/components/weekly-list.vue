@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-29 20:02:36
- * @LastEditTime: 2022-02-17 19:55:05
+ * @LastEditTime: 2022-02-18 16:34:06
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-weekly\week-list.vue
@@ -62,12 +62,8 @@
             </div>
           </div>
         </div>
-        <div class="detail-date">
-          里程碑计划验收日期：{{ weeklyData.acceptanceDate }}
-        </div>
-        <div class="detail-date">
-          收入计划完成日期：{{ weeklyData.estimateAcceptanceDate }}
-        </div>
+        <div class="detail-date"> 里程碑计划验收日期：{{ weeklyData.acceptanceDate }} </div>
+        <div class="detail-date"> 收入计划完成日期：{{ weeklyData.estimateAcceptanceDate }} </div>
       </div>
       <div class="item-card">
         <div
@@ -121,12 +117,12 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { SET_WEEK_SCROLL_TOP } from '../../../common/store/project-weekly.store'
-import { formatMoney } from '../../../common/utils/tool'
-import totalCostUrl from '../../../common/img/total-cost.png'
-import actualCostUrl from '../../../common/img/actual-cost.png'
-import actualProfitUrl from '../../../common/img/actual-profit.png'
-import marginDeviationUrl from '../../../common/img/margin-deviation.png'
+import { SET_WEEK_SCROLL_TOP } from '../../../../common/store/project-weekly.store'
+import { formatMoney } from '../../../../common/utils/tool'
+import totalCostUrl from '../../../../common/img/total-cost.png'
+import actualCostUrl from '../../../../common/img/actual-cost.png'
+import actualProfitUrl from '../../../../common/img/actual-profit.png'
+import marginDeviationUrl from '../../../../common/img/margin-deviation.png'
 export default {
   name: 'WeeklyList',
   components: {},

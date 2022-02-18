@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-23 14:59:21
- * @LastEditTime: 2022-02-11 13:56:38
+ * @LastEditTime: 2022-02-18 16:19:42
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\common\search-people.vue
@@ -75,12 +75,12 @@
 </template>
 
 <script>
-import apis from '../../../common/api'
+import apis from '../../../../common/api'
 import { mapState, mapMutations } from 'vuex'
-import { SET_MEMBER_MODEL } from '../../../common/store/add-member.store.js'
-import { SET_COORDINATE_MODEL } from '../../../common/store/add-coordinate.store'
-import { SET_ACTION_ITEM_MODEL } from '../../../common/store/add-action-item.store'
-import { SET_CHECK_ITEM_MODEL } from '../../../common/store/add-check-item.store'
+import { SET_MEMBER_MODEL } from '../../../../common/store/add-member.store.js'
+import { SET_COORDINATE_MODEL } from '../../../../common/store/add-coordinate.store'
+import { SET_ACTION_ITEM_MODEL } from '../../../../common/store/add-action-item.store'
+import { SET_CHECK_ITEM_MODEL } from '../../../../common/store/add-check-item.store'
 export default {
   name: 'SearchPeople',
   components: {},
@@ -118,12 +118,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-            threshold: 0,
-            txt: {
-              more: '上滑加载更多',
-              noMore: '没有更多数据了'
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
             }
-          }
           : false,
         scrollbar: true
       }

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-27 13:47:14
- * @LastEditTime: 2022-02-10 16:15:05
+ * @LastEditTime: 2022-02-18 15:25:52
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/common/search-department.vue
@@ -70,9 +70,9 @@
 </template>
 
 <script>
-import apis from '../../../common/api'
+import apis from '../../../../common/api'
 import { mapState, mapMutations } from 'vuex'
-import { SET_COORDINATE_MODEL } from '../../../common/store/add-coordinate.store'
+import { SET_COORDINATE_MODEL } from '../../../../common/store/add-coordinate.store'
 export default {
   name: 'SearchDepartment',
   data() {

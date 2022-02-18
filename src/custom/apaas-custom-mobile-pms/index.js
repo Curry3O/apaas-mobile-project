@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2022-02-17 16:36:19
+ * @LastEditTime: 2022-02-18 16:38:04
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-custom-apaas-mobile-pms\src\custom\apaas-custom-apaas-mobile-pms\index.js
@@ -9,18 +9,18 @@
 import '@/icons/index'
 import 'cube-ui/lib/fonts/cubeic.dcc2b6f.ttf'
 import ProjectHomePage from './custom-page/project-home-page.vue'
-import ProjectMember from './components/pro-home/project-member.vue'
-import AddMember from './components/pro-home/add-member.vue'
+import ProjectMember from './components/pro-home/page/project-member.vue'
+import AddMember from './components/pro-home/page/add-member.vue'
 import ProjectWeeklyPage from './custom-page/project-weekly-page.vue'
-import WeeklyDetails from './components/pro-weekly/weekly-details.vue'
-import AddCoordinate from './components/pro-weekly/add-coordinate.vue'
-import AddActionItem from './components/pro-weekly/add-actionItem.vue'
-import AddCheckItem from './components/pro-weekly/add-checkItem.vue'
-import SearchWeekly from './components/pro-weekly/search-weekly.vue'
-import SearchProject from './components/common/search-project.vue'
-import SearchPeople from './components/common/search-people.vue'
-import SearchRole from './components/common/search-role.vue'
-import SearchDepartment from './components/common/search-department.vue'
+import WeeklyDetails from './components/pro-weekly/page/weekly-details.vue'
+import AddCoordinate from './components/pro-weekly/page/add-coordinate.vue'
+import AddActionItem from './components/pro-weekly/page/add-actionItem.vue'
+import AddCheckItem from './components/pro-weekly/page/add-checkItem.vue'
+import SearchWeekly from './components/pro-weekly/page/search-weekly.vue'
+import SearchProject from './components/common/page/search-project.vue'
+import SearchPeople from './components/common/page/search-people.vue'
+import SearchRole from './components/common/page/search-role.vue'
+import SearchDepartment from './components/common/page/search-department.vue'
 import { addMemberStore } from '../common/store/add-member.store'
 import { projectHomeStore } from '../common/store/project-home.store'
 import { projectWeeklyStore } from '../common/store/project-weekly.store'

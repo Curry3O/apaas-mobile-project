@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-27 14:37:59
- * @LastEditTime: 2022-02-17 20:15:03
+ * @LastEditTime: 2022-02-18 16:33:31
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-coordinate.vue
@@ -65,11 +65,11 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { SET_SCROLL_TOP, SET_SD_COORDINATE } from '../../../common/store/weekly-details.store'
+import { SET_SCROLL_TOP, SET_SD_COORDINATE } from '../../../../common/store/weekly-details.store'
 import {
   SET_COORDINATE_MODEL,
   CLEAR_COORDINATE_MODEL
-} from '../../../common/store/add-coordinate.store.js'
+} from '../../../../common/store/add-coordinate.store.js'
 export default {
   name: 'WeeklyCoordinate',
   components: {},
@@ -105,16 +105,22 @@ export default {
     const { returnRoute, coordType } = this.$route.query
     this.returnRoute = returnRoute
     this.coordinateList = this.sdCoordinate
-    if (this.returnRoute === 'addCoordinate') {
-      if (coordType === '1' && this.coordinateModel.submitFlag) {
+    if (this.returnRoute === 'addCoordinate' && this.coordinateModel.submitFlag) {
+      if (coordType === '1') {
         this.coordinateList.push(this.coordinateModel)
       } else if (coordType === '2') {
         const newList = []
         this.coordinateList.forEach((item) => {
-          if (item.pkId === this.coordinateModel.pkId) {
-            newList.push(this.coordinateModel)
+          if (item.pkId) {
+            if (item.pkId === this.coordinateModel.pkId) {
+              newList.push(this.coordinateModel)
+            } else {
+              newList.push(item)
+            }
           } else {
-            newList.push(item)
+            if (item.id === this.coordinateModel.id) {
+              newList.push(this.coordinateModel)
+            }
           }
         })
         this.coordinateList = [...newList]

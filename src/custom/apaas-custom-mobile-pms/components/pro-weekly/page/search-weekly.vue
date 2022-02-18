@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-17 15:44:33
- * @LastEditTime: 2022-02-17 19:52:50
+ * @LastEditTime: 2022-02-18 16:37:57
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/search-weekly.vue
@@ -70,8 +70,11 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { SET_SEARCH_PARAMS, SET_WEEKLY_REFRESH } from '../../../common/store/project-weekly.store'
-import PageHeadSlot from '../common/page-head-slot.vue'
+import {
+  SET_SEARCH_PARAMS,
+  SET_WEEKLY_REFRESH
+} from '../../../../common/store/project-weekly.store'
+import PageHeadSlot from '../../common/components/page-head-slot.vue'
 export default {
   name: 'SearchWeekly',
   components: {

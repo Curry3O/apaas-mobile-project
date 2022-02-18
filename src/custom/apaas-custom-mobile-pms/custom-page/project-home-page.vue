@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2022-02-17 21:09:41
+ * @LastEditTime: 2022-02-18 16:27:59
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\page.vue
@@ -86,12 +86,8 @@
             {{ indexVo.contractType }}
           </cube-button>
           <div v-if="!isEmpty" class="bottom-text mt-10 fs-12">
-            <div class="bz-text">
-              预计验收时间：{{ indexVo.acceptanceDate || '-' }}
-            </div>
-            <div class="bz-text">
-              币种：{{ indexVo.originalCurrency || '-' }}
-            </div>
+            <div class="bz-text"> 预计验收时间：{{ indexVo.acceptanceDate || '-' }} </div>
+            <div class="bz-text"> 币种：{{ indexVo.originalCurrency || '-' }} </div>
           </div>
         </div>
         <div class="bg-radius"></div>
@@ -121,9 +117,9 @@
 
 <script>
 import apis from '../../common/api'
-import PageHeadSlot from '../components/common/page-head-slot.vue'
-import BaseInfo from '../components/pro-home/base-info.vue'
-import TabInfo from '../components/pro-home/table-info.vue'
+import PageHeadSlot from '../components/common/components/page-head-slot.vue'
+import BaseInfo from '../components/pro-home/components/base-info.vue'
+import TabInfo from '../components/pro-home/components/table-info.vue'
 import { mapState, mapMutations } from 'vuex'
 import { SET_CAN_ADD, SET_FINANCE_MODEL, INIT_FINANCE } from '../../common/store/project-home.store'
 export default {
@@ -159,8 +155,8 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-            txt: '刷新成功'
-          },
+              txt: '刷新成功'
+            },
         pullUpLoad: false,
         scrollbar: false
       }

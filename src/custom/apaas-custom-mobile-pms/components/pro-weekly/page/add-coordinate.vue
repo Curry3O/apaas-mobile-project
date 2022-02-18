@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-27 16:25:27
- * @LastEditTime: 2022-02-07 14:45:12
+ * @LastEditTime: 2022-02-18 16:37:43
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/add-coordinate.vue
@@ -92,11 +92,11 @@
 </template>
 
 <script>
-import PageHeadSlot from '../common/page-head-slot.vue'
-import PersonTag from '../common/person-tag.vue'
-import { generateUUID } from '../../../common/utils/tool'
+import PageHeadSlot from '../../common/components/page-head-slot.vue'
+import PersonTag from '../../common/components/person-tag.vue'
+import { generateUUID } from '../../../../common/utils/tool'
 import { mapState, mapMutations } from 'vuex'
-import { SET_COORDINATE_MODEL } from '../../../common/store/add-coordinate.store.js'
+import { SET_COORDINATE_MODEL } from '../../../../common/store/add-coordinate.store.js'
 export default {
   name: 'AddCoordinate',
   components: {
@@ -153,7 +153,7 @@ export default {
     const { headTitle, returnRoute } = this.$route.query
     this.headTitle = headTitle
     this.returnRoute = returnRoute
-    this.model = this.coordinateModel
+    this.model = JSON.parse(JSON.stringify(this.coordinateModel))
     if (this.returnRoute === 'weeklyDetails') {
       this.model.pkId = this.model.pkId ? this.model.pkId : generateUUID()
     }
@@ -209,7 +209,9 @@ export default {
     submitHandler(e) {
       e.preventDefault()
       if (this.submitFlag) {
-        this.setCoordinateModel({ submitFlag: this.submitFlag, ...this.model })
+        this.setCoordinateModel(
+          JSON.parse(JSON.stringify({ submitFlag: this.submitFlag, ...this.model }))
+        )
         this.$router.push({
           path: './apaas-custom-weekly-details',
           query: {

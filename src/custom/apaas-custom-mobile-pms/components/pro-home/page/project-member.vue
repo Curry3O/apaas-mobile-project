@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-22 16:03:08
- * @LastEditTime: 2022-01-13 16:48:19
+ * @LastEditTime: 2022-02-18 16:29:02
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\project-member.vue
@@ -64,8 +64,8 @@
 </template>
 
 <script>
-import apis from '../../../common/api'
-import PageHeadSlot from '../common/page-head-slot.vue'
+import apis from '../../../../common/api'
+import PageHeadSlot from '../../common/components/page-head-slot.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'ProjectMember',
@@ -109,12 +109,12 @@ export default {
       return {
         pullUpLoad: this.pullUpLoad
           ? {
-            threshold: 0,
-            txt: {
-              more: '上滑加载更多',
-              noMore: '没有更多数据了'
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
             }
-          }
           : false,
         scrollbar: true
       }

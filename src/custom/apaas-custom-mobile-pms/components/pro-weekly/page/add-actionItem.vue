@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-07 13:29:00
- * @LastEditTime: 2022-02-15 11:26:20
+ * @LastEditTime: 2022-02-18 16:36:14
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/add-actionItem.vue
@@ -87,11 +87,14 @@
 </template>
 
 <script>
-import PageHeadSlot from '../common/page-head-slot.vue'
-import PersonTag from '../common/person-tag.vue'
-import { generateUUID } from '../../../common/utils/tool'
+import PageHeadSlot from '../../common/components/page-head-slot.vue'
+import PersonTag from '../../common/components/person-tag.vue'
+import { generateUUID } from '../../../../common/utils/tool'
 import { mapState, mapMutations } from 'vuex'
-import { SET_ACTION_ITEM_MODEL, SET_ACTION_DATA } from '../../../common/store/add-action-item.store'
+import {
+  SET_ACTION_ITEM_MODEL,
+  SET_ACTION_DATA
+} from '../../../../common/store/add-action-item.store'
 export default {
   name: 'AddActionItem',
   components: {

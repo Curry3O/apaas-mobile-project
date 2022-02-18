@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-20 17:33:04
- * @LastEditTime: 2022-02-18 15:04:31
+ * @LastEditTime: 2022-02-18 16:38:33
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-details.vue
@@ -142,7 +142,7 @@
         id="my-scroll"
         ref="scroll"
         class="page-main"
-        :class="{ 'page-height': !weeklypo.id }"
+        :class="weeklypo.id ? (editMode ? 'ph-height1' : 'ph-height2') : 'ph-height3'"
         :data="costTypePoList"
         :options="cubeScrollOptions"
       >
@@ -218,9 +218,9 @@
 </template>
 
 <script>
-import apis from '../../../common/api'
+import apis from '../../../../common/api'
 import { mapState, mapMutations } from 'vuex'
-import { SET_WEEKLY_REFRESH } from '../../../common/store/project-weekly.store'
+import { SET_WEEKLY_REFRESH } from '../../../../common/store/project-weekly.store'
 import {
   SET_SCROLL_TOP,
   SET_SD_CONFIG_FIELD,
@@ -232,15 +232,15 @@ import {
   SET_SD_COORDINATE,
   SET_SD_PROGRESS,
   INIT_SD_ALL_DATA
-} from '../../../common/store/weekly-details.store'
-import PageHeadSlot from '../common/page-head-slot.vue'
-import WeeklyTable from '../pro-weekly/weekly-table.vue'
-import HealthyState from '../pro-weekly/healthy-state.vue'
-import WeeklyPlan from '../pro-weekly/weekly-plan.vue'
-import WeeklyCoordinate from '../pro-weekly/weekly-coordinate.vue'
-import ActionItemPopup from '../pro-weekly/actionItem-popup.vue'
-import WeeklyCheck from '../pro-weekly/weekly-check.vue'
-import EditRowPopup from '../common/editRow-popup.vue'
+} from '../../../../common/store/weekly-details.store'
+import PageHeadSlot from '../../common/components/page-head-slot.vue'
+import WeeklyTable from '../components/weekly-table.vue'
+import HealthyState from '../components/healthy-state.vue'
+import WeeklyPlan from '../components/weekly-plan.vue'
+import WeeklyCoordinate from '../components/weekly-coordinate.vue'
+import ActionItemPopup from '../components/actionItem-popup.vue'
+import WeeklyCheck from '../components/weekly-check.vue'
+import EditRowPopup from '../../common/components/editRow-popup.vue'
 export default {
   name: 'WeeklyDetails',
   components: {
@@ -884,7 +884,6 @@ export default {
     }
     .page-main {
       background: #fff;
-      height: calc(100vh - 254px);
       overflow: scroll;
       .pg-title {
         padding: 10px 20px;
@@ -948,7 +947,13 @@ export default {
         background: #efeff4;
       }
     }
-    .page-height {
+    .ph-height1 {
+      height: calc(100vh - 229px);
+    }
+    .ph-height2 {
+      height: calc(100vh - 254px);
+    }
+    .ph-height3 {
       height: calc(100vh - 82px);
     }
     .bottom-btn {

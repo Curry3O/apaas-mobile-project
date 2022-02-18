@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-27 15:35:18
- * @LastEditTime: 2022-02-17 20:54:14
+ * @LastEditTime: 2022-02-18 16:34:07
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\project-weekly-page.vue
@@ -162,9 +162,9 @@
 
 <script>
 import apis from '../../common/api'
-import PageHeadSlot from '../components/common/page-head-slot.vue'
-import WeeklyList from '../components/pro-weekly/weekly-list.vue'
-import InspectPopup from '../components/pro-weekly/inspect-popup.vue'
+import PageHeadSlot from '../components/common/components/page-head-slot.vue'
+import WeeklyList from '../components/pro-weekly/components/weekly-list.vue'
+import InspectPopup from '../components/pro-weekly/components/inspect-popup.vue'
 import { mapState, mapMutations } from 'vuex'
 import {
   SET_WEEK_SCROLL_TOP,
@@ -243,16 +243,16 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-            txt: '刷新成功'
-          },
+              txt: '刷新成功'
+            },
         pullUpLoad: this.pullUpLoad
           ? {
-            threshold: 0,
-            txt: {
-              more: '上滑加载更多',
-              noMore: '没有更多数据了'
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
             }
-          }
           : false,
         scrollbar: false
       }
