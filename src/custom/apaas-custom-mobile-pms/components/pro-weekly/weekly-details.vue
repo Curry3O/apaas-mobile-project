@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-20 17:33:04
- * @LastEditTime: 2022-02-18 14:12:20
+ * @LastEditTime: 2022-02-18 15:04:31
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-details.vue
@@ -199,7 +199,7 @@
           上一周
         </div>
         <div
-          class="opt-btn"
+          class="opt-btn bt-1"
           :class="{ 'disabled-btn': !weeklypo.lastWeeklyId }"
           @click="switchWeek(weeklypo.nextWeeklyId, '下一周')"
         >
@@ -1015,8 +1015,10 @@ export default {
     .opt-btn {
       color: #027aff;
       font-size: 16px;
-      line-height: 40px;
+      line-height: 45px;
       text-align: center;
+    }
+    .bt-1 {
       border-top: 1px solid #b4bac2;
     }
     .disabled-btn {
@@ -1025,14 +1027,13 @@ export default {
   }
   .popup-bottom {
     margin: 5px 0;
-    border-radius: 10px;
+    border-radius: 8px;
     background-color: #fff;
     .cancel-btn {
       color: #027aff;
       font-size: 16px;
-      line-height: 40px;
+      line-height: 45px;
       text-align: center;
-      border-top: 1px solid #b4bac2;
     }
   }
 }
