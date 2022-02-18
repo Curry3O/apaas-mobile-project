@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-08 17:38:56
- * @LastEditTime: 2022-02-17 20:42:19
+ * @LastEditTime: 2022-02-18 14:56:30
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-check.vue
@@ -106,8 +106,10 @@ import CollapseSlot from '../common/collapse-slot.vue'
 import { SET_SCROLL_TOP, SET_SD_CHECK_WEEK } from '../../../common/store/weekly-details.store'
 import {
   CLEAR_CHECK_ITEM_MODEL,
+  SET_WEEKLY_INSPECT,
   SET_CHECK_ALL_DATA,
-  SET_CHECK_LIST_DATA
+  SET_CHECK_LIST_DATA,
+  SET_CHECK_LIST_ALL_DATA
 } from '../../../common/store/add-check-item.store'
 export default {
   name: 'WeeklyCheck',
@@ -145,8 +147,10 @@ export default {
       userInfo: (state) => state.authModule.userInfo,
       sdWeeklypo: (state) => state.weeklyDetailsModule.sdWeeklypo,
       checkItemModel: (state) => state.addCheckItemModule.checkItemModel,
+      weeklyInspect: (state) => state.addCheckItemModule.weeklyInspect,
       checkAllData: (state) => state.addCheckItemModule.checkAllData,
-      checkListData: (state) => state.addCheckItemModule.checkListData
+      checkListData: (state) => state.addCheckItemModule.checkListData,
+      checkListAllData: (state) => state.addCheckItemModule.checkListAllData
     }),
     getCount() {
       return (checkItem) => {
@@ -173,10 +177,12 @@ export default {
     const { returnRoute } = this.$route.query
     this.returnRoute = returnRoute
     if (this.returnRoute === 'addCheckItem') {
+      this.weeklyInspectDTO = this.weeklyInspect
       const { checkRole, disabled } = this.checkAllData
       this.checkRole = checkRole
       this.disabled = disabled
       this.checkList = this.checkListData
+      this.checkAllList = this.checkListAllData
     } else {
       this.loadActionData()
     }
@@ -189,8 +195,10 @@ export default {
     }),
     ...mapMutations('addCheckItemModule', {
       clearCheckItemModel: CLEAR_CHECK_ITEM_MODEL,
+      setWeeklyInspect: SET_WEEKLY_INSPECT,
       setCheckAllData: SET_CHECK_ALL_DATA,
-      setCheckListData: SET_CHECK_LIST_DATA
+      setCheckListData: SET_CHECK_LIST_DATA,
+      setCheckListAllData: SET_CHECK_LIST_ALL_DATA
     }),
     // 下拉框选项改变时
     selectChange(value) {
@@ -289,8 +297,10 @@ export default {
     // 新增检查项
     addCheckItem(field, anchorId) {
       this.setScrollTop(document.querySelector(anchorId).offsetTop)
+      this.setWeeklyInspect(this.weeklyInspectDTO)
       this.setCheckAllData({ checkRole: this.checkRole, disabled: this.disabled })
       this.setCheckListData(this.checkList)
+      this.setCheckListAllData(this.checkAllList)
       this.clearCheckItemModel()
       this.$router.push({
         path: './apaas-custom-add-check-item',

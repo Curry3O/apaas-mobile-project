@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-07 15:10:12
- * @LastEditTime: 2022-02-17 15:19:26
+ * @LastEditTime: 2022-02-18 14:15:17
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/actionItem-popup.vue
@@ -140,6 +140,7 @@ export default {
   },
   computed: {
     ...mapState({
+      configField: (state) => state.weeklyDetailsModule.configField,
       sdWeeklypo: (state) => state.weeklyDetailsModule.sdWeeklypo,
       actionTableData: (state) => state.addActionItemModule.actionTableData
     }),
@@ -163,12 +164,12 @@ export default {
         pullUpLoad:
           this.selectedLabel === '已完成' && this.pullUpLoad
             ? {
-              threshold: 0,
-              txt: {
-                more: '上滑加载更多',
-                noMore: '没有更多数据了'
+                threshold: 0,
+                txt: {
+                  more: '上滑加载更多',
+                  noMore: '没有更多数据了'
+                }
               }
-            }
             : false,
         scrollbar: false
       }
@@ -184,6 +185,15 @@ export default {
     }),
     // 显示
     showPopup() {
+      if (this.configField.editMode) {
+        this.selectedLabel = '待提交'
+        this.$set(this.tabLabels[0], 'label', '待提交')
+        this.$set(this.tabLabels[1], 'label', '已提交')
+      } else {
+        this.selectedLabel = '未完成'
+        this.$set(this.tabLabels[0], 'label', '未完成')
+        this.$set(this.tabLabels[1], 'label', '已完成')
+      }
       this.componentPopup = this.$refs.myPopup
       this.componentPopup.show()
       this.initFinishData()

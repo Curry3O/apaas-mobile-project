@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-11 19:31:16
- * @LastEditTime: 2022-02-14 15:14:12
+ * @LastEditTime: 2022-02-18 14:20:34
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/editRow-popup.vue
@@ -65,6 +65,7 @@
         </cube-form>
       </div>
     </div>
+    <div v-if="fields.length === 1" class="height-10"> </div>
   </cube-popup>
 </template>
 
@@ -102,7 +103,13 @@ export default {
           this.$set(this.model, modelKey, item.value)
           const rules =
             item.type === 'input'
-              ? { required: item.required, type: 'number', money: true }
+              ? {
+                  required: item.required,
+                  type: 'number',
+                  max: 999999999999999,
+                  min: -999999999999999,
+                  money: true
+                }
               : { required: item.required }
           data.push({
             modelKey: modelKey,
@@ -248,5 +255,10 @@ export default {
       color: #000;
     }
   }
+}
+.height-10 {
+  height: 10px;
+  width: 100%;
+  background-color: #fff;
 }
 </style>
