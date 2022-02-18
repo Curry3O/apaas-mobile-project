@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-21 16:53:50
- * @LastEditTime: 2022-02-15 10:58:58
+ * @LastEditTime: 2022-02-16 15:27:42
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-table.vue
@@ -22,6 +22,13 @@
   </div>
 </template>
 <script>
+import { mapState, mapMutations } from 'vuex'
+import {
+  SET_SD_COST_TYPE,
+  SET_SD_INCOME_TYPE,
+  SET_SD_TYPE_LIST,
+  SET_SD_TABLE_DATA_LIST
+} from '../../../common/store/weekly-details.store'
 import TabSlot from '../common/tab-slot.vue'
 import { formatMoney } from '../../../common/utils/tool'
 export default {
@@ -29,345 +36,13 @@ export default {
   components: {
     TabSlot
   },
-  props: {
-    editMode: {
-      type: Boolean,
-      default: false
-    },
-    costVoList: {
-      type: Array,
-      default: () => []
-    },
-    incomeVoList: {
-      type: Array,
-      default: () => []
-    },
-    returnVoList: {
-      type: Array,
-      default: () => []
-    }
-  },
+  props: {},
   data() {
     return {
+      editMode: false,
       firstTabName: '成本',
       secondTabName: 'MRD计划/已发生',
-      tableDataList: [
-        {
-          label: '成本',
-          children: [
-            {
-              label: 'MRD计划/已发生',
-              list: [
-                {
-                  field: '内部人天',
-                  code: 'insideCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '交付费用',
-                  code: 'travelCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '人天外包',
-                  code: 'outsourceCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '软件产品第三方',
-                  code: 'softwareDsf',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '第三方实施',
-                  code: 'implementDsf',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '云资源成本',
-                  code: 'cloudResourcesCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '流量费成本',
-                  code: 'dataTrafficCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '自营硬件成本',
-                  code: 'selfOperateHardwareCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '第三方硬件成本',
-                  code: 'dsfHardwareCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '自营软件',
-                  code: 'selfOperateSoftware',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '库存成本',
-                  code: 'stockCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '在途成本',
-                  code: 'otwCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '小计',
-                  code: 'subtotal',
-                  value1: null,
-                  value2: null
-                }
-              ]
-            },
-            {
-              label: '项目总预计/本年度预计',
-              list: [
-                {
-                  field: '内部人天',
-                  code: 'insideCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '交付费用',
-                  code: 'travelCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '人天外包',
-                  code: 'outsourceCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '软件产品第三方',
-                  code: 'softwareDsf',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '第三方实施',
-                  code: 'implementDsf',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '云资源成本',
-                  code: 'cloudResourcesCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '流量费成本',
-                  code: 'dataTrafficCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '自营硬件成本',
-                  code: 'selfOperateHardwareCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '第三方硬件成本',
-                  code: 'dsfHardwareCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '自营软件',
-                  code: 'selfOperateSoftware',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '库存成本',
-                  code: 'stockCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '在途成本',
-                  code: 'otwCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '小计',
-                  code: 'subtotal',
-                  value1: null,
-                  value2: null
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: '收入',
-          children: [
-            {
-              label: 'MRD计划/已确认/本年度已确定',
-              list: [
-                {
-                  field: '硬件',
-                  code: 'hardware',
-                  value1: null,
-                  value2: null,
-                  value3: null,
-                  showMore: true
-                },
-                {
-                  field: '软件实施',
-                  code: 'software',
-                  value1: null,
-                  value2: null,
-                  value3: null,
-                  showMore: true
-                },
-                {
-                  field: '平台服务费',
-                  code: 'platformServiceCost',
-                  value1: null,
-                  value2: null,
-                  value3: null,
-                  showMore: true
-                },
-                {
-                  field: '流量服务费',
-                  code: 'dataServiceCost',
-                  value1: null,
-                  value2: null,
-                  value3: null,
-                  showMore: true
-                },
-                {
-                  field: '小计',
-                  code: 'subtotal',
-                  value1: null,
-                  value2: null,
-                  value3: null,
-                  showMore: true
-                }
-              ]
-            },
-            {
-              label: '待确认/本年度待确认',
-              list: [
-                {
-                  field: '硬件',
-                  code: 'hardware',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '软件实施',
-                  code: 'software',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '平台服务费',
-                  code: 'platformServiceCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '流量服务费',
-                  code: 'dataServiceCost',
-                  value1: null,
-                  value2: null
-                },
-                {
-                  field: '小计',
-                  code: 'subtotal',
-                  value1: null,
-                  value2: null
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: '毛利率',
-          children: [
-            {
-              label: '含风险溢价',
-              list: [
-                {
-                  field: 'MRD计划',
-                  code: 'grossMarginContainRp',
-                  value1: null,
-                  riskPremium: null,
-                  showPremium: true,
-                  hiddenRow: true,
-                  percentType: true
-                }
-              ]
-            },
-            {
-              label: '不含风险溢价',
-              list: [
-                {
-                  field: 'MRD计划',
-                  code: 'grossMarginExcludeRp',
-                  value1: null,
-                  hiddenRow: true,
-                  percentType: true
-                },
-                {
-                  field: '实际小计',
-                  code: 'grossMarginExcludeRp',
-                  value1: null,
-                  hiddenRow: true,
-                  percentType: true
-                },
-                {
-                  field: '总项目预计',
-                  code: 'grossMarginExcludeRp',
-                  value1: null,
-                  hiddenRow: true,
-                  percentType: true
-                },
-                {
-                  field: '年度预计',
-                  code: 'grossMarginExcludeRp',
-                  value1: null,
-                  hiddenRow: true,
-                  percentType: true
-                },
-                {
-                  field: '总项目偏差',
-                  code: 'grossMarginExcludeRp',
-                  value1: null,
-                  hiddenRow: true,
-                  percentType: true
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      tableDataList: [],
       secondIndexList: [
         { 'MRD计划/已发生': 0, '项目总预计/本年度预计': 1 },
         { 'MRD计划/已确认/本年度已确定': 0, '待确认/本年度待确认': 1 },
@@ -381,6 +56,13 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      configField: (state) => state.weeklyDetailsModule.configField,
+      sdCostTypePoList: (state) => state.weeklyDetailsModule.sdCostTypePoList,
+      sdIncomeTypePoList: (state) => state.weeklyDetailsModule.sdIncomeTypePoList,
+      sdTypePoList: (state) => state.weeklyDetailsModule.sdTypePoList,
+      sdTableDataList: (state) => state.weeklyDetailsModule.sdTableDataList
+    }),
     transform() {
       return (value) => {
         if (value) {
@@ -394,7 +76,13 @@ export default {
     }
   },
   watch: {
-    costVoList: {
+    configField: {
+      handler(v) {
+        this.editMode = v.editMode
+      },
+      immediate: true
+    },
+    sdCostTypePoList: {
       handler(v) {
         if (v.length) {
           this.tableDataList[0].children[0].list.forEach((item) => {
@@ -408,10 +96,11 @@ export default {
             item.canEdit = this.editMode && item.code !== 'stockCost' && item.code !== 'otwCost'
             item.lastFlag = true
           })
+          this.computeAllRp()
         }
       }
     },
-    incomeVoList: {
+    sdIncomeTypePoList: {
       handler(v) {
         if (v.length) {
           this.tableDataList[1].children[0].list.forEach((item) => {
@@ -429,10 +118,11 @@ export default {
               item.value2 = v[4][item.code]
             }
           })
+          this.computeAllRp()
         }
       }
     },
-    returnVoList: {
+    sdTypePoList: {
       handler(v) {
         if (v.length) {
           this.tableDataList[2].children[0].list.forEach((item) => {
@@ -442,12 +132,26 @@ export default {
           this.tableDataList[2].children[1].list.forEach((item, index) => {
             item.value1 = v[index][item.code]
           })
+          this.computeAllRp()
         }
+      }
+    },
+    sdTableDataList: {
+      handler(v) {
+        this.tableDataList = [...v]
       }
     }
   },
-  created() {},
+  created() {
+    this.tableDataList = this.sdTableDataList
+  },
   methods: {
+    ...mapMutations('weeklyDetailsModule', {
+      set_sd_costType: SET_SD_COST_TYPE,
+      set_sd_incomeType: SET_SD_INCOME_TYPE,
+      set_sd_typeList: SET_SD_TYPE_LIST,
+      set_sd_tableDataList: SET_SD_TABLE_DATA_LIST
+    }),
     /**
      * 计算每行毛利率（不含风险溢价）
      */
@@ -456,13 +160,14 @@ export default {
         this.computeEstimateTotal()
         this.computeEstimateYear()
         this.computeEstimateDeviation()
+        this.set_sd_tableDataList(this.tableDataList)
       })
     },
     /**
      * 计算每行毛利率公式
      */
     computeExcludeRp(cost, income) {
-      if (Number(income) === 0) {
+      if (!this.isNumber(cost) || !this.isNumber(income) || Number(income) === 0) {
         return '-'
       }
       return (((Number(income) - Number(cost)) / Number(income)) * 100).toFixed(2)
@@ -495,7 +200,11 @@ export default {
       ).toFixed(2)
       const allIncome = (
         Number(this.tableDataList[1].children[0].list[4].value3) +
-        Number(this.tableDataList[1].children[1].list[4].value2)
+        Number(
+          this.tableDataList[1].children[1].list[4].value2 === '计划收入预测未填'
+            ? 0
+            : this.tableDataList[1].children[1].list[4].value2
+        )
       ).toFixed(2)
       this.$set(
         this.tableDataList[2].children[1].list[3],
@@ -509,16 +218,110 @@ export default {
     computeEstimateDeviation() {
       let value = null
       if (
-        this.tableDataList[2].children[1].list[0].value1 === '-' ||
-        this.tableDataList[2].children[1].list[2].value1 === '-'
+        this.transformNum(this.tableDataList[2].children[1].list[0].value1) === '-' ||
+        this.transformNum(this.tableDataList[2].children[1].list[2].value1) === '-'
       ) {
         value = '-'
+      } else {
+        value = (
+          Number(this.tableDataList[2].children[1].list[2].value1) -
+          Number(this.tableDataList[2].children[1].list[0].value1)
+        ).toFixed(2)
       }
-      value = (
-        Number(this.tableDataList[2].children[1].list[2].value1) -
-        Number(this.tableDataList[2].children[1].list[0].value1)
-      ).toFixed(2)
       this.$set(this.tableDataList[2].children[1].list[4], 'value1', value)
+    },
+    /**
+     * 收集所有数据
+     */
+    returnAllData() {
+      return {
+        costData: this.getCostData(),
+        incomeData: this.getIncomeData(),
+        typeData: this.getTypeData()
+      }
+    },
+    /**
+     * 收集成本表格数据
+     */
+    getCostData() {
+      const costList = this.sdCostTypePoList
+      this.tableDataList[0].children[1].list.forEach((item) => {
+        costList[2][item.code] = item.value1 === '-' ? null : item.value1
+        costList[4][item.code] = item.value2 === '-' ? null : item.value2
+      })
+      return costList
+    },
+    /**
+     * 收集收入表格数据
+     */
+    getIncomeData() {
+      const incomeList = this.sdIncomeTypePoList
+      this.tableDataList[1].children[1].list.forEach((item) => {
+        incomeList[3][item.code] = item.value1 === '-' ? null : item.value1
+        incomeList[4][item.code] = item.value2 === '计划收入预测未填' ? null : item.value2
+      })
+      return incomeList
+    },
+    /**
+     * 收集类型表格数据
+     */
+    getTypeData() {
+      const typeList = this.sdTypePoList
+      typeList[2].cost = (
+        Number(this.tableDataList[0].children[0].list[12].value2) +
+        Number(this.tableDataList[0].children[1].list[12].value1)
+      ).toFixed(2)
+      typeList[2].income = (
+        Number(this.tableDataList[1].children[0].list[4].value2) +
+        Number(this.tableDataList[1].children[1].list[4].value1)
+      ).toFixed(2)
+      typeList[2].grossMarginExcludeRp =
+        this.tableDataList[2].children[1].list[2].value1 === '-'
+          ? null
+          : this.tableDataList[2].children[1].list[2].value1
+      typeList[3].cost = (
+        Number(this.tableDataList[0].children[0].list[12].value2) +
+        Number(this.tableDataList[0].children[1].list[12].value2)
+      ).toFixed(2)
+      typeList[3].income = (
+        Number(this.tableDataList[1].children[0].list[4].value3) +
+        Number(
+          this.tableDataList[1].children[1].list[4].value2 === '计划收入预测未填'
+            ? 0
+            : this.tableDataList[1].children[1].list[4].value2
+        )
+      ).toFixed(2)
+      typeList[3].grossMarginExcludeRp =
+        this.tableDataList[2].children[1].list[3].value1 === '-'
+          ? null
+          : this.tableDataList[2].children[1].list[3].value1
+      typeList[4].cost = (
+        Number(this.tableDataList[0].children[0].list[12].value2) +
+        Number(this.tableDataList[0].children[1].list[12].value1) -
+        Number(typeList[0].cost)
+      ).toFixed(2)
+      typeList[4].income = (
+        Number(this.tableDataList[1].children[0].list[4].value2) +
+        Number(this.tableDataList[1].children[1].list[4].value1) -
+        Number(typeList[0].income)
+      ).toFixed(2)
+      typeList[4].grossMarginExcludeRp =
+        this.tableDataList[2].children[1].list[4].value1 === '-'
+          ? null
+          : this.tableDataList[2].children[1].list[4].value1
+      return typeList
+    },
+    // 判断是否为数字类型
+    isNumber(num) {
+      return typeof Number(num) === 'number' && isFinite(num)
+    },
+    // 判断值是否为空
+    transformNum(value) {
+      if (Number(value) === 0) {
+        return Number(value)
+      } else if (!value || value === '-') {
+        return '-'
+      }
     }
   }
 }

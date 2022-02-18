@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-08 17:38:56
- * @LastEditTime: 2022-02-11 19:08:41
+ * @LastEditTime: 2022-02-17 20:42:19
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-check.vue
@@ -9,7 +9,9 @@
 <template>
   <div class="weekly-check">
     <div class="head-select">
-      <div class="select-title">检查角色</div>
+      <div class="select-title">
+        检查角色
+      </div>
       <div class="select-value">
         <cube-select
           v-model="checkRole"
@@ -52,13 +54,19 @@
               >
                 <div class="item-box mb-5">
                   <div class="box-left">
-                    <div class="text-title">问题描述：</div>
+                    <div class="text-title">
+                      问题描述：
+                    </div>
                   </div>
                   <div v-if="child.state" class="box-right">
-                    <div class="text-state">{{ child.state }}</div>
+                    <div class="text-state">
+                      {{ child.state }}
+                    </div>
                   </div>
                 </div>
-                <div class="item-problem">{{ child.problem }}</div>
+                <div class="item-problem">
+                  {{ child.problem }}
+                </div>
                 <div class="item-text">
                   计划开始时间：
                   {{ child.scheduledStartTime }}
@@ -95,7 +103,7 @@
 import apis from '../../../common/api'
 import { mapState, mapMutations } from 'vuex'
 import CollapseSlot from '../common/collapse-slot.vue'
-import { SET_SCROLL_TOP } from '../../../common/store/weekly-details.store'
+import { SET_SCROLL_TOP, SET_SD_CHECK_WEEK } from '../../../common/store/weekly-details.store'
 import {
   CLEAR_CHECK_ITEM_MODEL,
   SET_CHECK_ALL_DATA,
@@ -103,10 +111,10 @@ import {
 } from '../../../common/store/add-check-item.store'
 export default {
   name: 'WeeklyCheck',
-  props: {},
   components: {
     CollapseSlot
   },
+  props: {},
   data() {
     return {
       checkRole: null,
@@ -135,7 +143,7 @@ export default {
   computed: {
     ...mapState({
       userInfo: (state) => state.authModule.userInfo,
-      sd_weeklypo: (state) => state.weeklyDetailsModule.sd_weeklypo,
+      sdWeeklypo: (state) => state.weeklyDetailsModule.sdWeeklypo,
       checkItemModel: (state) => state.addCheckItemModule.checkItemModel,
       checkAllData: (state) => state.addCheckItemModule.checkAllData,
       checkListData: (state) => state.addCheckItemModule.checkListData
@@ -176,7 +184,8 @@ export default {
   },
   methods: {
     ...mapMutations('weeklyDetailsModule', {
-      setScrollTop: SET_SCROLL_TOP
+      setScrollTop: SET_SCROLL_TOP,
+      set_sd_checkWeek: SET_SD_CHECK_WEEK
     }),
     ...mapMutations('addCheckItemModule', {
       clearCheckItemModel: CLEAR_CHECK_ITEM_MODEL,
@@ -224,9 +233,9 @@ export default {
       const request = {
         ...apis.QUERY_WEEKLY_INSPECT_DETAILS,
         params: {
-          week: this.sd_weeklypo.week,
+          week: this.sdWeeklypo.week,
           userId: this.userInfo.id,
-          pmsProjectCode: this.sd_weeklypo.pmsProjectCode
+          pmsProjectCode: this.sdWeeklypo.pmsProjectCode
         }
       }
       this.$request(request)
@@ -340,9 +349,9 @@ export default {
               params: {
                 weeklyInspectDTO: {
                   checkRole: this.checkRole,
-                  week: this.sd_weeklypo.week,
-                  weekId: this.sd_weeklypo.id,
-                  pmsProjectCode: this.sd_weeklypo.pmsProjectCode,
+                  week: this.sdWeeklypo.week,
+                  weekId: this.sdWeeklypo.id,
+                  pmsProjectCode: this.sdWeeklypo.pmsProjectCode,
                   inspectionDate: this.$dayjs(new Date()).format('YYYY-MM-DD'),
                   ...this.weeklyInspectDTO
                 },
@@ -357,6 +366,7 @@ export default {
                     type: 'txt'
                   }).show()
                   this.$emit('show-details', true)
+                  this.set_sd_checkWeek(true)
                 } else {
                   this.$createToast({
                     txt: resp.message,

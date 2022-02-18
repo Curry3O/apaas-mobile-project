@@ -58,6 +58,13 @@
         "title": "新增周报检查"
       }
     },
+    "apaas-custom-search-weekly": {
+      "name": "apaas-custom-search-weekly",
+      "path": "apaas-custom-search-weekly",
+      "meta": {
+        "title": "周报首页搜索页面"
+      }
+    },
     "apaas-custom-search-project": {
       "name": "apaas-custom-search-project",
       "path": "apaas-custom-search-project",

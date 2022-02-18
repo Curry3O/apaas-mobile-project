@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-26 18:16:27
- * @LastEditTime: 2022-02-15 11:36:56
+ * @LastEditTime: 2022-02-16 17:37:37
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-plan.vue
@@ -12,11 +12,15 @@
       周计划
     </div>
     <div class="plan-content">
-      <div class="label">本周计划</div>
+      <div class="label">
+        本周计划
+      </div>
       <div class="textarea disable-text">
         <cube-textarea v-model="thisWeekPlan" :disabled="true"></cube-textarea>
       </div>
-      <div class="label v-require">本周实际</div>
+      <div id="twActual" class="label v-require">
+        本周实际
+      </div>
       <div class="textarea">
         <cube-textarea
           v-model="thisWeekActual"
@@ -24,9 +28,12 @@
           :class="{ 'disable-text': !editMode }"
           placeholder="请输入本周实际"
           :maxlength="200"
+          @blur="updateData"
         ></cube-textarea>
       </div>
-      <div class="label v-require">下周计划</div>
+      <div id="nwPlan" class="label v-require">
+        下周计划
+      </div>
       <div class="textarea">
         <cube-textarea
           v-model="nextWeekPlan"
@@ -34,6 +41,7 @@
           :class="{ 'disable-text': !editMode }"
           placeholder="请输入下周计划"
           :maxlength="200"
+          @blur="updateData"
         ></cube-textarea>
       </div>
     </div>
@@ -42,38 +50,99 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+import { SET_SD_PROGRESS } from '../../../common/store/weekly-details.store'
 export default {
   name: 'WeeklyPlan',
-  props: {
-    editMode: {
-      type: Boolean,
-      default: false
-    },
-    progressList: {
-      type: Object,
-      default: () => {}
-    }
-  },
   components: {},
+  props: {},
   data() {
     return {
+      editMode: false,
       thisWeekPlan: '',
       thisWeekActual: '',
       nextWeekPlan: ''
     }
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      configField: (state) => state.weeklyDetailsModule.configField,
+      sdProgressList: (state) => state.weeklyDetailsModule.sdProgressList
+    })
+  },
   watch: {
-    progressList: {
+    sdProgressList: {
       handler(v) {
         this.thisWeekPlan = v.thisWeekPlan
         this.thisWeekActual = v.thisWeekActual
         this.nextWeekPlan = v.nextWeekPlan
       }
+    },
+    configField: {
+      handler(v) {
+        this.editMode = v.editMode
+      },
+      immediate: true
     }
   },
-  created() {},
-  methods: {}
+  mounted() {
+    this.thisWeekPlan = this.sdProgressList.thisWeekPlan
+    this.thisWeekActual = this.sdProgressList.thisWeekActual
+    this.nextWeekPlan = this.sdProgressList.nextWeekPlan
+  },
+  methods: {
+    ...mapMutations('weeklyDetailsModule', {
+      set_sd_progress: SET_SD_PROGRESS
+    }),
+    // 输入框失焦后触发此事件
+    updateData() {
+      this.set_sd_progress({
+        thisWeekPlan: this.thisWeekPlan,
+        thisWeekActual: this.thisWeekActual,
+        nextWeekPlan: this.nextWeekPlan
+      })
+    },
+    /**
+     * 校验必填
+     */
+    checkValid() {
+      let validFlag = true
+      let element = null
+      if (!this.thisWeekActual) {
+        validFlag = false
+        this.$createToast({
+          txt: '本周实际为必填项',
+          type: 'error'
+        }).show()
+        element = document.querySelector('#twActual')
+        return { validFlag, element }
+      }
+      if (!this.nextWeekPlan) {
+        validFlag = false
+        this.$createToast({
+          txt: '下周计划为必填项',
+          type: 'error'
+        }).show()
+        element = document.querySelector('#nwPlan')
+        return { validFlag, element }
+      }
+      return { validFlag, element }
+    },
+    /**
+     * 校验并收集所有数据
+     */
+    returnAllData() {
+      return {
+        data: {
+          thisWeekPlan: this.thisWeekPlan,
+          thisWeekActual: this.thisWeekActual,
+          nextWeekPlan: this.nextWeekPlan
+        },
+        valid: this.checkValid().validFlag,
+        element: this.checkValid().element
+      }
+    }
+  }
 }
 </script>
 

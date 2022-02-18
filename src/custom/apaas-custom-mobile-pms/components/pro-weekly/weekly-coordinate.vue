@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-27 14:37:59
- * @LastEditTime: 2022-02-15 11:26:36
+ * @LastEditTime: 2022-02-17 20:15:03
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-coordinate.vue
@@ -9,16 +9,22 @@
 <template>
   <div class="weekly-coordinate">
     <div class="coordinate-title">
-      <div class="head-text fs-16 fw-600">协调事项</div>
+      <div class="head-text fs-16 fw-600">
+        协调事项
+      </div>
       <div v-if="editMode" class="head-icon">
         <x-svg-icon id="addIcon" name="add-icon" @click.native="goCoordinatePage('1')"></x-svg-icon>
       </div>
     </div>
     <div ref="coordinate" class="coordinate-list">
-      <div v-if="dataList.length">
-        <div v-for="(item, index) in dataList" :key="index" class="list-item">
-          <div class="title fs-14 mb-10">协调事项：</div>
-          <div class="text mb-5">{{ item.coordinateMatter }}</div>
+      <div v-if="coordinateList.length">
+        <div v-for="(item, index) in coordinateList" :key="index" class="list-item">
+          <div class="title fs-14 mb-10">
+            协调事项：
+          </div>
+          <div class="text mb-5">
+            {{ item.coordinateMatter }}
+          </div>
           <div class="label mb-5">
             协调部门：
             <span class="text">{{ item.coordinateDepartment }}</span>
@@ -32,7 +38,7 @@
               负责人：
               <span class="text">{{ item.coordinatePeople }}</span>
             </div>
-            <div class="box-right">
+            <div v-if="editMode" class="box-right">
               <x-svg-icon
                 :id="'edit' + index"
                 class="mr-15"
@@ -66,53 +72,53 @@ import {
 } from '../../../common/store/add-coordinate.store.js'
 export default {
   name: 'WeeklyCoordinate',
-  props: {
-    editMode: {
-      type: Boolean,
-      default: false
-    },
-    coordinateList: {
-      type: Array,
-      default: () => []
-    }
-  },
   components: {},
+  props: {},
   data() {
     return {
-      dataList: [],
+      editMode: false,
+      coordinateList: [],
       returnRoute: null
     }
   },
   computed: {
     ...mapState({
-      sd_coordinate: (state) => state.weeklyDetailsModule.sd_coordinate,
+      configField: (state) => state.weeklyDetailsModule.configField,
+      sdCoordinate: (state) => state.weeklyDetailsModule.sdCoordinate,
       coordinateModel: (state) => state.addCoordinateModule.coordinateModel
     })
   },
   watch: {
-    coordinateList: {
+    sdCoordinate: {
       handler(v) {
-        this.dataList = [...v]
+        this.coordinateList = [...v]
       }
+    },
+    configField: {
+      handler(v) {
+        this.editMode = v.editMode
+      },
+      immediate: true
     }
   },
   mounted() {
     const { returnRoute, coordType } = this.$route.query
     this.returnRoute = returnRoute
+    this.coordinateList = this.sdCoordinate
     if (this.returnRoute === 'addCoordinate') {
-      this.dataList = this.sd_coordinate
       if (coordType === '1' && this.coordinateModel.submitFlag) {
-        this.dataList.push(this.coordinateModel)
+        this.coordinateList.push(this.coordinateModel)
       } else if (coordType === '2') {
         const newList = []
-        this.dataList.forEach((item) => {
+        this.coordinateList.forEach((item) => {
           if (item.pkId === this.coordinateModel.pkId) {
             newList.push(this.coordinateModel)
           } else {
             newList.push(item)
           }
         })
-        this.dataList = [...newList]
+        this.coordinateList = [...newList]
+        this.set_sd_coordinate(this.coordinateList)
       }
     }
   },
@@ -129,7 +135,6 @@ export default {
     }),
     // 跳转到协调事项详情页面
     goCoordinatePage(type, item, index) {
-      this.set_sd_coordinate(this.dataList)
       if (type === '1') {
         this.clearCoordinateModel() // 新增
         this.setScrollTop(document.querySelector('#addIcon').offsetTop)
@@ -153,9 +158,18 @@ export default {
         type: 'confirm',
         content: '是否确认删除？',
         onConfirm: () => {
-          this.dataList = this.dataList.filter((item) => item.pkId !== pkId)
+          this.coordinateList = this.coordinateList.filter((item) => item.pkId !== pkId)
+          this.set_sd_coordinate(this.coordinateList)
         }
       }).show()
+    },
+    /**
+     * 收集所有数据
+     */
+    returnAllData() {
+      return {
+        data: this.coordinateList
+      }
     }
   }
 }

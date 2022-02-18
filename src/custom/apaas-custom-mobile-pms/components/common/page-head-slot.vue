@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 15:44:06
- * @LastEditTime: 2022-02-11 19:13:11
+ * @LastEditTime: 2022-02-18 10:38:23
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\page-head-slot.vue
@@ -10,16 +10,16 @@
   <div class="page-header">
     <div class="head-content">
       <x-svg-icon
-        v-if="showLeft"
+        v-if="showBackIcon"
         name="arrow-left"
         class="both-sides left-icon"
         @click.native="goBack"
       ></x-svg-icon>
       <div class="center-area">
-        <slot v-if="showCenter" name="main"></slot>
+        <slot name="main"></slot>
       </div>
       <div class="both-sides right-icon">
-        <slot v-if="showRight" name="icon"></slot>
+        <slot name="icon"></slot>
       </div>
     </div>
   </div>
@@ -33,15 +33,7 @@ export default {
       type: Boolean,
       default: false
     },
-    showLeft: {
-      type: Boolean,
-      default: true
-    },
-    showCenter: {
-      type: Boolean,
-      default: true
-    },
-    showRight: {
+    showBackIcon: {
       type: Boolean,
       default: true
     },

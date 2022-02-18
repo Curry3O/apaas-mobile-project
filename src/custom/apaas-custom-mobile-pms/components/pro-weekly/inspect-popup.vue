@@ -20,7 +20,9 @@
       </div>
       <div class="box-body">
         <cube-radio-group v-model="checkRole" :options="options" />
-        <div class="box-text">此操作允许一键通过该周报检查！</div>
+        <div class="box-text">
+          此操作允许一键通过该周报检查！
+        </div>
       </div>
     </div>
   </cube-popup>

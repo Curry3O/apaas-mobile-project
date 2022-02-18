@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-16 16:48:37
- * @LastEditTime: 2022-02-15 10:59:38
+ * @LastEditTime: 2022-02-17 20:28:39
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\components\pro-home\tab-info.vue
@@ -110,17 +110,27 @@
                     class="tab-panel-li"
                     :class="{ 'tab-padding': pItem.showMore }"
                   >
-                    <div class="panel-label">
+                    <div class="panel-label" :class="{ 'fw-600': pItem.boldFont }">
                       {{ pItem.field }}
                     </div>
                     <div class="panel-value">
-                      <div class="fc-blue">
+                      <div class="fc-blue" :class="{ 'fw-600': pItem.boldFont }">
                         {{ transform(pItem.value1, pItem.percentType) }}
                       </div>
-                      <div v-if="!pItem.hiddenRow">
+                      <div
+                        v-if="!pItem.hiddenRow"
+                        :class="{
+                          'fc-red': pItem.value2 === '计划收入预测未填',
+                          'fw-600': pItem.boldFont
+                        }"
+                      >
                         {{ transform(pItem.value2) }}
                       </div>
-                      <div v-if="pItem.showMore">
+                      <div
+                        v-if="pItem.showMore"
+                        class="fc-emerald"
+                        :class="{ 'fw-600': pItem.boldFont }"
+                      >
                         {{ transform(pItem.value3) }}
                       </div>
                       <div v-if="pItem.showPremium">
@@ -146,6 +156,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+import { SET_SD_TABLE_DATA_LIST } from '../../../common/store/weekly-details.store'
 import { findIndex, formatMoney } from '../../../common/utils/tool'
 import TipComponent from '../common/tip-component.vue'
 export default {
@@ -273,6 +285,9 @@ export default {
     })
   },
   methods: {
+    ...mapMutations('weeklyDetailsModule', {
+      set_sd_tableDataList: SET_SD_TABLE_DATA_LIST
+    }),
     changePage(current) {
       this.currentIndex = current
       this.currentFirstTab = this.tabBarData[current].label
@@ -344,6 +359,7 @@ export default {
       })
       this.$set(this.tabBarData[fIndex].children[sIndex].list[tIndex], 'value1', subtotal1)
       this.$set(this.tabBarData[fIndex].children[sIndex].list[tIndex], 'value2', subtotal2)
+      this.set_sd_tableDataList(this.tabBarData)
     },
     // 判断是否为数字类型
     isNumber(num) {
@@ -435,6 +451,9 @@ export default {
       border-top: none;
     }
   }
+  .fw-600 {
+    font-weight: 600;
+  }
   .fs-12 {
     font-size: 12px;
   }
@@ -449,6 +468,9 @@ export default {
   }
   .fc-emerald {
     color: #5e7d7a;
+  }
+  .fc-red {
+    color: #f5222d;
   }
   ::v-deep .cube-tab_active {
     color: #00a84d;

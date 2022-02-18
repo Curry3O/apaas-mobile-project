@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-24 14:34:54
- * @LastEditTime: 2022-02-11 16:12:44
+ * @LastEditTime: 2022-02-16 17:04:16
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/common/collapse-slot.vue
@@ -11,7 +11,7 @@
     <div class="collapse-head">
       <div class="head-label">
         <x-svg-icon
-          v-if="shrink"
+          v-if="shrink === '1'"
           name="arrow-rights"
           class="label-icon"
           @click.native="foldItem"
@@ -22,7 +22,7 @@
           class="label-icon"
           @click.native="foldItem"
         ></x-svg-icon>
-        <div class="label-text" @click="foldItem" :class="{ 'long-label': extraLabel }">
+        <div class="label-text" :class="{ 'long-label': extraLabel }" @click="foldItem">
           <span :class="{ required: requiredField }">
             {{ collapseLabel }}
           </span>
@@ -38,7 +38,7 @@
         <slot name="content"></slot>
       </div>
     </div>
-    <div class="collapse-content" ref="collapse">
+    <div ref="collapse" class="collapse-content" :class="{ 'not-empty': defaultShrink === '2' }">
       <slot name="main"></slot>
     </div>
   </div>
@@ -47,6 +47,7 @@
 <script>
 export default {
   name: 'CollapseSlot',
+  components: {},
   props: {
     collapseLabel: {
       type: String,
@@ -63,16 +64,26 @@ export default {
     collapseKey: {
       type: Number,
       default: 0
+    },
+    defaultShrink: {
+      type: String,
+      default: '1'
     }
   },
-  components: {},
   data() {
     return {
-      shrink: true
+      shrink: '1' // 1表示显示label上额外内容，2表示不显示label上额外内容
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    defaultShrink: {
+      handler(v) {
+        this.shrink = v
+      },
+      immediate: true
+    }
+  },
   created() {},
   methods: {
     // 折叠面板
@@ -84,12 +95,12 @@ export default {
         var targetHeight = window.getComputedStyle(this.$refs.collapse).height
         el.style.transition = 'height 600ms'
         el.style.height = '0px'
-        el.offsetWidth
+        console.log(el.offsetWidth)
         el.style.height = targetHeight
       } else {
         el.style.height = '0px'
       }
-      this.shrink = !this.shrink
+      this.shrink = this.shrink === '1' ? '2' : '1'
       this.$emit('draw-back', this.shrink)
     },
     // 重新计算高度
@@ -143,6 +154,9 @@ export default {
     height: 0px;
     transition: max-height 600ms;
     overflow: hidden;
+  }
+  .not-empty {
+    height: auto;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-27 15:07:53
- * @LastEditTime: 2022-02-11 16:22:07
+ * @LastEditTime: 2022-02-16 20:16:46
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\common\api\project-weekly.js
@@ -70,6 +70,24 @@ export default {
   CREATE_PROCESS: {
     // 项目周报检查创建流程
     url: '/custom/weeklyInspect/createProcess',
+    method: 'post',
+    disableSuccessMsg: true
+  },
+  WEEKLY_INSERT: {
+    // 新增项目周报提交
+    url: '/custom/weeklyPro/createWeeklyPro',
+    method: 'post',
+    disableSuccessMsg: true
+  },
+  EDIT_BY_WEEKLY_ID: {
+    // 编辑项目周报提交
+    url: '/custom/weeklyPro/editWeeklyPro',
+    method: 'post',
+    disableSuccessMsg: true
+  },
+  GET_WEEKLY_ACTION_ITEMS_LIST: {
+    // 查询周报已提交行动项
+    url: '/custom/weeklyPro/getWeeklyActionltemsList',
     method: 'post',
     disableSuccessMsg: true
   }

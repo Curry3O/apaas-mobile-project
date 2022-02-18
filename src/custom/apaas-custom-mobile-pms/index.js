@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2022-02-13 19:20:05
+ * @LastEditTime: 2022-02-17 16:36:19
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-custom-apaas-mobile-pms\src\custom\apaas-custom-apaas-mobile-pms\index.js
@@ -16,6 +16,7 @@ import WeeklyDetails from './components/pro-weekly/weekly-details.vue'
 import AddCoordinate from './components/pro-weekly/add-coordinate.vue'
 import AddActionItem from './components/pro-weekly/add-actionItem.vue'
 import AddCheckItem from './components/pro-weekly/add-checkItem.vue'
+import SearchWeekly from './components/pro-weekly/search-weekly.vue'
 import SearchProject from './components/common/search-project.vue'
 import SearchPeople from './components/common/search-people.vue'
 import SearchRole from './components/common/search-role.vue'
@@ -42,6 +43,7 @@ const install = function(Vue) {
   Vue.component('apaas-custom-add-coordinate', AddCoordinate)
   Vue.component('apaas-custom-add-action-item', AddActionItem)
   Vue.component('apaas-custom-add-check-item', AddCheckItem)
+  Vue.component('apaas-custom-search-weekly', SearchWeekly)
   Vue.component('apaas-custom-search-project', SearchProject)
   Vue.component('apaas-custom-search-people', SearchPeople)
   Vue.component('apaas-custom-search-role', SearchRole)

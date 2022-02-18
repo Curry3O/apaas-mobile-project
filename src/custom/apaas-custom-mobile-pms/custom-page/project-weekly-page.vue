@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-27 15:35:18
- * @LastEditTime: 2022-02-10 16:11:44
+ * @LastEditTime: 2022-02-17 20:54:14
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\project-weekly-page.vue
@@ -105,6 +105,7 @@
       </div>
       <div v-if="weeklyList.length">
         <cube-scroll
+          id="my-scroll"
           ref="myScroll"
           class="page-main"
           :data="weeklyList"
@@ -121,6 +122,7 @@
               :class="{ 'hidden-box': hideCheckbox }"
             >
               <WeeklyList
+                ref="weeklyList"
                 :weeklyData="item"
                 :hideCheckbox="hideCheckbox"
                 @show-popup="openPopup($event)"
@@ -144,70 +146,17 @@
           </div>
         </div>
       </div>
-      <div class="table-empty" v-if="!weeklyList.length && hiddenEmpty">
+      <div v-if="!weeklyList.length && hiddenEmpty" class="table-empty">
         <x-empty>
           <span class="empty-text">暂无数据</span>
         </x-empty>
       </div>
-      <cube-popup ref="myPopup" type="my-popup" position="top" :mask-closable="true">
-        <div class="popup-box">
-          <div>
-            <div class="box-title">
-              项目状态：
-            </div>
-            <div class="box-content">
-              <div v-for="item in selectOptions.statusList" :key="item.value">
-                <div
-                  class="box-btn"
-                  :class="{ 'ac-btn': params.milestoneCode === item.value }"
-                  @click="selectChange('status', item.value)"
-                >
-                  {{ item.label }}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="mt-15">
-            <div class="box-title">
-              周报检查：
-            </div>
-            <div class="box-content">
-              <div v-for="item in selectOptions.isCheck" :key="item.value">
-                <div
-                  class="box-btn"
-                  :class="{ 'ac-btn': params.isInspect === item.value }"
-                  @click="selectChange('check', item.value)"
-                >
-                  {{ item.label }}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="bottom-btn">
-            <cube-button @click="resetBtn">
-              重置
-            </cube-button>
-            <cube-button class="confirm-btn" @click="confirmBtn">
-              确定
-            </cube-button>
-          </div>
-        </div>
-      </cube-popup>
     </div>
     <InspectPopup
       ref="inspectPopup"
       :weeklyReports="weeklyReports"
       @refresh-data="initData()"
     ></InspectPopup>
-    <!-- 暂时 1 -->
-    <cube-popup ref="development" type="my-popup">
-      <div
-        style="background-color: rgba(0, 0, 0, 0.8); color: #fff; padding: 20px 40px;"
-        @click="closePopup"
-      >
-        正在开发中...
-      </div>
-    </cube-popup>
   </div>
 </template>
 
@@ -218,11 +167,13 @@ import WeeklyList from '../components/pro-weekly/weekly-list.vue'
 import InspectPopup from '../components/pro-weekly/inspect-popup.vue'
 import { mapState, mapMutations } from 'vuex'
 import {
+  SET_WEEK_SCROLL_TOP,
   SET_SEARCH_PARAMS,
   SET_WEEKLY_MODEL,
   SET_WEEKLY_REFRESH,
   INIT_WEEKLY
 } from '../../common/store/project-weekly.store'
+import { SET_SD_CHECK_WEEK } from '../../common/store/weekly-details.store'
 import { getYearWeek } from '../../common/utils/tool'
 export default {
   name: 'ProjectWeeklyPage',
@@ -263,20 +214,17 @@ export default {
       },
       weeklyReports: [],
       pullUpLoad: true,
-      componentPopup: null,
       pagination: { currentPage: 1, pageSize: 10, total: 0 },
       weeklyList: [],
       checkData: [],
       hideCheckbox: true,
-      returnRoute: null,
-      // 暂时 2
-      temp: null,
-      count: 0
+      returnRoute: null
     }
   },
   computed: {
     ...mapState({
       userInfo: (state) => state.authModule.userInfo,
+      weekScrollTop: (state) => state.projectWeeklyModule.weekScrollTop,
       searchParams: (state) => state.projectWeeklyModule.searchParams,
       weeklyModel: (state) => state.projectWeeklyModule.weeklyModel,
       weeklyRefresh: (state) => state.projectWeeklyModule.weeklyRefresh
@@ -295,16 +243,16 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-              txt: '刷新成功'
-            },
+            txt: '刷新成功'
+          },
         pullUpLoad: this.pullUpLoad
           ? {
-              threshold: 0,
-              txt: {
-                more: '上滑加载更多',
-                noMore: '没有更多数据了'
-              }
+            threshold: 0,
+            txt: {
+              more: '上滑加载更多',
+              noMore: '没有更多数据了'
             }
+          }
           : false,
         scrollbar: false
       }
@@ -313,7 +261,11 @@ export default {
   watch: {},
   created() {
     this.returnRoute = this.$route.query.returnRoute
-    if (this.returnRoute === 'searchPro') {
+    if (
+      this.returnRoute === 'searchPro' ||
+      this.returnRoute === 'searchWeekly' ||
+      this.returnRoute === 'weeklyDetails'
+    ) {
       this.params.searchContent = this.searchParams.searchContent
       if (this.weeklyRefresh) {
         this.params = {
@@ -326,6 +278,8 @@ export default {
       } else {
         this.handleCacheData()
       }
+      this.set_sd_checkWeek(false)
+      this.setWeeklyRefresh(true)
     } else {
       this.initWeekly()
       this.params.week = getYearWeek(this.$dayjs(new Date()).format('YYYY-MM-DD'))
@@ -333,25 +287,25 @@ export default {
     }
   },
   mounted() {
-    // 暂时 3
-    // this.count = 0
-    // this.temp = this.$refs.development
-    // this.temp.show()
+    // if (!this.weeklyRefresh && this.weekScrollTop > 0) {
+    //   this.handleScroll(this.weekScrollTop)
+    // }
+    // this.setWeekScrollTop(0)
   },
   methods: {
     ...mapMutations('projectWeeklyModule', {
+      setWeekScrollTop: SET_WEEK_SCROLL_TOP,
       setSearchParams: SET_SEARCH_PARAMS,
       setWeeklyModel: SET_WEEKLY_MODEL,
       setWeeklyRefresh: SET_WEEKLY_REFRESH,
       initWeekly: INIT_WEEKLY
     }),
-    // 暂时 4
-    closePopup() {
-      if (this.count === 3) {
-        this.temp.hide()
-      } else {
-        this.count++
-      }
+    ...mapMutations('weeklyDetailsModule', {
+      set_sd_checkWeek: SET_SD_CHECK_WEEK
+    }),
+    // 页面滚动到指定位置
+    handleScroll(y) {
+      document.querySelector('#my-scroll').scrollTop = 1111
     },
     initData() {
       this.isEmpty = true
@@ -481,35 +435,16 @@ export default {
     },
     // 弹出层
     filterData() {
-      this.componentPopup = this.$refs.myPopup
-      this.componentPopup.show()
-    },
-    // 筛选数据
-    selectChange(code, value) {
-      const field = code === 'status' ? 'milestoneCode' : 'isInspect'
-      if (this.params[field] === value) {
-        this.params[field] = null
-      } else {
-        this.params[field] = value
-      }
-    },
-    // 重置
-    resetBtn() {
-      this.$set(this.params, 'milestoneCode', null)
-      this.$set(this.params, 'isInspect', null)
-    },
-    // 确定
-    confirmBtn() {
-      if (this.componentPopup) {
-        this.componentPopup.hide()
-        this.initData()
-      }
+      this.$router.push({
+        path: './apaas-custom-search-weekly',
+        query: {
+          ...this.$route.query,
+          returnRoute: 'proWeekly'
+        }
+      })
     },
     // 筛选周数
     selectWeek() {
-      if (this.componentPopup) {
-        this.componentPopup.hide()
-      }
       this.datePicker = this.$createDatePicker({
         title: '',
         value: new Date(),
@@ -660,6 +595,9 @@ export default {
         display: none;
       }
     }
+    ::v-deep .cube-checkbox-wrap {
+      padding-bottom: 0px;
+    }
   }
   .page-foot {
     height: 32px;
@@ -712,50 +650,6 @@ export default {
   }
   ::v-deep .cube-popup {
     top: 90px;
-  }
-  .popup-box {
-    background-color: #fff;
-    padding: 20px 15px;
-    .box-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-left: 5px;
-    }
-    .box-content {
-      display: flex;
-      align-items: center;
-      margin-top: 5px;
-      flex-flow: wrap;
-      .box-btn {
-        width: 82px;
-        height: 24px;
-        font-size: 12px;
-        text-align: center;
-        margin: 5px;
-        line-height: 24px;
-        border: 1px solid #dcdfe6;
-        border-radius: 5px;
-      }
-      .ac-btn {
-        color: #a9e676;
-        border: 1px solid #a9e676;
-      }
-    }
-    .bottom-btn {
-      margin-top: 20px;
-      display: flex;
-      justify-content: space-around;
-      .cube-btn {
-        width: 20%;
-        height: 26px;
-        line-height: 26px;
-        border-radius: 5px;
-        font-size: 12px;
-      }
-      .confirm-btn {
-        background: #027aff;
-      }
-    }
   }
   .fs-12 {
     font-size: 12px;

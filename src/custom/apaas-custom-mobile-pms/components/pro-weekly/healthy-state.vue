@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-24 12:21:28
- * @LastEditTime: 2022-02-15 11:36:40
+ * @LastEditTime: 2022-02-16 17:27:34
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/healthy-state.vue
@@ -13,16 +13,20 @@
     </div>
     <div v-for="(item, index) in situationList" :key="item.id">
       <CollapseSlot
+        ref="collapse"
         :collapseKey="index"
+        :defaultShrink="item.shrink"
         :collapseLabel="item.situationContent"
-        @draw-back="situationList[index].shrink = $event"
+        @draw-back="drawBack($event, index)"
       >
         <template v-slot:header>
           <div class="head-area">
-            <div class="light" :class="{ 'hidden-light': !item.shrink }">
+            <div class="light" :class="{ 'hidden-light': item.shrink === '2' }">
               <div>上周：</div>
               <x-svg-icon name="light-icon" :class="'bg-' + item.lwHealthyState" />
-              <div class="pl-10">本周：</div>
+              <div class="pl-10">
+                本周：
+              </div>
               <x-svg-icon name="light-icon" :class="'bg-' + item.twHealthyState" />
             </div>
             <cube-button
@@ -39,7 +43,9 @@
         <template v-slot:main>
           <div class="content-area">
             <div class="tw-label">
-              <div class="label-text">本周异常说明及解决措施</div>
+              <div class="label-text required">
+                本周异常说明及解决措施
+              </div>
               <div class="label-light">
                 <div class="light-item" @click="changeStatus(item, index, 'green')">
                   <div>绿</div>
@@ -71,7 +77,7 @@
                   name="question-mark"
                   @click.native="$refs.tipComponent[index].showTip()"
                 />
-                <TipComponent class="tips" ref="tipComponent" direction="right" :offsetTop="8">
+                <TipComponent ref="tipComponent" class="tips" direction="right" :offsetTop="8">
                   <template v-slot:content>
                     <div class="tip-main">
                       <!-- <div v-html="item.weeklyReportStandard"></div> -->
@@ -88,7 +94,9 @@
                         {{ item.weeklyReportStandard[2] }}
                       </div>
                       <div v-if="item.weeklyReportStandard[3]" class="flex-box">
-                        <div :class="'dw-' + (index === 4 ? '156' : '42')">备注：</div>
+                        <div :class="'dw-' + (index === 4 ? '156' : '42')">
+                          备注：
+                        </div>
                         {{ item.weeklyReportStandard[3] }}
                       </div>
                     </div>
@@ -103,10 +111,13 @@
                 :class="{ 'disable-text': !editMode }"
                 placeholder="请输入本周异常说明及解决措施"
                 :maxlength="200"
+                @blur="updateData"
               ></cube-textarea>
             </div>
             <div class="lw-label">
-              <div class="label-text">上周异常说明及解决措施</div>
+              <div class="label-text">
+                上周异常说明及解决措施
+              </div>
               <div class="label-icon">
                 <div>{{ transLight(item.lwHealthyState) }}</div>
                 <x-svg-icon name="light-icon" :class="'bg-' + item.lwHealthyState" />
@@ -135,18 +146,10 @@ export default {
     CollapseSlot,
     TipComponent
   },
-  props: {
-    editMode: {
-      type: Boolean,
-      default: false
-    },
-    lwSituationPoList: {
-      type: Array,
-      default: () => []
-    }
-  },
+  props: {},
   data() {
     return {
+      editMode: false,
       situationList: [],
       returnRoute: null
     }
@@ -154,7 +157,8 @@ export default {
   computed: {
     ...mapState({
       actionItemModel: (state) => state.addActionItemModule.actionItemModel,
-      sd_lwSituationPoList: (state) => state.weeklyDetailsModule.sd_lwSituationPoList,
+      configField: (state) => state.weeklyDetailsModule.configField,
+      sdLwSituationPoList: (state) => state.weeklyDetailsModule.sdLwSituationPoList,
       actionTableData: (state) => state.addActionItemModule.actionTableData
     }),
     transLight() {
@@ -247,12 +251,11 @@ export default {
     }
   },
   watch: {
-    lwSituationPoList: {
+    sdLwSituationPoList: {
       handler(v) {
         let data = [...v]
         data.sort((a, b) => a.dataIndex - b.dataIndex)
-        data.forEach((row) => {
-          row.shrink = true
+        data.forEach((row, i) => {
           if (this.rowTip.has(row.situationContent)) {
             row.weeklyReportStandard = this.rowTip.get(row.situationContent)
           }
@@ -261,21 +264,25 @@ export default {
         })
         this.situationList = [...data]
       }
+    },
+    configField: {
+      handler(v) {
+        this.editMode = v.editMode
+      },
+      immediate: true
     }
   },
   mounted() {
     const { returnRoute } = this.$route.query
     this.returnRoute = returnRoute
-    if (this.returnRoute === 'addActionItem') {
-      const data = this.sd_lwSituationPoList
-      data.forEach((row) => {
-        row.doneTasks = this.actionTableData.filter(
-          (item) => item.situationType === row.situationType
-        ).length
-        row.taskNums = row.doneTasks + row.undoneTasks
-      })
-      this.situationList = [...data]
-    }
+    const data = this.sdLwSituationPoList
+    data.forEach((row, i) => {
+      row.doneTasks = this.actionTableData.filter(
+        (item) => item.situationType === row.situationType
+      ).length
+      row.taskNums = row.doneTasks + row.undoneTasks
+    })
+    this.situationList = [...data]
   },
   methods: {
     ...mapMutations('weeklyDetailsModule', {
@@ -285,6 +292,11 @@ export default {
     ...mapMutations('addActionItemModule', {
       clearActionItemModel: CLEAR_ACTION_ITEM_MODEL
     }),
+    // 折叠面板收缩事件
+    drawBack(e, index) {
+      this.$set(this.situationList[index], 'shrink', e)
+      this.set_sd_situation(this.situationList)
+    },
     // 选择本周健康度
     changeStatus(item, index, color) {
       if (!this.editMode) {
@@ -295,6 +307,11 @@ export default {
         'twHealthyState',
         item.twHealthyState === color ? null : color
       )
+      this.set_sd_situation(this.situationList)
+    },
+    // 输入框失焦后触发此事件
+    updateData() {
+      this.set_sd_situation(this.situationList)
     },
     // 跳转新增行动项页面
     goTaskPage(item, id) {
@@ -303,7 +320,6 @@ export default {
       }
       this.clearActionItemModel()
       this.setScrollTop(document.querySelector(id).offsetTop)
-      this.set_sd_situation(this.situationList)
       this.$router.push({
         path: './apaas-custom-add-action-item',
         query: {
@@ -313,6 +329,54 @@ export default {
           returnRoute: 'weeklyDetails'
         }
       })
+    },
+    /**
+     * 校验必填
+     */
+    checkValid() {
+      let validFlag = true
+      let element = null
+      for (let i = 0; i < this.situationList.length; i++) {
+        const data = this.situationList[i]
+        if (!data.twHealthyState) {
+          validFlag = false
+          this.$createToast({
+            txt: data.situationContent + '的本周健康状态为必填项',
+            type: 'error'
+          }).show()
+          element = document.querySelector('#btn' + i)
+          break
+        }
+        if (data.twHealthyState !== 'green' && !data.twExplain) {
+          validFlag = false
+          this.$createToast({
+            txt: data.situationContent + '的本周异常说明及解决措施为必填项',
+            type: 'error'
+          }).show()
+          element = document.querySelector('#btn' + i)
+          break
+        }
+        if (data.twHealthyState !== 'green' && data.doneTasks < 1 && data.undoneTasks < 1) {
+          validFlag = false
+          this.$createToast({
+            txt: data.situationContent + '的行动项未分配',
+            type: 'error'
+          }).show()
+          element = document.querySelector('#btn' + i)
+          break
+        }
+      }
+      return { validFlag, element }
+    },
+    /**
+     * 校验并收集所有数据
+     */
+    returnAllData() {
+      return {
+        data: this.situationList,
+        valid: this.checkValid().validFlag,
+        element: this.checkValid().element
+      }
     }
   }
 }
@@ -365,6 +429,13 @@ export default {
       .label-text {
         width: 150px;
         color: #333333;
+      }
+      .required::before {
+        content: '*';
+        margin-right: 3px;
+        font-size: 14px;
+        font-family: SimSun, sans-serif;
+        color: #f5222d;
       }
       .label-light {
         flex: 3;

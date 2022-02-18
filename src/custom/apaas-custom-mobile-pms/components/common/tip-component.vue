@@ -17,6 +17,7 @@
 <script>
 export default {
   name: 'TipComponent',
+  components: {},
   props: {
     direction: {
       type: String,
@@ -27,7 +28,6 @@ export default {
       default: 0
     }
   },
-  components: {},
   data() {
     return {}
   },

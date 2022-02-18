@@ -1,25 +1,27 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-07 15:10:12
- * @LastEditTime: 2022-02-07 20:00:52
+ * @LastEditTime: 2022-02-17 15:19:26
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/actionItem-popup.vue
 -->
 <template>
   <cube-popup ref="myPopup" type="my-popup" position="center" :mask-closable="true">
-    <div class="popup-box">
+    <div class="popup-box" :class="{ 'is-Empty': !tabLabels[initialIndex].list.length }">
       <div class="box-head">
-        <div class="head-title">行动项</div>
+        <div class="head-title">
+          行动项
+        </div>
         <x-svg-icon name="close-icon" class="head-icon" @click.native="closeBtn"></x-svg-icon>
       </div>
       <div class="box-tab-bar">
         <cube-tab-bar
+          ref="tabNav"
           v-model="selectedLabel"
           class="tabBar"
           show-slider
           :use-transition="false"
-          ref="tabNav"
           :data="tabLabels"
         >
           <cube-tab v-for="item in tabLabels" :key="item.label" :label="item.label">
@@ -47,10 +49,15 @@
             @scroll="scroll"
             @change="changePage"
           >
-            <cube-slide-item>
-              <cube-scroll :data="tabLabels" :options="cubeScrollOptions">
+            <cube-slide-item :class="{ 'scroll-content': tabLabels[initialIndex].list.length }">
+              <cube-scroll
+                ref="myScroll"
+                :data="tabLabels"
+                :options="cubeScrollOptions"
+                @pulling-up="onPullingUp"
+              >
                 <cube-tab-panels v-model="selectedLabel">
-                  <cube-tab-panel v-for="tab in tabLabels" :label="tab.label" :key="tab.label">
+                  <cube-tab-panel v-for="tab in tabLabels" :key="tab.label" :label="tab.label">
                     <div v-if="tab.list.length" class="panel-content">
                       <div v-for="(item, index) in tab.list" :key="index" class="list-item">
                         <div class="item-box">
@@ -59,13 +66,18 @@
                           </div>
                           <div class="box-right">
                             <x-svg-icon
+                              v-if="selectedLabel === '未完成'"
                               name="delete-icon"
                               @click.native="deleteItem(item.pkId)"
                             ></x-svg-icon>
                           </div>
                         </div>
-                        <div class="item-title">{{ item.title }}</div>
-                        <div class="item-content">{{ item.content }}</div>
+                        <div class="item-title">
+                          {{ item.title }}
+                        </div>
+                        <div class="item-content">
+                          {{ item.content }}
+                        </div>
                         <div class="item-end">
                           <div class="end-text">
                             负责人：
@@ -95,7 +107,7 @@
 </template>
 
 <script>
-// import apis from '../../../common/api'
+import apis from '../../../common/api'
 import { mapState, mapMutations } from 'vuex'
 import { SET_ACTION_DATA } from '../../../common/store/add-action-item.store'
 import { findIndex } from '../../../common/utils/tool'
@@ -117,6 +129,8 @@ export default {
           list: []
         }
       ],
+      pagination: { currentPage: 1, pageSize: 10, total: 0 },
+      pullUpLoad: true,
       slideOptions: {
         listenScroll: true,
         probeType: 3,
@@ -126,6 +140,7 @@ export default {
   },
   computed: {
     ...mapState({
+      sdWeeklypo: (state) => state.weeklyDetailsModule.sdWeeklypo,
       actionTableData: (state) => state.addActionItemModule.actionTableData
     }),
     initialIndex() {
@@ -145,7 +160,16 @@ export default {
     cubeScrollOptions() {
       return {
         pullDownRefresh: false,
-        pullUpLoad: false,
+        pullUpLoad:
+          this.selectedLabel === '已完成' && this.pullUpLoad
+            ? {
+              threshold: 0,
+              txt: {
+                more: '上滑加载更多',
+                noMore: '没有更多数据了'
+              }
+            }
+            : false,
         scrollbar: false
       }
     }
@@ -162,6 +186,7 @@ export default {
     showPopup() {
       this.componentPopup = this.$refs.myPopup
       this.componentPopup.show()
+      this.initFinishData()
     },
     // 关闭
     closeBtn() {
@@ -175,9 +200,54 @@ export default {
       this.setActionData(JSON.parse(JSON.stringify(newList)))
       this.$set(this.tabLabels[0], 'list', this.actionTableData)
     },
+    // 切换tab
     changePage(current) {
       this.selectedLabel = this.tabLabels[current].label
-      console.log(this.selectedLabel)
+      this.$refs.myScroll.forceUpdate()
+    },
+    // 初始化参数
+    initFinishData() {
+      this.$set(this.tabLabels[1], 'list', [])
+      this.pagination.currentPage = 1
+      this.pullUpLoad = true
+      this.loadFinishData()
+    },
+    // 加载已完成数据
+    loadFinishData() {
+      const request = {
+        ...apis.GET_WEEKLY_ACTION_ITEMS_LIST,
+        params: {
+          pageIndex: this.pagination.currentPage,
+          pageSize: this.pagination.pageSize,
+          pmsProjectCode: this.sdWeeklypo.pmsProjectCode
+        }
+      }
+      this.$request(request).asyncThen((resp) => {
+        if (resp.code === 'ok' && resp.data) {
+          const { result, count } = resp.data
+          this.$set(this.tabLabels[1], 'list', this.tabLabels[1].list.concat(result))
+          this.pagination.total = count
+          if (this.pagination.total <= this.tabLabels[1].list.length) {
+            this.pullUpLoad = false
+            this.$nextTick(() => {
+              this.tabLabels[1].list.length && this.$refs.myScroll.forceUpdate()
+            })
+          } else {
+            this.pagination.currentPage += 1
+          }
+        } else {
+          this.$createToast({
+            txt: resp.message,
+            type: 'error'
+          }).show()
+        }
+      })
+    },
+    // 上拉加载
+    onPullingUp() {
+      if (this.selectedLabel === '已完成') {
+        this.loadFinishData()
+      }
     },
     scroll(pos) {
       const x = Math.abs(pos.x)
@@ -192,7 +262,7 @@ export default {
 
 <style lang="scss" scoped>
 .popup-box {
-  max-height: 600px;
+  height: 600px;
   background-color: #fff;
   border-radius: 10px;
   .box-head {
@@ -255,9 +325,10 @@ export default {
         }
       }
     }
+    .scroll-content {
+      height: calc(600px - 85px);
+    }
     .panel-content {
-      height: calc(600px - 115px);
-      overflow: scroll;
       padding: 15px 15px 5px;
       .list-item {
         padding: 15px;
@@ -320,6 +391,9 @@ export default {
       }
     }
   }
+}
+.is-Empty {
+  height: 450px;
 }
 ::v-deep .cube-popup-container.cube-popup-center .cube-popup-content {
   top: -50% !important;

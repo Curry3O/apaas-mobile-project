@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-12-10 10:27:20
- * @LastEditTime: 2022-01-21 11:13:41
+ * @LastEditTime: 2022-02-17 21:09:41
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \apaas-mobile-pms\src\custom\apaas-custom-mobile-pms\custom-page\page.vue
@@ -86,8 +86,12 @@
             {{ indexVo.contractType }}
           </cube-button>
           <div v-if="!isEmpty" class="bottom-text mt-10 fs-12">
-            <div class="bz-text"> 预计验收时间：{{ indexVo.acceptanceDate || '-' }} </div>
-            <div class="bz-text"> 币种：{{ indexVo.originalCurrency || '-' }} </div>
+            <div class="bz-text">
+              预计验收时间：{{ indexVo.acceptanceDate || '-' }}
+            </div>
+            <div class="bz-text">
+              币种：{{ indexVo.originalCurrency || '-' }}
+            </div>
           </div>
         </div>
         <div class="bg-radius"></div>
@@ -121,7 +125,7 @@ import PageHeadSlot from '../components/common/page-head-slot.vue'
 import BaseInfo from '../components/pro-home/base-info.vue'
 import TabInfo from '../components/pro-home/table-info.vue'
 import { mapState, mapMutations } from 'vuex'
-import { SET_FINANCE_MODEL, INIT_FINANCE } from '../../common/store/project-home.store'
+import { SET_CAN_ADD, SET_FINANCE_MODEL, INIT_FINANCE } from '../../common/store/project-home.store'
 export default {
   name: 'ProjectHomePage',
   components: {
@@ -133,7 +137,6 @@ export default {
     return {
       searchValue: '',
       isEmpty: true,
-      canAdd: false,
       indexVo: {}, // 项目财务指标主体信息
       grossMarginVo: {}, // 实际毛利率偏差折线图
       fourPiecesVo: {}, // 卡片里面的内容
@@ -146,6 +149,7 @@ export default {
   computed: {
     ...mapState({
       userInfo: (state) => state.authModule.userInfo,
+      canAdd: (state) => state.projectHomeModule.canAdd,
       financeModel: (state) => state.projectHomeModule.financeModel,
       selectedData: (state) => state.projectHomeModule.selectedData,
       homeRefresh: (state) => state.projectHomeModule.homeRefresh
@@ -155,8 +159,8 @@ export default {
         pullDownRefresh: this.isEmpty
           ? false
           : {
-              txt: '刷新成功'
-            },
+            txt: '刷新成功'
+          },
         pullUpLoad: false,
         scrollbar: false
       }
@@ -185,6 +189,7 @@ export default {
   },
   methods: {
     ...mapMutations('projectHomeModule', {
+      setCanAdd: SET_CAN_ADD,
       setFinanceModel: SET_FINANCE_MODEL,
       initFinance: INIT_FINANCE
     }),
@@ -215,7 +220,7 @@ export default {
       }
       this.$request(request).asyncThen((resp) => {
         if (resp.code === 'ok') {
-          this.canAdd = resp.data
+          this.setCanAdd(resp.data)
         } else {
           this.$createToast({
             txt: resp.message,

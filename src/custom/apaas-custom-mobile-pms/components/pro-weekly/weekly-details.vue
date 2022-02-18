@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-20 17:33:04
- * @LastEditTime: 2022-02-14 22:15:40
+ * @LastEditTime: 2022-02-18 13:43:56
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-details.vue
@@ -11,7 +11,7 @@
     <div class="page">
       <PageHeadSlot
         :backPath="backPath"
-        :noBack="checkFlag"
+        :noBack="returnRoute !== 'proHome'"
         returnRoute="weeklyDetails"
         @go-back="handleGoBack"
       >
@@ -19,6 +19,14 @@
           <div class="head-text">
             {{ headTitle }}
           </div>
+        </template>
+        <template v-slot:icon>
+          <x-svg-icon
+            v-if="!editMode"
+            class="big-icon"
+            name="more-icon"
+            @click.native="openBtnDialog"
+          ></x-svg-icon>
         </template>
       </PageHeadSlot>
       <div class="page-head">
@@ -29,6 +37,7 @@
                 {{ weeklypo.projectCode }}
               </div>
               <div
+                v-if="!editMode"
                 class="pro-tag fs-12 ml-10"
                 :class="{
                   'bg-delay': weeklypo.speedProgress === '延期',
@@ -81,14 +90,41 @@
           </cube-button>
           <div class="bottom-content mt-10 fs-12">
             <div class="content-left">
-              <div v-if="weeklypo.costPrice" class="bz-text fs-14 fw-600">
+              <div v-if="weeklypo.costPrice && !editMode" class="bz-text fs-14 fc-red">
                 {{ weeklypo.costPrice }}
               </div>
-              <div v-if="weeklypo.acceptanceDate" class="bz-text">
-                预计验收时间：{{ weeklypo.acceptanceDate || '-' }}
+              <div v-if="weeklypo.id" id="acceptanceDate" class="content-date">
+                <div class="bz-text date-label">
+                  里程碑计划验收日期：
+                </div>
+                <div v-if="weeklypo.acceptanceDate" class="bz-text date-value">
+                  {{ weeklypo.acceptanceDate }}
+                </div>
+                <x-svg-icon
+                  v-if="editMode && !weeklypo.acceptanceDate"
+                  class="date-icon"
+                  name="edit-panel"
+                  @click.native="editDate('acceptanceDate', weeklypo.acceptanceDate)"
+                ></x-svg-icon>
+              </div>
+              <div v-if="weeklypo.id" id="estimateDate" class="content-date">
+                <div class="bz-text date-label">
+                  收入计划完成日期：
+                </div>
+                <div v-if="weeklypo.estimateAcceptanceDate" class="bz-text date-value">
+                  {{ weeklypo.estimateAcceptanceDate }}
+                </div>
+                <x-svg-icon
+                  v-if="editMode"
+                  class="date-icon"
+                  name="edit-panel"
+                  @click.native="
+                    editDate('estimateAcceptanceDate', weeklypo.estimateAcceptanceDate)
+                  "
+                ></x-svg-icon>
               </div>
             </div>
-            <div v-if="weeklypo.projectCode" class="content-right">
+            <div v-if="weeklypo.projectCode" class="content-right mr-5">
               <div class="content-img" @click="openActionItem"></div>
               <div
                 v-if="actionTableData.length"
@@ -103,9 +139,10 @@
         <div class="bg-radius"></div>
       </div>
       <cube-scroll
-        class="page-main"
-        ref="scroll"
         id="my-scroll"
+        ref="scroll"
+        class="page-main"
+        :class="{ 'page-height': !weeklypo.id }"
         :data="costTypePoList"
         :options="cubeScrollOptions"
       >
@@ -129,25 +166,17 @@
             </div>
             <div class="pg-wrap mt-10"></div>
           </div>
-          <WeeklyTable
-            :editMode="editMode"
-            :costVoList="costTypePoList"
-            :incomeVoList="incomeTypePoList"
-            :returnVoList="typePoList"
-          ></WeeklyTable>
-          <HealthyState :editMode="editMode" :lwSituationPoList="lwSituationPoList"></HealthyState>
-          <WeeklyPlan :editMode="editMode" :progressList="progressList"></WeeklyPlan>
-          <WeeklyCoordinate
-            :editMode="editMode"
-            :coordinateList="coordinateList"
-          ></WeeklyCoordinate>
+          <WeeklyTable ref="weeklyTable"></WeeklyTable>
+          <HealthyState ref="healthyState"></HealthyState>
+          <WeeklyPlan ref="weeklyPlan"></WeeklyPlan>
+          <WeeklyCoordinate ref="weeklyCoordinate"></WeeklyCoordinate>
         </div>
         <div v-else>
           <WeeklyCheck ref="weeklyCheck" @show-details="handleShowDetails($event)"></WeeklyCheck>
         </div>
       </cube-scroll>
       <div v-if="editMode" class="bottom-btn">
-        <cube-button @click="weeklySubmit">
+        <cube-button @click="openDialog">
           提交
         </cube-button>
       </div>
@@ -160,6 +189,29 @@
         </cube-button>
       </div>
     </div>
+    <cube-popup ref="btnPopup" type="my-popup" position="bottom" :mask-closable="true">
+      <div class="popup-content">
+        <div
+          class="opt-btn"
+          :class="{ 'disabled-btn': !weeklypo.lastWeeklyId }"
+          @click="switchWeek(weeklypo.lastWeeklyId, '上一周')"
+        >
+          上一周
+        </div>
+        <div
+          class="opt-btn"
+          :class="{ 'disabled-btn': !weeklypo.lastWeeklyId }"
+          @click="switchWeek(weeklypo.nextWeeklyId, '下一周')"
+        >
+          下一周
+        </div>
+      </div>
+      <div class="popup-bottom">
+        <div class="cancel-btn" @click="closeBtnDialog">
+          取消
+        </div>
+      </div>
+    </cube-popup>
     <ActionItemPopup ref="actionPopup"></ActionItemPopup>
     <EditRowPopup></EditRowPopup>
   </div>
@@ -168,6 +220,7 @@
 <script>
 import apis from '../../../common/api'
 import { mapState, mapMutations } from 'vuex'
+import { SET_WEEKLY_REFRESH } from '../../../common/store/project-weekly.store'
 import {
   SET_SCROLL_TOP,
   SET_SD_CONFIG_FIELD,
@@ -177,7 +230,8 @@ import {
   SET_SD_TYPE_LIST,
   SET_SD_SITUATION,
   SET_SD_COORDINATE,
-  SET_SD_PROGRESS
+  SET_SD_PROGRESS,
+  INIT_SD_ALL_DATA
 } from '../../../common/store/weekly-details.store'
 import PageHeadSlot from '../common/page-head-slot.vue'
 import WeeklyTable from '../pro-weekly/weekly-table.vue'
@@ -265,20 +319,22 @@ export default {
           code: 'test'
         }
       ],
+      componentPopup: null,
       returnRoute: null // 访问路径
     }
   },
   computed: {
     ...mapState({
-      $_scrollTop: (state) => state.weeklyDetailsModule.$_scrollTop,
+      scrollTop: (state) => state.weeklyDetailsModule.scrollTop,
       configField: (state) => state.weeklyDetailsModule.configField,
-      sd_weeklypo: (state) => state.weeklyDetailsModule.sd_weeklypo,
-      sd_costTypePoList: (state) => state.weeklyDetailsModule.sd_costTypePoList,
-      sd_incomeTypePoList: (state) => state.weeklyDetailsModule.sd_incomeTypePoList,
-      sd_typePoList: (state) => state.weeklyDetailsModule.sd_typePoList,
-      sd_lwSituationPoList: (state) => state.weeklyDetailsModule.sd_lwSituationPoList,
-      sd_coordinate: (state) => state.weeklyDetailsModule.sd_coordinate,
-      sd_progressList: (state) => state.weeklyDetailsModule.sd_progressList,
+      sdWeeklypo: (state) => state.weeklyDetailsModule.sdWeeklypo,
+      sdCostTypePoList: (state) => state.weeklyDetailsModule.sdCostTypePoList,
+      sdIncomeTypePoList: (state) => state.weeklyDetailsModule.sdIncomeTypePoList,
+      sdTypePoList: (state) => state.weeklyDetailsModule.sdTypePoList,
+      sdLwSituationPoList: (state) => state.weeklyDetailsModule.sdLwSituationPoList,
+      sdCoordinate: (state) => state.weeklyDetailsModule.sdCoordinate,
+      sdProgressList: (state) => state.weeklyDetailsModule.sdProgressList,
+      isCheckWeek: (state) => state.weeklyDetailsModule.isCheckWeek,
       actionTableData: (state) => state.addActionItemModule.actionTableData
     }),
     transNum() {
@@ -302,41 +358,46 @@ export default {
   created() {
     const { returnRoute, type } = this.$route.query
     this.returnRoute = returnRoute
-    this.editMode = type !== '0'
-    if (this.returnRoute === 'proHome') {
-      this.headTitle = '填写周报'
-      this.backPath = './apaas-custom-financial-norm'
-    } else {
-      if (type === '0') {
-        this.headTitle = '周报详情'
-      } else if (type === '1') {
-        this.headTitle = '周报编辑'
-      }
-      this.backPath = './apaas-custom-weekly-page'
-    }
     if (this.returnRoute === 'proHome' || this.returnRoute === 'proWeekly') {
+      this.editMode = type !== '0'
+      if (this.returnRoute === 'proHome') {
+        this.headTitle = '填写周报'
+        this.backPath = './apaas-custom-financial-norm'
+      } else {
+        if (type === '0') {
+          this.headTitle = '周报详情'
+        } else if (type === '1') {
+          this.headTitle = '周报编辑'
+        }
+        this.backPath = './apaas-custom-weekly-page'
+      }
       this.loadData()
     } else {
-      this.weeklypo = this.sd_weeklypo
-      this.costTypePoList = this.sd_costTypePoList
-      this.incomeTypePoList = this.sd_incomeTypePoList
-      this.typePoList = this.sd_typePoList
-      this.lwSituationPoList = this.sd_lwSituationPoList
-      this.coordinateList = this.sd_coordinate
-      this.progressList = this.sd_progressList
-      const { editMode, showDetail, checkFlag } = this.configField
+      this.weeklypo = this.sdWeeklypo
+      this.costTypePoList = this.sdCostTypePoList
+      this.incomeTypePoList = this.sdIncomeTypePoList
+      this.typePoList = this.sdTypePoList
+      this.lwSituationPoList = this.sdLwSituationPoList
+      this.coordinateList = this.sdCoordinate
+      this.progressList = this.sdProgressList
+      const { editMode, showDetail, checkFlag, headTitle, backPath } = this.configField
       this.editMode = editMode
       this.showDetail = showDetail
       this.checkFlag = checkFlag
+      this.headTitle = headTitle
+      this.backPath = backPath
     }
   },
   mounted() {
-    if (this.$_scrollTop > 0) {
-      this.handleScroll(this.$_scrollTop)
+    if (this.scrollTop > 0) {
+      this.handleScroll(this.scrollTop)
       this.setScrollTop(0)
     }
   },
   methods: {
+    ...mapMutations('projectWeeklyModule', {
+      setWeeklyRefresh: SET_WEEKLY_REFRESH
+    }),
     ...mapMutations('weeklyDetailsModule', {
       setScrollTop: SET_SCROLL_TOP
     }),
@@ -348,7 +409,8 @@ export default {
       set_sd_typeList: SET_SD_TYPE_LIST,
       set_sd_situation: SET_SD_SITUATION,
       set_sd_coordinate: SET_SD_COORDINATE,
-      set_sd_progress: SET_SD_PROGRESS
+      set_sd_progress: SET_SD_PROGRESS,
+      init_sd_all_data: INIT_SD_ALL_DATA
     }),
     handleScroll(y) {
       // this.$refs.scroll.scrollTo(0, y, 100, 'bounce')
@@ -390,10 +452,14 @@ export default {
             if (resp.code === 'ok' && resp.data) {
               const { data } = resp
               this.weeklypo = data.weeklypo
-              this.costTypePoList = data.costTypePoList
-              this.incomeTypePoList = data.incomeTypePoList
-              this.typePoList = data.typePoList
-              this.lwSituationPoList = data.lwSituationPoList
+              this.costTypePoList = data.costTypePoList.sort((a, b) => a.dataIndex - b.dataIndex)
+              this.incomeTypePoList = data.incomeTypePoList.sort(
+                (a, b) => a.dataIndex - b.dataIndex
+              )
+              this.typePoList = data.typePoList.sort((a, b) => a.dataIndex - b.dataIndex)
+              this.lwSituationPoList = data.lwSituationPoList.sort(
+                (a, b) => a.dataIndex - b.dataIndex
+              )
               this.coordinateList = data.coordinateList || []
               this.progressList = {
                 thisWeekPlan: data.weeklypo.thisWeekPlan,
@@ -401,11 +467,9 @@ export default {
                 nextWeekPlan: data.weeklypo.nextWeekPlan
               }
               if (this.returnRoute === 'proWeekly' && data.lwSituationPoList?.length) {
-                data.lwSituationPoList
-                  .sort((a, b) => a.dataIndex - b.dataIndex)
-                  .forEach((item, index) => {
-                    this.lightList[index].twHealthyState = item.twHealthyState
-                  })
+                data.lwSituationPoList.forEach((item, index) => {
+                  this.lightList[index].twHealthyState = item.twHealthyState
+                })
               }
               this.saveAllData()
             } else {
@@ -433,13 +497,195 @@ export default {
       this.set_sd_situation(this.lwSituationPoList)
       this.set_sd_coordinate(this.coordinateList)
       this.set_sd_progress(this.progressList)
+      this.set_sd_configField({
+        editMode: this.editMode,
+        showDetail: this.showDetail,
+        checkFlag: this.checkFlag,
+        headTitle: this.headTitle,
+        backPath: this.backPath
+      })
     },
     // 打开行动项
     openActionItem() {
       this.$refs.actionPopup.showPopup()
     },
+    // 编辑日期
+    editDate(field, value) {
+      if (field === 'acceptanceDate') {
+        this.$createDatePicker({
+          title: '里程碑计划验收日期',
+          value: new Date(),
+          maskClosable: false,
+          onSelect: this.handleAccept
+        }).show()
+      } else {
+        this.$createDatePicker({
+          title: '收入计划完成日期',
+          value: new Date(value),
+          maskClosable: false,
+          onSelect: this.handleEstimate
+        }).show()
+      }
+    },
+    // 选择里程碑计划验收日期
+    handleAccept(date) {
+      this.$set(this.weeklypo, 'acceptanceDate', this.$dayjs(new Date(date)).format('YYYY-MM-DD'))
+    },
+    // 选择收入计划完成日期
+    handleEstimate(date) {
+      this.$set(
+        this.weeklypo,
+        'estimateAcceptanceDate',
+        this.$dayjs(new Date(date)).format('YYYY-MM-DD')
+      )
+    },
     // 周报新增或编辑提交
-    weeklySubmit() {},
+    weeklySubmit() {
+      if (this.getWeeklyData()) {
+        const toast = this.$createToast({
+          txt: 'Loading...',
+          mask: true
+        })
+        toast.show()
+        const params = {
+          weeklypo: { ...this.weeklypo, ...this.progressList },
+          costTypePoList: this.costTypePoList,
+          incomeTypePoList: this.incomeTypePoList,
+          typePoList: this.typePoList,
+          lwSituationPoList: this.lwSituationPoList,
+          coordinateList: this.coordinateList,
+          weeklyActionItemsList: this.weeklyActionItemsList
+        }
+        const request = {
+          ...apis[this.$route.query.id ? 'EDIT_BY_WEEKLY_ID' : 'WEEKLY_INSERT'],
+          params: params
+        }
+        this.$request(request)
+          .asyncThen(
+            (resp) => {
+              if (resp.code === 'ok') {
+                this.$createToast({
+                  txt: '提交成功',
+                  type: 'txt'
+                }).show()
+                this.setWeeklyRefresh(true)
+                this.init_sd_all_data()
+                this.$router.push({
+                  path: './apaas-custom-weekly-page',
+                  query: {
+                    ...this.$route.query,
+                    returnRoute: 'weeklyDetails'
+                  }
+                })
+              } else {
+                this.$createToast({
+                  txt: resp.message,
+                  type: 'error'
+                }).show()
+              }
+              toast.hide()
+            },
+            () => {
+              toast.hide()
+            }
+          )
+          .asyncErrorCatch(() => {
+            toast.hide()
+          })
+      }
+    },
+    // 收集周报详情所有数据
+    getWeeklyData() {
+      let valid = true
+      // 校验主体数据的必填项
+      if (!this.weeklypo.acceptanceDate) {
+        valid = false
+        this.$createToast({
+          txt: '里程碑计划验收日期为必填项',
+          type: 'error'
+        }).show()
+        const element = document.querySelector('#acceptanceDate')
+        element && element.scrollIntoView({ block: 'start', behavior: 'smooth' })
+        return valid
+      }
+      if (!this.weeklypo.estimateAcceptanceDate) {
+        valid = false
+        this.$createToast({
+          txt: '收入计划完成日期为必填项',
+          type: 'error'
+        }).show()
+        const element = document.querySelector('#estimateDate')
+        element && element.scrollIntoView({ block: 'start', behavior: 'smooth' })
+        return valid
+      }
+      // 搜集成本、收入、表格数据
+      const { costData, incomeData, typeData } = this.$refs.weeklyTable.returnAllData()
+      this.costTypePoList = costData
+      this.incomeTypePoList = incomeData
+      this.typePoList = typeData
+      // 收集上周情况列表数据
+      valid = this.$refs.healthyState.returnAllData().valid
+      if (!valid) {
+        const element = this.$refs.healthyState.returnAllData().element
+        element && element.scrollIntoView({ block: 'start', behavior: 'smooth' })
+        return valid
+      }
+      this.lwSituationPoList = this.$refs.healthyState.returnAllData().data
+      // 收集协调列表数据
+      this.coordinateList = this.$refs.weeklyCoordinate.returnAllData().data
+      // 收集进度列表数据
+      valid = this.$refs.weeklyPlan.returnAllData().valid
+      if (!valid) {
+        const element = this.$refs.weeklyPlan.returnAllData().element
+        element && element.scrollIntoView({ block: 'start', behavior: 'smooth' })
+        return valid
+      }
+      this.progressList = this.$refs.weeklyPlan.returnAllData().data
+      // 收集行动项列表数据
+      this.weeklyActionItemsList = this.actionTableData
+      return valid
+    },
+    // 打开选择上下周弹窗
+    openBtnDialog() {
+      this.componentPopup = this.$refs.btnPopup
+      this.componentPopup.show()
+    },
+    // 关闭选择上下周弹窗
+    closeBtnDialog() {
+      if (this.componentPopup) {
+        this.componentPopup.hide()
+      }
+    },
+    // 切换上下周
+    switchWeek(id, text) {
+      if (!id) {
+        this.$createToast({
+          txt: '未搜索到' + text + '的项目周报',
+          type: 'txt'
+        }).show()
+        return
+      }
+      if (this.$route.query.id === id) return
+      this.closeBtnDialog()
+      const params = { ...this.$route.query }
+      this.$router.push({
+        path: './apaas-custom-weekly-details',
+        query: {
+          ...params,
+          id: id
+        }
+      })
+    },
+    // 打开确认框
+    openDialog() {
+      this.$createDialog({
+        type: 'confirm',
+        content: '是否确认提交？',
+        onConfirm: () => {
+          this.weeklySubmit()
+        }
+      }).show()
+    },
     // 周报检查
     checkAll() {
       this.showDetail = false
@@ -456,8 +702,21 @@ export default {
     },
     // 处理返回后页面显示逻辑
     handleGoBack() {
-      this.showDetail = true
-      this.checkFlag = false
+      if (this.checkFlag) {
+        this.showDetail = true
+        this.checkFlag = false
+      } else {
+        if (!this.isCheckWeek) {
+          this.setWeeklyRefresh(false)
+        }
+        this.$router.push({
+          path: './apaas-custom-weekly-page',
+          query: {
+            ...this.$route.query,
+            returnRoute: 'weeklyDetails'
+          }
+        })
+      }
     },
     // 处理按钮显示逻辑
     handleShowDetails(e) {
@@ -475,12 +734,18 @@ export default {
   .page {
     background: url('~@/assets/project-bg.png');
     background-repeat: no-repeat;
-    background-size: 100% 230px;
+    background-size: 100% 254px;
     .head-text {
       color: #fff;
       font-size: 18px;
       font-weight: 600;
       text-align: center;
+    }
+    .big-icon {
+      ::v-deep .svg-icon {
+        width: 26px !important;
+        height: 26px !important;
+      }
     }
     .page-head {
       .head-title {
@@ -503,6 +768,24 @@ export default {
           align-items: center;
           .content-left {
             width: 70%;
+            .content-date {
+              display: flex;
+              align-items: center;
+              .date-label {
+                width: 120px;
+              }
+              .date-value {
+                width: 70px;
+              }
+              .date-icon {
+                flex: 1;
+                ::v-deep .svg-icon {
+                  width: 18px !important;
+                  height: 18px !important;
+                  color: #fff;
+                }
+              }
+            }
           }
           .content-right {
             width: 30%;
@@ -601,7 +884,7 @@ export default {
     }
     .page-main {
       background: #fff;
-      height: calc(100vh - 230px);
+      height: calc(100vh - 254px);
       overflow: scroll;
       .pg-title {
         padding: 10px 20px;
@@ -665,6 +948,9 @@ export default {
         background: #efeff4;
       }
     }
+    .page-height {
+      height: calc(100vh - 82px);
+    }
     .bottom-btn {
       width: 100%;
       z-index: 10;
@@ -679,6 +965,9 @@ export default {
         font-size: 12px;
         border-radius: 6px;
       }
+    }
+    .fc-red {
+      color: #c23616 !important;
     }
     .fs-12 {
       font-size: 12px;
@@ -718,6 +1007,32 @@ export default {
     }
     .mb-5 {
       margin-bottom: 5px;
+    }
+  }
+  .popup-content {
+    background-color: #d0cfd0;
+    border-radius: 12px;
+    .opt-btn {
+      color: #027aff;
+      font-size: 16px;
+      line-height: 40px;
+      text-align: center;
+      border-top: 1px solid #b4bac2;
+    }
+    .disabled-btn {
+      color: #fff;
+    }
+  }
+  .popup-bottom {
+    margin: 5px 0;
+    border-radius: 10px;
+    background-color: #fff;
+    .cancel-btn {
+      color: #027aff;
+      font-size: 16px;
+      line-height: 40px;
+      text-align: center;
+      border-top: 1px solid #b4bac2;
     }
   }
 }
