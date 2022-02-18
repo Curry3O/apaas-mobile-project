@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-01-20 17:33:04
- * @LastEditTime: 2022-02-18 16:38:33
+ * @LastEditTime: 2022-02-18 16:54:56
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /pms-mobile/src/custom/apaas-custom-mobile-pms/components/pro-weekly/weekly-details.vue
@@ -93,7 +93,7 @@
               <div v-if="weeklypo.costPrice && !editMode" class="bz-text fs-14 fc-red">
                 {{ weeklypo.costPrice }}
               </div>
-              <div v-if="weeklypo.id" id="acceptanceDate" class="content-date">
+              <div v-if="weeklypo.projectCode" id="acceptanceDate" class="content-date">
                 <div class="bz-text date-label">
                   里程碑计划验收日期：
                 </div>
@@ -107,7 +107,7 @@
                   @click.native="editDate('acceptanceDate', weeklypo.acceptanceDate)"
                 ></x-svg-icon>
               </div>
-              <div v-if="weeklypo.id" id="estimateDate" class="content-date">
+              <div v-if="weeklypo.projectCode" id="estimateDate" class="content-date">
                 <div class="bz-text date-label">
                   收入计划完成日期：
                 </div>
@@ -142,7 +142,7 @@
         id="my-scroll"
         ref="scroll"
         class="page-main"
-        :class="weeklypo.id ? (editMode ? 'ph-height1' : 'ph-height2') : 'ph-height3'"
+        :class="weeklypo.projectCode ? (editMode ? 'ph-height1' : 'ph-height2') : 'ph-height3'"
         :data="costTypePoList"
         :options="cubeScrollOptions"
       >

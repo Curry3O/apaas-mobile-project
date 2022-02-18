@@ -62,8 +62,12 @@
             </div>
           </div>
         </div>
-        <div class="detail-date"> 里程碑计划验收日期：{{ weeklyData.acceptanceDate }} </div>
-        <div class="detail-date"> 收入计划完成日期：{{ weeklyData.estimateAcceptanceDate }} </div>
+        <div class="detail-date">
+          里程碑计划验收日期：{{ weeklyData.acceptanceDate }}
+        </div>
+        <div class="detail-date">
+          收入计划完成日期：{{ weeklyData.estimateAcceptanceDate }}
+        </div>
       </div>
       <div class="item-card">
         <div

@@ -65,7 +65,8 @@
         </cube-form>
       </div>
     </div>
-    <div v-if="fields.length === 1" class="height-10"> </div>
+    <div v-if="fields.length === 1" class="height-10">
+    </div>
   </cube-popup>
 </template>
 
@@ -104,12 +105,12 @@ export default {
           const rules =
             item.type === 'input'
               ? {
-                  required: item.required,
-                  type: 'number',
-                  max: 999999999999999,
-                  min: -999999999999999,
-                  money: true
-                }
+                required: item.required,
+                type: 'number',
+                max: 999999999999999,
+                min: -999999999999999,
+                money: true
+              }
               : { required: item.required }
           data.push({
             modelKey: modelKey,
